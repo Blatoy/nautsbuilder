@@ -14,7 +14,7 @@
         <div id="naut-splash-art"></div>
         <div id="naut-list" class="naut-list-center"></div>
         <div class="black-box" id="naut-description"></div>
-        <div class="black-box" id="skill-desc"></div>
+        <div class="black-box" id="skill-description"></div>
 
         <div id="naut-shop">
           <div class="shop-row" id="shop-row-1"></div>
@@ -31,14 +31,23 @@
         <div class="black-box build-info" id="build-info-2"></div>
         <div class="black-box build-info" id="build-info-3"></div>
         <div class="black-box build-info" id="build-info-4"></div>
-        <div class="black-box build-info" id="build-summary">
-          Total cost:
+        <div class="black-box build-info" id="build-summary"></div>
+        <div class="black-box" id="about">
+          Assets taken from <a href="http://store.steampowered.com/app/204300/Awesomenauts/">Awesomenauts</a>, data gathered by the community!<br>
+          Made with love by Blatoy, inspired by <a href="http://nautsbuilder.com">Nautsbuilder</a>.<br>
+          If you have anything to report or want to be able to update the data join <a href="">this Discord</a>!<br>
         </div>
 
-        <div id="tooltip">Hey I'm the text ot the tooltip</div>
+        <div id="tooltip"></div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="/standalone/nautsbuilder/scripts/globalUpgrades.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/utils.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/event-manager.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/tooltip.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/skill-parser.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/ui-manager.js"></script>
+        <script src="/standalone/nautsbuilder/scripts/nautsbuilder.js"></script>
         <script src="/standalone/nautsbuilder/scripts/main.js"></script>
     </body>
 </html>
