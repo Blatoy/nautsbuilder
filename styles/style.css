@@ -1,0 +1,364 @@
+@font-face {
+    font-family: ethnocentric;
+    src: url("/standalone/nautsbuilder/fonts/ethnocentric.ttf");
+}
+
+body {
+  font-family: ethnocentric;
+  color: white;
+  margin: 0;
+
+  background-image: url("/standalone/nautsbuilder/images/background.jpg");
+  background-position: center top;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-color: black;
+}
+
+input {
+  color: rgb(250, 250, 250);
+  background-color: black;
+  border: 2px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+}
+
+a {
+    color:#37A1E8;
+    text-decoration:none;
+}
+
+a:visited {
+    color:#37A1E8;
+}
+
+a:active {
+    color:#37A1E8;
+}
+
+a:hover {
+    color:#256C9B;
+}
+
+
+/* NAUT LIST */
+#naut-list {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+
+  z-index: 103;
+  position: fixed;
+  padding: 4px;
+  overflow-y: auto;
+}
+
+.naut-list-center {
+  top: 10px;
+  left: 15%;
+  right: 15%;
+
+  text-align: center;
+}
+
+.naut-list-right {
+  top: 10px;
+  left: 75%;
+  right: 0;
+
+  text-align: right;
+}
+
+/* BLACK BOXES */
+
+.black-box {
+  font-family: "Verdana", "sans-serif";
+  background-color: black;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* DESCRIPTION */
+
+#naut-description {
+  display: none;
+  z-index: 100;
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  height: auto;
+  min-height: 40%;
+  overflow: auto;
+  width: 34%;
+  max-height: calc(100% - 250px);
+}
+
+#naut-splash-art {
+  z-index: 99;
+  position: fixed;
+  left: 39%;
+  right: 39%;
+  height: 50%;
+  bottom: 22%;
+  text-align: center;
+}
+
+.naut-story, .build-description-category {
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+.build-description-category {
+  font-size: 1em;
+}
+
+.naut-name {
+  width: 100%;
+  font-size: 1.8em;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.naut-image {
+  height: 100%;
+}
+
+.naut-icon {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 1px;
+}
+
+
+.naut-icon:hover {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 10px rgba(158, 202, 237, 0.5);
+  border-radius: 2px;
+  filter: brightness(1.2);
+}
+
+.selected {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 0px 3px rgba(88, 220, 233, 0.8)!important;
+  border-radius: 2px!important;
+  filter: brightness(1.3)!important;
+}
+
+#skill-description {
+  display: none;
+  bottom: 5px;
+  position: fixed;
+  width: 34%;
+  height: auto;
+  min-height: 40%;
+}
+
+#skill-description div {
+  margin-bottom: 10px;
+}
+
+#skill-description img {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+#skill-description span {
+  display: inline-block;
+  width: calc(100% - 60px);
+  float: right;
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+#skill-description hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+}
+
+/* BUILD */
+
+.build-info {
+  display: none;
+}
+
+.build-info, #about {
+  position: fixed;
+  width: 22%;
+  height: 15%;
+  left: calc(50% + 15px);
+  font-size: 0.8em;
+  overflow: auto;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+#build-info-1 {
+  top: 2%;
+}
+
+#build-info-2 {
+  top: 22%;
+}
+
+#build-info-3 {
+  top: 42%;
+}
+
+#build-info-4 {
+  top: 62%;
+}
+
+#build-summary {
+  top: 82%;
+}
+
+#about {
+  top: 82%;
+  left: calc(72% + 40px);
+  right: 5px;
+  width: auto;
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+/* SHOP */
+
+#naut-shop, #build-order {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+#naut-shop {
+  display: none;
+  z-index: 101;
+  border: 3px solid transparent;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 80%;
+  border-image: url("/standalone/nautsbuilder/images/border-shop.png") 5 round;
+  overflow: hidden;
+}
+
+#build-order {
+  display: none;
+  z-index: 102;
+  position: fixed;
+  left: 0;
+  top: calc(80% + 5px);
+  height: 20%;
+  width: 50%;
+  background-color: rgba(0, 31, 51, 0.8);
+  border: 3px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-shop.png") 5 round;
+  overflow: auto;
+}
+
+.shop-row {
+  width: 100%;
+  height: 25%;
+  border-top: 2px solid black;
+  background-image: url("/standalone/nautsbuilder/images/shop-hexagon.png");
+}
+
+#shop-row-1, #shop-row-3 {
+  background-color: rgba(0, 31, 51, 0.8);
+
+}
+
+#shop-row-2, #shop-row-4 {
+  background-color: rgba(0, 16, 29, 0.8);
+}
+
+.shop-item-container {
+  margin-left: 5px;
+  width: 12%;
+  display: inline-block;
+  position: relative;
+}
+
+.shop-item-price, .shop-item-stage {
+  position: absolute;
+  left: 25%;
+  font-size: 0.8em;
+  text-align: center;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+.shop-skill-container {
+  display: inline-block;
+  cursor: pointer;
+  width: 12%;
+  margin-right: 15px;
+}
+
+.shop-item-image {
+  vertical-align: middle;
+}
+
+.shop-item-stage {
+  top: 5%;
+  left: calc(25% + 4px);
+}
+
+.shop-item-price {
+  bottom: 5%;
+}
+
+.shop-item-skill, .shop-item-upgrade {
+  width: 100%;
+}
+
+.shop-item-upgrade {
+  cursor: pointer;
+  filter: brightness(0.3);
+}
+
+.shop-item-upgrade:hover {
+  cursor: pointer;
+  filter: brightness(0.5);
+}
+
+.purchased {
+  filter: brightness(1.1)!important;
+}
+
+#build-order-content .shop-item-container {
+  width: 7%;
+  vertical-align: middle;
+}
+
+/* TOOLTIP */
+#tooltip {
+  display: none;
+  max-width: 20%;
+  font-family: "Verdana", "sans-serif";
+  font-size: 0.95em;
+  z-index: 1000;
+  padding: 10px;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+}
+
+.tooltip-upgrades {
+  font-size: 0.85em;
+  color: yellow;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
