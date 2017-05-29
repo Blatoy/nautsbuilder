@@ -1,0 +1,185 @@
+/* NAUT LIST */
+#naut-list {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+
+  z-index: 103;
+  position: fixed;
+  padding: 4px;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+/* When the page is opened for the first time */
+.naut-list-center {
+  top: 10px;
+  left: 15%;
+  right: 15%;
+
+  text-align: center;
+}
+
+/* Weh a naut has been clicked */
+.naut-list-right {
+  top: 10px;
+  left: 75%;
+  right: 0;
+
+  text-align: right;
+}
+
+
+.naut-name {
+  width: 100%;
+  font-size: 1.8em;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.naut-image {
+  height: 100%;
+}
+
+.naut-icon {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 1px;
+}
+
+
+.naut-icon:hover {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 10px rgba(158, 202, 237, 0.5);
+  border-radius: 2px;
+  filter: brightness(1.2);
+}
+
+/* Aplied to naut-icon */
+.selected {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 0px 3px rgba(88, 220, 233, 0.8)!important;
+  border-radius: 2px!important;
+  filter: brightness(1.3)!important;
+}
+
+/* Description, splash-art and build info only displayed when shop is closed */
+#naut-description {
+  display: none;
+  z-index: 100;
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  height: auto;
+  min-height: 40%;
+  overflow: auto;
+  width: 34%;
+  max-height: 50%;
+}
+
+#naut-splash-art {
+  z-index: 99;
+  position: fixed;
+  left: 39%;
+  right: 39%;
+  height: 50%;
+  bottom: 22%;
+  text-align: center;
+}
+
+#skill-description {
+  display: none;
+  bottom: 5px;
+  position: fixed;
+  width: 34%;
+  height: auto;
+  min-height: 40%;
+}
+
+#skill-description div {
+  margin-bottom: 10px;
+}
+
+#skill-description img {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+#skill-description span {
+  display: inline-block;
+  width: calc(100% - 60px);
+  float: right;
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+}
+
+
+/* BUILD */
+.naut-story, .build-description-category {
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+.build-description-category {
+  font-size: 1em;
+}
+
+.build-info {
+  display: none;
+}
+
+.build-info, #about {
+  position: fixed;
+  width: 22%;
+  height: 15%;
+  left: calc(50% + 15px);
+  font-size: 0.8em;
+  overflow: auto;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+/* About should be in main.css but... */
+#about {
+  top: 82%;
+  left: calc(72% + 40px);
+  right: 5px;
+  width: auto;
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+#build-info-1 {
+  top: 2%;
+}
+
+#build-info-2 {
+  top: 22%;
+}
+
+#build-info-3 {
+  top: 42%;
+}
+
+#build-info-4 {
+  top: 62%;
+}
+
+#build-summary {
+  top: 82%;
+}

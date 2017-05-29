@@ -25,7 +25,7 @@ function preloadImage(src){
  * @param {string} paramValue - The string to add in the URL
  */
 function setGetParameter(paramName, paramValue) {
-  window.history.pushState(paramValue, "", paramValue);
+  window.history.replaceState(paramValue, "", paramValue);
 }
 
 /**
@@ -43,4 +43,56 @@ function getURLParameter(name) {
  */
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+/**
+ * Shuffle the given string
+ * @param {string} str - The string to shuffle
+ */
+function shuffleString(str) {
+  var a = str.split(""), n = a.length;
+
+  for(var i = n - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+  }
+  return a.join("");
+}
+
+/**
+ * Returns a string usable for an element ID
+ * @param {string} str - The string to clean
+ */
+function getValidElementId(str) {
+  return str.replace(/^[^a-z]+|[^\w:.-]+/gi, "");
+}
+
+/**
+ * Shuffle and return the specified array
+ * Source: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+ * @param {array} array - The array to shuffle
+ */
+function shuffleArray(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+function round(number) {
+  return Math.round(number * 100) / 100;
 }

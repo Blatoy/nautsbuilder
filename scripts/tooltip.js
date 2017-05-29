@@ -1,7 +1,7 @@
 var Tooltip = function(tooltipSelector) {
   var self = this;
   var tooltipElement = $(tooltipSelector);
-  var offset = {x: 5, y: 5}; // Offsets the tooltip a bit to prevent it being behind the mouse
+  var offset = {x: 20, y: 20}; // Offsets the tooltip a bit to prevent it being behind the mouse
 
   /**
    * Must be called when the mouse is moved to change the position of the tooltip

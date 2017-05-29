@@ -1,16 +1,17 @@
 var SkillParser = new function() {
-  // TODO: Edit this function to handle > > >
+  var self = this;
+
+// ca parse correctement si le truc est pas coché mais dès que on check le premier truc
+// ca transforme le parse correct en qqch de faux genre wtf
   this.parseSkillStep = function(step) {
-    var stepEffectsClean = {};
     // step = "Slowing Power: +20%; Slow duration: 1s;""
+    var stepEffectsClean = {};
 
     // No ; found this is a mistake and we "fix" it
     if(step.indexOf(";") == -1) {
       step += ";";
     }
-
     var stepEffects = step.split(";");
-
     for(var i = 0; i < stepEffects.length; ++i) {
       // Slowing Power: +20%
       var stepEffect = stepEffects[i];
@@ -20,36 +21,63 @@ var SkillParser = new function() {
       if(!value)
         continue;
 
-      // Remove useless spaces
+      // Remove useless spaces a the start of the string
       while(stepEffectParsed[0][0] == " ") {
         stepEffectParsed[0] = stepEffectParsed[0].substring(1);
       }
 
+      // We got the key, put in in the return variable
       stepEffectsClean[stepEffectParsed[0]] = {};
 
-      // Has unit ?
+      // Passes this test: 4s, 6%
       if(self.getUnit(value) != "none") {
         // Is number after removing unit and space ?
-        var valueNoBlanks = value.replace(/ /g, "");
+        value = value.replace(/ /g, "");
 
-        if(isNumeric(valueNoBlanks.substring(0, valueNoBlanks.length - 1))) {
+        // Passes this test: 4s, 6%
+        if(isNumeric(value.substring(0, value.length - 1))) {
           // Number + unit
           stepEffectsClean[stepEffectParsed[0]][self.getUnit(value)] = parseFloat(value);
         }
         else {
-          // Thing like 0s > 1s > 2s
-          // if contain > return like array
-          stepEffectsClean[stepEffectParsed[0]]["none"] = value;
+          // Passes this test: Droids, any string
+
+          // Check if the skill is like "1s > 2s > 3s"
+          if(value.indexOf(">") != -1) {
+            var splitedValues = value.split(">");
+            var values = [];
+            for(var j = 0; j < splitedValues.length; ++j) {
+              values.push(parseFloat(splitedValues[j]));
+            }
+            // 1s > 2s > 3s + unit
+            stepEffectsClean[stepEffectParsed[0]][self.getUnit(splitedValues[0])] = values;
+          } else {
+            // No unit (this is a text)
+            stepEffectsClean[stepEffectParsed[0]]["none"] = value;
+          }
         }
       }
       else {
+        // Passes this test: 3, 5
         if(isNumeric((value.replace(/ /g, "")))) {
-          // Number w/o unit
+          // Just a number, no unit
           stepEffectsClean[stepEffectParsed[0]]["none"] = parseFloat(value);
         }
         else {
-          // Thing like 0 > 1 > 2
-          stepEffectsClean[stepEffectParsed[0]]["none"] = value;
+          // Else it's just text
+          if(value.indexOf(">") != -1) {
+            var splitedValues = value.split(" > ");
+            var values = [];
+            for(var j = 0; j < splitedValues.length; ++j) {
+              values.push(parseFloat(splitedValues[j]));
+            }
+            // 1s > 2s > 3s but without unit
+            stepEffectsClean[stepEffectParsed[0]]["none"] = values;
+          }
+          else {
+            // No unit (this is a text)
+            stepEffectsClean[stepEffectParsed[0]]["none"] = value;
+          }
         }
       }
     }

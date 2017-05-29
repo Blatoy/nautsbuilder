@@ -1,0 +1,70 @@
+@font-face {
+    font-family: ethnocentric;
+    src: url("/standalone/nautsbuilder/fonts/ethnocentric.ttf");
+}
+
+body {
+  font-family: ethnocentric;
+  color: white;
+  margin: 0;
+
+  background-image: url("/standalone/nautsbuilder/images/background.jpg");
+  background-position: center top;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-color: black;
+}
+
+input {
+  color: #666;
+  background-color: rgb(5, 5, 5);
+  border: 1px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+}
+
+a {
+    color:#37A1E8;
+    text-decoration:none;
+}
+
+a:visited {
+    color:#37A1E8;
+}
+
+a:active {
+    color:#37A1E8;
+}
+
+a:hover {
+    color:#256C9B;
+}
+
+.small-text {
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+.black-box {
+  font-family: "Verdana", "sans-serif";
+  background-color: black;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+#export-div {
+  display: none;
+  position: fixed;
+  padding: 10px;
+  text-align: center;
+  top: 20%;
+  left: 25%;
+  right: 25%;
+
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-radius: 2px;
+  z-index: 999;
+}

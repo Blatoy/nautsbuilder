@@ -1,0 +1,58 @@
+
+.shop-item-container {
+  margin-left: 5px;
+  width: 12%;
+  display: inline-block;
+  position: relative;
+}
+
+.shop-item-price, .shop-item-stage {
+  position: absolute;
+  left: 25%;
+  font-size: 0.8em;
+  text-align: center;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+.shop-skill-container {
+  display: inline-block;
+  cursor: pointer;
+  width: 12%;
+  margin-right: 5%;
+}
+
+.shop-item-image {
+  vertical-align: middle;
+}
+
+.shop-item-stage {
+  top: 5%;
+  left: calc(25% + 4px);
+}
+
+.shop-item-price {
+  bottom: 5%;
+}
+
+.shop-item-skill, .shop-item-upgrade {
+  width: 100%;
+}
+
+.shop-item-upgrade {
+  cursor: pointer;
+  filter: brightness(0.3);
+}
+
+.shop-item-upgrade:hover {
+  cursor: pointer;
+  filter: brightness(0.5);
+}
+
+.purchased {
+  filter: brightness(1.1)!important;
+}
+
+.locked {
+  cursor: default!important;
+  filter: brightness(0.7)!important;
+}

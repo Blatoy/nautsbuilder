@@ -97,7 +97,7 @@ var NautsBuilder = new function() {
    * Add events and load APIs
    */
   this.init = function() {
-    EventManager.addEvent(window, "popstate", self.importBuildFromURL);
+    //EventManager.addEvent(window, "popstate", self.importBuildFromURL);
     this.loadAPIs();
   };
 
@@ -294,103 +294,210 @@ var NautsBuilder = new function() {
    * Add or remove an element to the buyOrder list and update it
    */
   this.updateBuyOrder = function(upgrade, remove) {
-    if(!remove){
-      this.buyOrder.push(upgrade);
-    }
-    else {
-      do {
-        this.buyOrder.splice(this.buyOrder.indexOf(upgrade), 1);
-      } while(this.buyOrder.indexOf(upgrade) != -1)
+    if(upgrade) {
+      if(!remove){
+        this.buyOrder.push(upgrade);
+      }
+      else {
+        do {
+          this.buyOrder.splice(this.buyOrder.indexOf(upgrade), 1);
+        } while(this.buyOrder.indexOf(upgrade) != -1)
+      }
     }
 
+    this.updateURL();
     UIManager.updateBuyOrder(this.buyOrder);
   };
 
-  // TODO
-  this.updateBuildInfo = function() {
-    // TEMP DATA
-    $(".build-info").html("This will contain stats about your build soon (tm)");
-    $("#build-summary").html(
-      "Forum link: <input type='text' value='[build]" + self.getExportData() + "[/build]'>"
-    );
-    /*$(".build-info").html("");
-    var totalSolarCost = 0, solarCostLine = 0;
-    var txt = "";
-    var categories = {}; // Damage, duration, etc.
-    var skillLoaded = false;
-    // Add the main upgrade to the list
+  /**
+   * Create something like ["Damage"]["Unit"] = 3
+   * It does also sum every values
+   * @param {object} upgradeEffect - A step1 parsed using SkillParser.parseSkillStep
+   * @param {object} currentRow - {data: ..., cost: 0}
+   */
+  this.updateCurrentRow = function(upgradeEffect, currentRow) {
+    for(var key in upgradeEffect) {
+      // Key: Damage, Heal, etc
+      if(!currentRow.data[key]) {
+        currentRow.data[key] = {};
+      }
 
-    // Foreach item in the shop
-    $("#naut-shop .shop-item-container").each(function(i, item) {
-      var upgrade = $(item);
-      // Solar track
-      totalSolarCost += upgrade.data("upgrade-cost") * upgrade.data("upgrade-stage");
-      solarCostLine += upgrade.data("upgrade-cost") * upgrade.data("upgrade-stage");
-
-      // Create the description, calcul damage, %, etc
-      if(upgrade.data("upgrade-stage") != 0) {
-
-        var step = upgrade.data("upgrade-step" + upgrade.data("upgrade-stage"));
-        var formatedSteps = self.parseSkillStep(step);
-        if(!skillLoaded) {
-          // Dirty way to load skills info
-          var skillSteps = self.parseSkillStep($("#shop-row-" + (1 + Math.floor(i / 6)) + " .shop-item-skill").data("skill-effects"));
-          Object.assign(formatedSteps, skillSteps);
-          skillLoaded = true;
+      for(var unit in upgradeEffect[key]) {
+        // Key doesn't exist, we set the unit to the current number
+        if(!currentRow.data[key][unit]) {
+          currentRow.data[key][unit] = upgradeEffect[key][unit];
         }
-
-        for(var k in formatedSteps) {
-          if(!categories[k]) {
-            categories[k]= {};
+        else {
+          // Key exists and it's a number, we add the value
+          if(typeof currentRow.data[key][unit] == "number") {
+            currentRow.data[key][unit] += upgradeEffect[key][unit];
           }
-          // k2 is the unit, k1 is "Damamage", "Duration", etc.
-          for(var k2 in formatedSteps[k]) {
-            if(categories[k][k2]) {
-              categories[k][k2] += formatedSteps[k][k2];
-            }
-            else {
-              categories[k][k2] = formatedSteps[k][k2];
+          else {
+            // Key exists and it's not a tumber
+            for(var j in currentRow.data[key][unit]) {
+              if(typeof upgradeEffect[key][unit] != "number")
+                currentRow.data[key][unit][j] += parseFloat(upgradeEffect[key][unit][j]);
+              else
+                currentRow.data[key][unit][j] += parseFloat(upgradeEffect[key][unit]);
             }
           }
         }
       }
+    }
 
-      if((i + 1) % 6 == 0) {
-        for(var k in categories)  {
-          var categoryAffectedByPercentage = false;
-          var categoryUnit = "%";
-          for(var k2 in categories[k]) {
-            if(k2 != "%") {
-              categoryUnit = k2;
-              if(categories[k]["%"]) {
-                categoryAffectedByPercentage = true;
-                categories[k][k2] *= 1 + (categories[k]["%"] / 100);
-              }
-            }
-          }
+    return currentRow;
+  };
 
-          var categoryDisplay = categoryUnit == "none" ? "" : categoryUnit;
-          txt += "<span class='build-description-category'>" + k + ":</span> "
-             + (isNumeric(categories[k][categoryUnit]) ? Math.round(categories[k][categoryUnit] * 100) / 100 : categories[k][categoryUnit])
-             + categoryDisplay + "<br>";
-        }
+  // TODO Clean this code
+  this.updateBuildInfo = function() {
+    var totalCost = 0;
+    var rowsData = {};
 
-        $("#build-info-" + Math.round((i + 1) / 6)).html(
-          "<div style='float:right;' class='shop-cost'>Cost: " + solarCostLine + " <img style='vertical-align:middle; ' src='http://i.imgur.com/o1BDqpK.png'></div>" + txt
-        );
+    $(".build-info").html("");
 
-        // Reset "lines" variables
-        categories = {};
-        solarCostLine = 0;
-        txt = "";
-        skillLoaded = false;
+    $("#naut-shop .shop-skill-container").each(function(i, item){
+      var row = i;
+      var upgradeEffect = SkillParser.parseSkillStep($(this).data("skill-effects"));
+
+      rowsData[row] = {cost: 0, data: []};
+      self.updateCurrentRow(upgradeEffect, rowsData[row]);
+    });
+
+    $("#naut-shop .shop-item-container").each(function(i, item) {
+      var row = Math.floor(i / 6);
+      var currentRow = rowsData[row];
+      var upgradeStage = $(this).data("upgrade-stage");
+      var upgradeCost = $(this).data("upgrade-cost");
+
+      totalCost += upgradeCost * upgradeStage;
+      currentRow.cost += upgradeCost * upgradeStage;
+
+      if(upgradeStage != 0) {
+        var upgradeEffect = SkillParser.parseSkillStep($(this).data("upgrade-step" + upgradeStage));
+        self.updateCurrentRow(upgradeEffect, currentRow);
       }
     });
 
+    for(var key in rowsData) {
+      var rowData = rowsData[key];
+
+      $("#build-info-" + (parseInt(key) + 1))
+        .append("<span style='float: right;'>" + rowData.cost + " <img style='vertical-align: middle;' src='" + BASE_PATH + "images/solar-icon.png" + "'/></span>")
+
+      for(var effect in rowData.data) {
+        var value = rowData.data[effect];
+        var damage = "";
+        var displayUnit = "%";
+
+        if(value["%"]) { // We need to calculate the %
+          damage = value["%"]; // This will be overwritten only if % isn't the only one
+          if(typeof value["%"] == "object") { //  We have a % change in a thing like < < <
+            for(var unit in value) { // We find which unit need to be updated
+              if(unit == "%") {
+                continue;
+              }
+              damage = [];
+              for(var j = 0; j < value[unit].length; ++j) {
+                displayUnit = unit;
+                if(typeof value["%"] != "number") { // Check if the % value is an array or just a value (Ayla's second upgrade)
+                  damage.push(round(value[unit][j] * (1 + value["%"][j] / 100)));
+                }
+                else {
+                  damage.push(round(value[unit][j] * (1 + value["%"] / 100)));
+                }
+              }
+            }
+          }
+          else {
+            for(var unit in value) { // We find which unit need to be updated
+              if(unit == "%") {
+                continue;
+              }
+              if(typeof value[unit] == "object") {
+                for(var j in value[unit]) {
+                  damage = round(value[unit][j] * (1 + value["%"] / 100));
+                  displayUnit = unit;
+                }
+              }
+              else {
+                damage = round(value[unit] * (1 + value["%"] / 100));
+                displayUnit = unit;
+              }
+            }
+          }
+        }
+        else {
+          for(var unit in value) {
+            damage = value[unit];
+            displayUnit = unit;
+          }
+        }
+
+        displayUnit = displayUnit == "none" ? "" : displayUnit;
+
+        if(typeof damage == "object") {
+          displayDamage = "";
+          for(var j in damage) {
+            displayDamage += damage[j] + displayUnit + " > ";
+          }
+
+          displayDamage = displayDamage.substring(0, displayDamage.length - 3);
+          displayUnit = "";
+        }
+        else {
+          displayDamage =  damage;
+        }
+
+        $("#build-info-" + (parseInt(key) + 1))
+          .append(effect + ": <span class='small-text' style='font-size: 0.95em'>" + displayDamage + displayUnit + "</span><br>");
+      }
+    }
+
     $("#build-summary").html(
-      "Total cost: " + totalSolarCost + "<img style='vertical-align:middle; ' src='http://i.imgur.com/o1BDqpK.png'><br>" +
-      "Forum link: <input type='text' value='[build]" + self.getExportData() + "[/build]'>"
-    );*/
+      "Total cost: " + totalCost + "<img style='vertical-align: middle;' src='" + BASE_PATH + "images/solar-icon.png" + "'/><br>" +
+      "Forum link: <input type='text' value='[build]" + self.getExportData() + "[/build]'><br>" +
+      "<a href='#' onclick='NautsBuilder.generateImage(" + totalCost + ")'>Export as image</a>" +
+      "<hr><a onclick='NautsBuilder.getRandomBuild()' href='#'>Generate random build!</a>"
+    );
+  };
+
+
+  /**
+   * Swap the place between 2 upgrades in the build order and refresht it
+   * @param {number} source - The array index of the source
+   * @param {number} target - The array index of the target
+   */
+  this.swapBuildOrder = function(source, target) {
+    var tmp = self.buyOrder[source];
+
+    self.buyOrder[source] = self.buyOrder[target];
+    self.buyOrder[target] = tmp;
+
+    UIManager.draggedReorderUpgrade = false;
+    self.updateBuyOrder();
+  }
+
+  /**
+   * Generate a random build for the current character
+   */
+  this.getRandomBuild = function(){
+    $("#naut-icon-" + getValidElementId(self.selectedNaut.name)).click();
+    // Generate random build
+    var b = "";
+    for(var i = 0; i < 4; ++i) {
+      b += shuffleString("111000");
+    }
+
+    $(".shop-item-container").each(function(i){
+      if(b[i] == 1) {
+        for(var i = 0; i < $(this).data("upgrade-stage-max"); ++i) {
+          $(this).click();
+        }
+      }
+    });
+
+    self.buyOrder = shuffleArray(self.buyOrder);
+    self.updateBuyOrder();
   };
 
   /**
@@ -400,7 +507,7 @@ var NautsBuilder = new function() {
     var data = SkillParser.parseURLData(getURLParameter("b"));
 
     // Select the right naut
-    $("#naut-icon-" + data.name.replace(/ /g, "_")).click();
+    $("#naut-icon-" + getValidElementId(data.name)).click();
 
     if(data.build) {
       for(var i = 0; i < data.build.length; ++i) {
@@ -438,7 +545,7 @@ var NautsBuilder = new function() {
    */
   this.getExportData = function() {
     // Naut name
-    var str = self.selectedNaut.name;
+    var str = getValidElementId(self.selectedNaut.name);
     // First separator
     str += "/";
 
@@ -464,14 +571,79 @@ var NautsBuilder = new function() {
   };
 
   /**
+   * Return the image containing the build
+   */
+  this.generateImage = function(totalCost) {
+    var str = "";
+    var canvas = document.createElement('canvas');
+
+    var ctx = canvas.getContext("2d");
+    var solarImg = new Image();
+    solarImg.src = BASE_PATH + "images/solar-icon.png";
+
+    // TODO: CLEAN THIS CODE (this shouldn't be here)
+    $("#export-div").html("");
+    $("#export-div").append("Right click > copy as image. Left click will close this box.<br>");
+    $("#export-div").append(canvas);
+    $("#export-div").show();
+
+    EventManager.addEvent("#export-div", "click", function(){
+      $("#export-div").hide();
+    });
+
+    $(canvas).css("width", "360px");
+    $(canvas).css("height", "360px");
+
+    canvas.width = 360;
+    canvas.height = 360;
+
+    ctx.drawImage($("#naut-icon-" + getValidElementId(self.selectedNaut.name))[0], 1, 1, 58, 58);
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.font = "30px Verdana";
+    ctx.fillText(self.selectedNaut.name, 70, 28);
+    ctx.strokeText(self.selectedNaut.name, 70, 28);
+    ctx.font = "20px Verdana";
+    ctx.fillText(totalCost, 70, 53);
+    ctx.strokeText(totalCost, 70, 53);
+    ctx.drawImage(solarImg, 125, 38);
+
+    $("#naut-shop .shop-item-upgrade").each(function(i, item){
+      var parent = $(this).parent();
+      var w = 60, h = 60;
+      var x = (i % 6) * w, y = (Math.floor(i / 6)) * h + 60;
+
+      ctx.drawImage($(this)[0], x, y, w, h);
+
+      if(parent.data("upgrade-stage") == 0) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillRect(x, y, w, h);
+      }
+    });
+
+    for(var i = 0; i < self.buyOrder.length; ++i) {
+      var w = 30, h = 30;
+      var x = (i % 12) * w, y = (Math.floor(i / 12)) * h + 300;
+      var img = new Image();
+      img.src = self.buyOrder[i].icon;
+      ctx.drawImage(img, x, y, w, h);
+    }
+  };
+
+  /**
    * Add or remove an element to the buyOrder list and update it
    * @param {object} update - The clicked upgrade
    * @param {number} nextUpgradeStage - The upgrade stage that will be set after clicking the item
    */
   this.onItemUpgradeClicked = function(upgrade, nextUpgradeStage) {
-    // TODO: Something may be wrong here (maybe) now I don't remember what it is and this is dumb
     this.updateBuyOrder(upgrade, nextUpgradeStage == 0)
     this.updateBuildInfo();
+  };
+
+  /**
+   * Update the build data in the URL
+   */
+  this.updateURL = function() {
     setGetParameter("b", "/nautsbuilder?b=" + self.getExportData());
   };
 

@@ -11,6 +11,8 @@ var UIManager = new function() {
     about: $("#about")
   };
 
+  var draggedReorderUpgrade = false;
+
   /**
    * Add events
    */
@@ -26,6 +28,7 @@ var UIManager = new function() {
    * @param {string} selector - The target element
    * @param {object} upgrade - The upgrade to display
    * @param {boolean} purchasable - If the upgrade can be clicked to change its state.
+   * @param {JqueryObject} - Returns the created container
    */
   this.addUpgradeToSelector = function(selector, upgrade, purchasable) {
     var stageCount = (upgrade.step1 ? 1 : 0) + (upgrade.step2 ? 1 : 0) + (upgrade.step3 ? 1 : 0) + (upgrade.step4 ? 1 : 0);
@@ -36,6 +39,7 @@ var UIManager = new function() {
     shopItemContainer.append(
         $("<img>")
           .attr("src", upgrade.icon)
+          .data("default-url", upgrade.icon)
           .addClass(purchasable ? "shop-item-upgrade" : "shop-item-upgrade purchased")
     );
 
@@ -52,7 +56,7 @@ var UIManager = new function() {
       tooltip.display(
         "<b>" + $("<p>" + upgrade.name + "</p>").text() + "</b><br><br>" +
         "<img style='vertical-align: middle;' src='" + BASE_PATH + "images/solar-icon.png" + "'/>" + $("<p>" + upgrade.cost + "</p>").text() + "<br><br>" +
-        (upgrade.step1 ? "Stage 2<br><span class='tooltip-upgrades'>- " + SkillParser.getUpgradeTextFormated($("<p>" + upgrade.step1 + "</p>").text()) + "</span><br><br>" : "") +
+        (upgrade.step1 ? "Stage 1<br><span class='tooltip-upgrades'>- " + SkillParser.getUpgradeTextFormated($("<p>" + upgrade.step1 + "</p>").text()) + "</span><br><br>" : "") +
         (upgrade.step2 ? "Stage 2<br><span class='tooltip-upgrades'>- " + SkillParser.getUpgradeTextFormated($("<p>" + upgrade.step2 + "</p>").text()) + "</span><br><br>" : "") +
         (upgrade.step3 ? "Stage 3<br><span class='tooltip-upgrades'>- " + SkillParser.getUpgradeTextFormated($("<p>" + upgrade.step3 + "</p>").text()) + "</span><br><br>" : "") +
         (upgrade.step4 ? "Stage 4<br><span class='tooltip-upgrades'>- " + SkillParser.getUpgradeTextFormated($("<p>" + upgrade.step4 + "</p>").text()) + "</span><br><br>" : "") +
@@ -85,6 +89,9 @@ var UIManager = new function() {
       );
 
       EventManager.addEvent(shopItemContainer, "click", function(){
+        if($(".shop-item-upgrade", this).hasClass("locked"))
+          return;
+
         // Handle buy item
         var currentUpgradeStage = $(this).data("upgrade-stage");
         var nextUpgradeStage = currentUpgradeStage + 1;
@@ -100,6 +107,27 @@ var UIManager = new function() {
           $(".shop-item-upgrade", this).toggleClass("purchased");
         }
 
+        if($(".shop-item-container .purchased", $(this).parent()).length == 3) {
+          $(".shop-item-container", $(this).parent()).each(function(i){
+            if($(this).data("upgrade-stage") == 0) {
+              $(".shop-item-stage", this).hide();
+              $(".shop-item-price", this).hide();
+              $(".shop-item-upgrade", this).attr("src", BASE_PATH + "images/locked.png");
+              $(".shop-item-upgrade", this).addClass("locked");
+            }
+          });
+        }
+        else {
+          $(".shop-item-container", $(this).parent()).removeClass("locked");
+          $(".shop-item-container .shop-item-stage", $(this).parent()).show();
+          $(".shop-item-container .shop-item-price", $(this).parent()).show();
+          $(".shop-item-container .shop-item-upgrade", $(this).parent()).removeClass("locked");
+
+          $(".shop-item-container .shop-item-upgrade", $(this).parent()).each(function(i){
+            $(this).attr("src", $(this).data("default-url"));
+          });
+        }
+
         // Set the text for the current stage
         $(".shop-item-stage-value", this).text(nextUpgradeStage);
 
@@ -108,6 +136,7 @@ var UIManager = new function() {
     }
 
     $(selector).append(shopItemContainer);
+    return shopItemContainer;
   };
 
   /**
@@ -180,12 +209,6 @@ var UIManager = new function() {
   this.displayNautInformation = function(naut) {
     if(naut == false) {
       // Do not clear informations if a naut is selected
-      // TODO: Check if removing this break something
-      if(this.selectedNaut) {
-        this.displayNautInformation(this.selectedNaut);
-        return;
-      }
-
       elements.nautSplashArt.html("");
       elements.nautDescription.html("");
       elements.skillDescription.html("");
@@ -215,12 +238,14 @@ var UIManager = new function() {
 
       // Skills
       elements.skillDescription.html("<div>Skills</div>");
-      for(var i = 0; i < naut.skills.length; ++i) {
-        var skill = naut.skills[i];
-        elements.skillDescription
-          .append($("<img>").attr("src", skill.icon))
-          .append($("<span>").text(skill.description))
-          .append($("<hr>"))
+      if(naut.skills) {
+        for(var i = 0; i < naut.skills.length; ++i) {
+          var skill = naut.skills[i];
+          elements.skillDescription
+            .append($("<img>").attr("src", skill.icon))
+            .append($("<span>").text(skill.description))
+            .append($("<hr>"))
+        }
       }
   };
 
@@ -244,7 +269,7 @@ var UIManager = new function() {
         nautImage
           .attr("src", naut.icon)
           .addClass("naut-icon")
-          .attr("id", "naut-icon-" + naut.name.replace(/ /gi, "_"))
+          .attr("id", "naut-icon-" + getValidElementId(naut.name));
 
 
         // TODO: Check if it's required to add onmouseleave and to clear displayNautInfo
@@ -260,10 +285,6 @@ var UIManager = new function() {
           elements.nautList.removeClass("naut-list-center");
           elements.nautList.addClass("naut-list-right");
 
-          // TODO: Move this in a custom style
-          // Prevent div going below naut list
-          elements.nautDescription.css("max-height", "50%");
-
           self.displayShop(naut);
           self.onMouseLeaveNautList();
           NautsBuilder.onNautSelected(naut);
@@ -278,12 +299,12 @@ var UIManager = new function() {
     randomIcon.attr("src", BASE_PATH + "images/random-naut.png").addClass("naut-icon");
 
     EventManager.addEvent(randomIcon, "click", function(){
-      var randomNaut = Math.floor(Math.random() * ("#naut-list .naut-icon").length);
-
+      var randomNaut = Math.round(Math.random() * $("#naut-list .naut-icon").length);
       $("#naut-list .naut-icon").each(function(i, item) {
-        // TODO: Better way + random build
         if(i == randomNaut) {
-          $(item).click();
+          $(this).click();
+          NautsBuilder.getRandomBuild();
+
           return false;
         }
       });
@@ -329,7 +350,6 @@ var UIManager = new function() {
     $(".build-info").fadeIn();
   };
 
-
   /**
    * Remove all the upgrades in the buyOrder box
    */
@@ -338,12 +358,30 @@ var UIManager = new function() {
   };
 
   /**
+   * Handle build reorder
+   */
+  this.handleReorderClick = function() {
+    if(!self.draggedReorderUpgrade) {
+      $("#build-order-content .shop-item-container").removeClass("selected");
+      $(this).addClass("selected");
+
+      self.draggedReorderUpgrade = this;
+    }
+    else {
+      NautsBuilder.swapBuildOrder($(self.draggedReorderUpgrade).data("index"), $(this).data("index"));
+    }
+  };
+
+  /**
    * Display the right upgrades in the buyOrder box
    */
   this.updateBuyOrder = function(buyOrder) {
     $("#build-order-content").html("");
     for(var i = 0; i < buyOrder.length; ++i) {
-      this.addUpgradeToSelector("#build-order-content", buyOrder[i], false);
+      var upgradeContainer = this.addUpgradeToSelector("#build-order-content", buyOrder[i], false);
+      upgradeContainer.data("index", i);
+      EventManager.addEvent(upgradeContainer, "click", self.handleReorderClick);
+
       $("#build-order-content").append(" > ");
     }
   }
