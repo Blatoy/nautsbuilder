@@ -5,16 +5,9 @@
         <title>NautsBuilder V2</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="/standalone/nautsbuilder/styles/main.css">
-        <link rel="stylesheet" type="text/css" href="/standalone/nautsbuilder/styles/shop.css">
-        <link rel="stylesheet" type="text/css" href="/standalone/nautsbuilder/styles/naut-info.css">
-        <link rel="stylesheet" type="text/css" href="/standalone/nautsbuilder/styles/tooltip.css">
-        <link rel="stylesheet" type="text/css" href="/standalone/nautsbuilder/styles/upgrade.css">
         <link rel="icon" type="image/png" href="/standalone/nautsbuilder/images/favicon.png"/>
     </head>
     <body>
-        <!-- Used to count visitors -->
-        <iframe style="display:none;" src="https://orikaru.net/resources/logic/php/ajax/account.php"></iframe>
         <!-- Nauts presentation, hidden while shop open -->
         <div id="naut-splash-art"></div>
         <div id="naut-list" class="naut-list-center"></div>
@@ -41,6 +34,8 @@
         <div class="black-box build-info" id="build-info-3"></div>
         <div class="black-box build-info" id="build-info-4"></div>
         <div class="black-box build-info" id="build-summary"></div>
+
+        <!-- About -->
         <div class="black-box" id="about">
           Assets taken from <a href="http://store.steampowered.com/app/204300/Awesomenauts/">Awesomenauts</a>, data gathered by the community!<br>
           Made with love by <a href="http://steamcommunity.com/id/blatoy/">Blatoy</a>, inspired by <a href="http://nautsbuilder.com">Nautsbuilder</a>.<br>
@@ -48,21 +43,25 @@
           If you want to help me, you can pay me a <a href="/donate">coffee</a>!
         </div>
 
-        <!--<div onclick="$(this).remove();" style="cursor: pointer; text-align: center; z-index: 1100; position: fixed; top: 0; left: 0; width: 100%; height: 30px; line-height: 30px; background-color: orange; color:white;">
-          I'm updating the tool in live and it may not work properly.
-        </div>-->
-
+        <!-- Toolip & export image div -->
         <div id="tooltip"></div>
         <div id="export-div"></div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/globalUpgrades.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/utils.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/event-manager.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/tooltip.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/skill-parser.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/ui-manager.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/nautsbuilder.js"></script>
-        <script src="/standalone/nautsbuilder/scripts/main.js"></script>
+        <!-- These 2 scripts can't be included automatically -->
+        <script src="/nautsbuilder/config/config.js"></script>
+        <script src="/nautsbuilder/scripts/main.js"></script>
+
+        <!-- Used to count visitors -->
+        <iframe style="display:none;" src="https://orikaru.net/resources/logic/php/ajax/account.php"></iframe>
+        <!-- Google Analytics  -->
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-62317289-1', 'auto');
+          ga('send', 'pageview');
+        </script>
     </body>
 </html>

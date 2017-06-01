@@ -108,12 +108,12 @@ var NautsBuilder = new function() {
     var dataLoadedCount = 0, dataToLoadCount = 3;
 
     // Load nauts
-    $.post(API_URL, {
+    $.post(CONFIG.apiURL, {
         action: "nautsbuilder-get-characters"
       }, function(data, textStatus) {
         dataLoadedCount++;
         self.nauts = data;
-        UIManager.addNautsToUi(self.nauts);
+        UINautList.addNautsToUi(self.nauts);
 
         // Nauts loaded. Check if skills loaded
         if(self.skills) {
@@ -133,7 +133,7 @@ var NautsBuilder = new function() {
     );
 
     // Load skills
-    $.post(API_URL, {
+    $.post(CONFIG.apiURL, {
         action: "nautsbuilder-get-skills"
       }, function(data, textStatus) {
         dataLoadedCount++;
@@ -157,7 +157,7 @@ var NautsBuilder = new function() {
     );
 
     // Load upgrades
-    $.post(API_URL, {
+    $.post(CONFIG.apiURL, {
         action: "nautsbuilder-get-upgrades"
       }, function(data, textStatus) {
         dataLoadedCount++;
@@ -213,68 +213,33 @@ var NautsBuilder = new function() {
    * Add upgrades to their respective skills
    */
   this.addUpgradeToSkills = function() {
-    // The first upgrades must be the global one or "replaces" may not work!
-    for(var i = 0; i < self.upgrades.length; ++i) {
-      var upgrade = self.upgrades[i];
-
-      if(upgrade.character) {
-        // Character specific upgrade
-        for(var j = 0; j < self.nauts.length; ++j) {
-          var naut = self.nauts[j];
-
-          if(naut.name == upgrade.character) {
-            // Found the right naut
-            for(var k = 0; k < naut.skills.length; ++k) {
-              var skill = naut.skills[k];
-
-              if(skill.name == upgrade.skill) {
-                // Found the right skill
-                // Check if it replaces another skill
-                if(upgrade.replaces) {
-                  // Skills can only be replaced in the last row
-                  var lastRowSkill = naut.skills[naut.skills.length - 1];
-
-                  for(var l = 0; l < lastRowSkill.upgrades.length; ++l) {
-                    // Found an upgrade to replace
-                    if(lastRowSkill.upgrades[l].name == upgrade.replaces) {
-                      lastRowSkill.upgrades[l] = upgrade;
-                      break;
-                    }
-                  }
-                }
-                else {
-                  // No replaces, just add the upgrade to the skill list
-                  if(!skill.upgrades) {
-                    skill.upgrades = [upgrade]
-                  }
-                  else {
-                    skill.upgrades.push(upgrade);
-                  }
+    for(var i = 0; i < self.nauts.length; ++i) {
+      var naut = self.nauts[i];
+      for(var j = 0; j < naut.skills.length; ++j) {
+        var skill = naut.skills[j];
+        if(!skill.upgrades) {
+          skill.upgrades = [];
+        }
+        for(var k = 0; k < self.upgrades.length; ++k) {
+          var upgrade = self.upgrades[k];
+          if(
+              (j == 3 && !upgrade.character &&
+                (upgrade.usedby == "all" || upgrade.usedby == naut.expansion ||
+                  (naut.expansion == "none" && upgrade.usedby == "noExpansion")
+                )
+              ) || // Global upgrade, only on last row
+            (upgrade.character == naut.name && upgrade.skill == skill.name) // Check for the right skill / character
+          ) {
+            // Replaced upgrade must be added first in the spreadsheet!
+            if(upgrade.replaces) {
+              for(var l = 0; l < skill.upgrades.length; l++) {
+                if(skill.upgrades[l].name == upgrade.replaces) {
+                  skill.upgrades[l] = upgrade;
                 }
               }
             }
-          }
-        }
-      }
-      else {
-        // "Global" upgrades (i = 0...8 should pass here)
-        for(var j = 0; j < self.nauts.length; ++j) {
-          var naut = self.nauts[j];
-          // Get the last skill row
-          var skill = naut.skills[naut.skills.length - 1];
-          // Check the globalUpgrades list to see who will need which upgrade
-          for(var k = 0; k < globalUpgrades.length; ++k) {
-            var gUpgrade = globalUpgrades[k];
-            if(gUpgrade.name == upgrade.name) {
-              // All nauts have the same upgrades except the expansion one
-              if(gUpgrade.usedBy == "all" || gUpgrade.usedBy == naut.expansion || (gUpgrade.usedBy == "noExpansion" && naut.expansion == "none")) {
-                if(!skill.upgrades) {
-                  skill.upgrades = [upgrade]
-                }
-                else {
-                  skill.upgrades.push(upgrade);
-                }
-              }
+            else {
+              skill.upgrades.push(upgrade);
             }
           }
         }
@@ -287,7 +252,7 @@ var NautsBuilder = new function() {
    */
   this.clearBuyOrder = function() {
     this.buyOrder = [];
-    UIManager.clearBuyOrder();
+    UIShop.clearBuyOrder();
   };
 
   /**
@@ -306,7 +271,7 @@ var NautsBuilder = new function() {
     }
 
     this.updateURL();
-    UIManager.updateBuyOrder(this.buyOrder);
+    UIShop.updateBuyOrder(this.buyOrder);
   };
 
   /**
@@ -382,7 +347,7 @@ var NautsBuilder = new function() {
       var rowData = rowsData[key];
 
       $("#build-info-" + (parseInt(key) + 1))
-        .append("<span style='float: right;'>" + rowData.cost + " <img style='vertical-align: middle;' src='" + BASE_PATH + "images/solar-icon.png" + "'/></span>")
+        .append("<span style='float: right;'>" + rowData.cost + " <img style='vertical-align: middle;' src='" + CONFIG.path.images + "solar-icon.png" + "'/></span>")
 
       for(var effect in rowData.data) {
         var value = rowData.data[effect];
@@ -454,7 +419,7 @@ var NautsBuilder = new function() {
     }
 
     $("#build-summary").html(
-      "Total cost: " + totalCost + "<img style='vertical-align: middle;' src='" + BASE_PATH + "images/solar-icon.png" + "'/><br>" +
+      "Total cost: " + totalCost + "<img style='vertical-align: middle;' src='" + CONFIG.path.images + "/solar-icon.png" + "'/><br>" +
       "Forum link: <input type='text' value='[build]" + self.getExportData() + "[/build]'><br>" +
       "<a href='#' onclick='NautsBuilder.generateImage(" + totalCost + ")'>Export as image</a>" +
       "<hr><a onclick='NautsBuilder.getRandomBuild()' href='#'>Generate random build!</a>"
@@ -473,7 +438,7 @@ var NautsBuilder = new function() {
     self.buyOrder[source] = self.buyOrder[target];
     self.buyOrder[target] = tmp;
 
-    UIManager.draggedReorderUpgrade = false;
+    UIShop.draggedReorderUpgrade = false;
     self.updateBuyOrder();
   }
 
@@ -579,7 +544,7 @@ var NautsBuilder = new function() {
 
     var ctx = canvas.getContext("2d");
     var solarImg = new Image();
-    solarImg.src = BASE_PATH + "images/solar-icon.png";
+    solarImg.src = CONFIG.path.images + "images/solar-icon.png";
 
     // TODO: CLEAN THIS CODE (this shouldn't be here)
     $("#export-div").html("");
