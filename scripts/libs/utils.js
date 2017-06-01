@@ -7,7 +7,20 @@ var preloadedImages = [];
  */
 function nl2br(string) {
   return string.replace(/\n/g, "<br>");
-};
+}
+
+/**
+ * Send a query to the requested API, call the callback method if failed / successful
+ * @param {string} action - The action to request on the API
+ * @param {function(data, textStatus)} callback - The function called after querying the API
+ */
+function queryAPI(action, callback) {
+  $.post(CONFIG.apiURL, {action: action}, function(data, textStatus) {
+    if(callback) {
+      callback(data, textStatus);
+    }
+  }, "json");
+}
 
 /**
  * Load an image an store it into an array to load it.
@@ -17,7 +30,7 @@ function preloadImage(src){
   var img = new Image();
   img.src = src;
   preloadedImages.push(img);
-};
+}
 
 /**
  * Change the URL with the specified paramValue
@@ -91,6 +104,30 @@ function shuffleArray(array) {
   }
 
   return array;
+}
+
+/**
+ * getNumberInfo - Returns useful informations about a given string
+ * If the unit has more than 1 character the number will be considered as a string
+ * @param {string} str
+ * @return {object} {unit: "none", "type": "number|text", value: ""}
+ */
+function getNumberInfo(str){
+  if(str === undefined) {
+    return {unit: "none", type: "undefined", value: undefined};
+  }
+  // Number without unit
+  if(isNumeric(str)) {
+    return {unit: "none", type: "number", value: parseFloat(str.substring(0, str.length - 1))};
+  }
+  else {
+    if(isNumeric(str.substring(0, str.length - 1)) && !isNumeric(str.substring(str.length - 1))) {
+      return {unit: str.substring(str.length - 1), type: "number", value: parseFloat(str.substring(0, str.length - 1))};
+    }
+    else {
+      return {unit: "none", type: "text", value: str}; // we only want 1-digit units, we assume this is a string
+    }
+  }
 }
 
 function round(number) {
