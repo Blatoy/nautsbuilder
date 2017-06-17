@@ -30,10 +30,10 @@ var CONFIG = new function(){
   this.apiURL = "https://orikaru.net/resources/logic/php/ajax/awesomenauts.php";
 
   var path = {};
-  path["base"] = "/nautsbuilder/";
-  path["scripts"] = path["base"] + "scripts/";
-  path["images"] = path["base"] + "images/";
-  path["styles"] = path["base"] + "styles/";
+  path.base = "/nautsbuilder/";
+  path.scripts = path.base + "scripts/";
+  path.images = path.base + "images/";
+  path.styles = path.base + "styles/";
 
   this.path = path;
 };
