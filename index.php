@@ -33,34 +33,18 @@
         <div class="black-box build-info" id="build-info-2"></div>
         <div class="black-box build-info" id="build-info-3"></div>
         <div class="black-box build-info" id="build-info-4"></div>
-<<<<<<< HEAD
         <div class="black-box build-info" id="build-summary"></div>-->
 
         <!-- About -->
         <!--<div class="black-box" id="about">
-=======
-        <div class="black-box build-info" id="build-summary"></div>
-
-        <!-- About -->
-        <div class="black-box" id="about">
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
           Assets taken from <a href="http://store.steampowered.com/app/204300/Awesomenauts/">Awesomenauts</a>, data gathered by the community!<br>
           Join <a href="https://discord.gg/GsE29w7">this Discord</a> if you want to report anything wrong with the upgrades.
           If you have any feedback check the <a href="http://github.com/Blatoy/nautsbuilder/issues">github page</a>.<br>
           Made with love by <a href="http://steamcommunity.com/id/blatoy/">Blatoy</a>, inspired by <a href="http://nautsbuilder.com">Nautsbuilder</a>.<br>
-<<<<<<< HEAD
           If you want to help me, you can buy me a <a href="/donate">coffee</a>!
         </div>-->
 
         <!-- Export image div -->
-=======
-          If you have anything to report or want to be able to update the data join <a href="https://discord.gg/GsE29w7">this Discord</a>!<br>
-          If you want to help me, you can pay me a <a href="/donate">coffee</a>!
-        </div>
-
-        <!-- Toolip & export image div -->
-        <div id="tooltip"></div>
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
         <div id="export-div"></div>
 
         <!-- These 2 scripts can't be included automatically -->

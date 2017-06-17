@@ -1,5 +1,4 @@
 /**
-<<<<<<< HEAD
  * Include all scripts and styles required in the app
  */
 var Main = new function() {
@@ -13,59 +12,25 @@ var Main = new function() {
     scriptListLength = CONFIG.scriptList.length;
     loadedScripts = 0;
 
-=======
- * Load all the scripts and all the styles and instanciate everything
- */
-var Main = new function(){
-  var scriptListLength = CONFIG.scriptList.length;
-  var self = this;
-
-  this.tooltip = false;
-
-  /**
-   * Load scripts and styles
-   */
-  this.init = function(){
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
     includeStyles();
     includeScripts();
   };
 
   /**
-<<<<<<< HEAD
    * Init the main controller
    */
   var onScriptsLoaded = function(){
     if(++loadedScripts == scriptListLength) {
       NautController.init();
     }
-=======
-   * Instanciate and init classes
-   */
-  var onScriptsLoaded = function(){
-    this.tooltip = new Tooltip("#tooltip");
-    UIManager.init();
-    NautsBuilder.init();
-    addEventListner();
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
   };
 
   /**
    * Load all the scripts specified in the configuration file, call onScriptsLoaded when all loaded
    */
   var includeScripts = function(){
-<<<<<<< HEAD
     for(var i = 0; i < CONFIG.scriptList.length; ++i) {
       self.getScript(CONFIG.path.scripts + CONFIG.scriptList[i], onScriptsLoaded);
-=======
-    var loadedScripts = 0;
-    for(var i = 0; i < CONFIG.scriptList.length; ++i) {
-      self.getScript(CONFIG.path.scripts + CONFIG.scriptList[i], function(){
-        if(++loadedScripts == scriptListLength) {
-          onScriptsLoaded();
-        }
-      });
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
     }
   };
 
@@ -85,24 +50,6 @@ var Main = new function(){
   };
 
   /**
-<<<<<<< HEAD
-=======
-   * Add all global events
-   */
-  var addEventListner = function(){
-    EventManager.addEvent(document, "mousemove", function(e){
-      tooltip.onMouseMove(e);
-    });
-
-    EventManager.addEvent(document, "keydown", function(e){
-      if(e.keyCode == 115) {
-        NautsBuilder.skillCheck();
-      }
-    });
-  };
-
-  /**
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
    * Load the specified javascript script
    * Source: https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
    * @param {string} source - The URL to the script
@@ -124,14 +71,7 @@ var Main = new function(){
 
      script.src = source;
      prior.parentNode.insertBefore(script, prior);
-<<<<<<< HEAD
    };
 
    init();
 };
-=======
-   }
-};
-
-Main.init();
->>>>>>> 4664d57bf5a6602641913854e7c0a6571af492a8
