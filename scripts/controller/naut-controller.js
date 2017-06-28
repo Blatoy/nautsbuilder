@@ -74,7 +74,6 @@ var NautController = new function(){
     var nauts = Naut.list;
 
     for(var i = 0; i < nauts.length; ++i) {
-      i = 23;
       var naut = nauts[i];
       var skills = naut.getSkills();
 
@@ -113,7 +112,6 @@ var NautController = new function(){
           }
         }
       }
-      break;
     }
   };
 
