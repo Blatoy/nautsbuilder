@@ -137,3 +137,6 @@ var Naut = function(nautAPIData) {
 // List of all the nauts, loaded by the controller
 Naut.list = [];
 Naut.EXPANSION_NONE = "none"; // We don't need the other because we never check for a specific expansion
+
+Naut.getByName = function(){};
+Naut.displayList = function(){};
