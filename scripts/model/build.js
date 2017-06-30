@@ -88,7 +88,7 @@ var Build = function(URLData) {
   */
   this.getRowPrice = function(row){
     var price = 0;
-    var upgrades = naut.getSkills()[0].getUpgrades();
+    var upgrades = naut.getSkills()[row].getUpgrades();
 
     for(var i = 0; i < upgrades.length; ++i) {
       // Upgrade cost * stage. No cost if stage = 0
@@ -109,32 +109,34 @@ var Build = function(URLData) {
 
     // Skill effects
     for(var i = 0; i < skillEffects.length; ++i) {
-      this.addEffectToEffectList(skillEffects[i], effectList);
+      addEffectToEffectList(skillEffects[i], effectList);
     }
 
     var upgrades = naut.getSkills()[row].getUpgrades();
     for(var i = 0; i < upgrades.length; ++i) {
-      var upgradeEffects = upgrades[i].getSteps();
-      for(var j = 0; j < upgradeEffects.length; ++j) {
-        if(purchasedUpgrades[row][i] > 0) {
-          this.addEffectToEffectList(upgradeEffects[j][purchasedUpgrades[row][i] - 1], effectList);
+      if(purchasedUpgrades[row][i] > 0) {
+        var effectStage = upgrades[i].getSteps()[purchasedUpgrades[row][i] - 1];
+        for(var j = 0; j < effectStage.length; ++j) {
+          addEffectToEffectList(effectStage[j], effectList);
         }
       }
     }
 
+    // TODO: Handle global value like starstorm's statue
+    // TODO: Apply coeff to value
+    // TODO: Add DPS to effect list
+
     return effectList;
-    // Naut.list[0].getSkills()[0].getUpgrades()[1].getSteps()
   };
 
   /**
-  * this.addEffectToEffectList - Add the specified effect to the effect list
-  * If the effect is already in the effectList we add the values and the coefficient
+  * var addEffectToEffectList - Add the specified effect to the effect list
   * Also store the correct unit (%, s or none)
   *
   * @param  {object} effect The effect to add
   * @param  {object} effectList The effect list where the effect will be added
   */
-  this.addEffectToEffectList = function(effect, effectList){
+  var addEffectToEffectList = function(effect, effectList){
     var key = effect.getKey();
     var unit = effect.getUnit();
     var type = effect.getType();
@@ -149,10 +151,10 @@ var Build = function(URLData) {
     else {
       // Convert 95% to 0.95
       if(Array.isArray(effect.getValue())) {
-        // TODO: Use a for loop instead of map
-        coefficient = effect.getValue().map(function(e){
-          return e / 100;
-        });
+        coefficient = [];
+        for(var i = 0; i < effect.getValue().length; ++i) {
+          coefficient.push(effect.getValue()[i] / 100);
+        }
       }
       else {
         coefficient = effect.getValue() / 100;
@@ -171,48 +173,22 @@ var Build = function(URLData) {
       }
 
       if(effect.getUnit() == "%") {
-        handleEffectMerge(value, effectListItem, "coefficient");
+        mergeValueInEffect(coefficient, effectListItem, "coefficient");
       }
       else {
-        handleEffectMerge(value, effectListItem, "value");
+        mergeValueInEffect(value, effectListItem, "value");
       }
     }
   };
-
-  this.debugPrintBuild = function() {
-    /*
-    Test code to test things
-    var b = new Build(); b.setNaut(Naut.list[23]); var c = b.getRowEffects(2);
-
-    for(var k in c) {
-    	console.log(k + ": (" + c[k].value + " / " + c[k].coefficient + ") (" + c[k].unit + ")");
-    }
-    */
-    console.log(naut.getName());
-    console.log("      Skills              Shop        Cost");
-    for(var i = 0; i < purchasedUpgrades.length; ++i) {
-      var txt = "[" + naut.getSkills()[i].getName().padEnd(18, " ") + "] | ";
-      for(var j = 0; j < purchasedUpgrades[i].length; ++j) {
-        txt += purchasedUpgrades[i][j] + " ";
-      }
-      var e = this.getRowEffects(i);
-      var txt2 = "";
-      for(var k in e) {
-        txt2 += k + ": " + e[k].value + " " + e[k].unit + " | ";
-      }
-      console.log(txt + " | " + this.getRowPrice(i) + "      | "+ txt2);
-    }
-  };
-
 
   /**
-   * var handleEffectMerge - Perform a lot of check to se how to add values when adding effects
+   * var mergeValueInEffect - Sum value of effects (checks for array)
    *
    * @param  {number} value          effect.getValue() (/ 100 if getUnit() == "%")
    * @param  {type} effectListItem   The item having the same key
    * @param  {type} type             "coefficient" if value is a "%" or "value" if value is a "value" (or string)
    */
-  var handleEffectMerge = function(value, effectListItem, type) {
+  var mergeValueInEffect = function(value, effectListItem, type) {
     if(Array.isArray(value)) {
       if(Array.isArray(effectListItem[type])) {
         // Both are array
@@ -262,4 +238,48 @@ var Build = function(URLData) {
   this.toString = function(){};
 
   init(URLData);
+
+  this.debugPrintBuild = function() {
+    /*
+    Test code to test things
+    var b = new Build(); b.setNaut(Naut.list[23]); var c = b.getRowEffects(2);
+
+    for(var k in c) {
+    	console.log(k + ": (" + c[k].value + " / " + c[k].coefficient + ") (" + c[k].unit + ")");
+    }
+    */
+    $("#debug").remove();
+    $("body").append(
+      $("<div/>")
+        .css("white-space", "pre")
+        .css("background-color", "white")
+        .css("color", "black")
+        .css("font-family", "consolas")
+        .attr("id", "debug")
+        .html(naut.getName() + "<br>      Skills              Shop        Cost     Effects<br>")
+    );
+
+    for(var i = 0; i < purchasedUpgrades.length; ++i) {
+      var txt = "[" + naut.getSkills()[i].getName().padEnd(18, " ") + "] | ";
+      for(var j = 0; j < purchasedUpgrades[i].length; ++j) {
+        var upgradeName = naut.getSkills()[i].getUpgrades()[j].getName();
+        txt += "<a href='#' onclick='b.setUpgradeStage("+i+","+j+"); b.debugPrintBuild()' >" + (purchasedUpgrades[i][j]) + "</a> ";
+      }
+
+      var e = this.getRowEffects(i);
+      var txt2 = "";
+
+      for(var k in e) {
+        txt2 += k + ": " + e[k].value + " " + e[k].coefficient + " | ";
+      }
+      $("#debug").append(txt + " | " + (this.getRowPrice(i) + "").padEnd(6, " ") + " | "+ txt2 + "<br>");
+
+    }
+  };
 };
+
+// TODO: Remove debug
+setTimeout(function(){
+  b = new Build();
+  b.setNaut(Naut.list[20]); b.debugPrintBuild();
+}, 1000)
