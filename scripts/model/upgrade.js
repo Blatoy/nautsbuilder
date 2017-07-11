@@ -104,10 +104,16 @@ var Upgrade = function(upgradeAPIData) {
   /**
    * this.getSteps - Getter
    *
+   * @param {number} step - Optional, return specified step instead of all step if specified
    * @returns {array}  Step = upgrade stage, each step contains multiples Effects
    */
-  this.getSteps = function(){
-    return steps;
+  this.getSteps = function(step){
+    if(step !== undefined) {
+      return steps[step];
+    }
+    else {
+      return steps;
+    }
   };
 
   /**

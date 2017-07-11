@@ -49,10 +49,49 @@ var Effect = function(effectData) {
   /**
    * this.getValue - getter
    *
-   * @returns {string|number}  The value of this effect
+   * @param {number} index - The index of the value to get (works only for array)
+   * @returns {string|number|array}  The value of this effect, 0 if the effect is a coefficient
    */
-  this.getValue = function(){
-    return value;
+  this.getValue = function(index){
+    if(this.getUnit() != "%") {
+      if(index !== undefined && Array.isArray(value)) {
+        return value[index];
+      }
+      else {
+        return value;
+      }
+    }
+    else {
+      return 0;
+    }
+  };
+
+  /**
+   * this.getCoeff - getter
+   *
+   * @param {number} index - The index of the coeff to get (works only for array)
+   * @returns {number|array}  The value/100 of this effect, 0 if the effect is a value
+   */
+  this.getCoeff = function(index){
+    if(this.getUnit() == "%") {
+      if(Array.isArray(value)) {
+        var coeffArray = [];
+        for(var i = 0; i < value.length; ++i) {
+          coeffArray.push(value[i] / 100);
+        }
+        if(index !== undefined) {
+          return coeffArray[index];
+        } else {
+          return coeffArray;
+        }
+      }
+      else {
+        return value / 100;
+      }
+    }
+    else {
+      return 0;
+    }
   };
 
   /**

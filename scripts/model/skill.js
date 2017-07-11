@@ -90,10 +90,16 @@ var Skill = function(skillAPIData) {
   /**
    * this.getEffects - Getter
    *
+   * @param {number} col - Optional, returns the upgrades at the specified col
    * @returns {array}  The array of Upgrades for this skill
    */
-  this.getUpgrades = function(){
-    return upgrades;
+  this.getUpgrades = function(col){
+    if(col !== undefined) {
+      return upgrades[col];
+    }
+    else {
+      return upgrades;
+    }
   };
 
   /**

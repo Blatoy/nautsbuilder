@@ -1,5 +1,10 @@
 /**
 * var Build - Store informations about the current build
+* Just to be clear:
+* Effect is something like Damage: +34 or Add flying droid: yes
+* Effects are stored like : ["effect name": {value: 3, coefficient: 0.12}]
+* Effect are stored in "Steps[]" for upgrades and "Effects" for skills
+* A naut has 4 skills and a skill has 6 upgrades
 *
 * @param  {string} URLData Something like: "Nibbs/1001000100200010010001000000/3" This is actually the same format as the old nautsbuilder
 */
@@ -9,7 +14,9 @@ var Build = function(URLData) {
   * @var buildOrder - Stores a list of upgrade index (to support old nautsbuilder format)
   * @var naut - The naut of this build
   */
-  var buildOrder = [], purchasedUpgrades = [[], [], [], []], naut = {};
+  var buildOrder = [], naut = {};
+  var errors = [];
+  var purchasedUpgrades = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
   var self = this;
 
   /**
@@ -18,13 +25,21 @@ var Build = function(URLData) {
   * @param  {string} URLData See class description
   */
   var init = function(URLData){
-    purchasedUpgrades = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
     if(URLData) {
       var build = self.getFromURL(URLData);
       buildOrder = build.order;
       purchasedUpgrades = build.purchasedUpgrades;
       naut = Naut.getByName(build.nautName);
     }
+  };
+
+  /**
+  * this.addError - Used to debug the spreadsheet by storing all invalid thingy that can be fixed in the spreadsheet
+  *
+  * @param  {string} text A text to help find the error in the spreadsheet
+  */
+  this.addError = function(text) {
+    errors.push(naut.getName() + ": " + text);
   };
 
   /**
@@ -43,7 +58,7 @@ var Build = function(URLData) {
 
     name = data[0];
     if(data[1]) {
-      // We convert the string to a 2 dimensional array
+      // We convert the string to a 2 dimensional array where rows are skills and cols are upgrades
       for(var i = 0; i < data[1].length; ++i) {
         // The old nautsbuilder stores the stage for the skill but unlocking skills has been removed from the game
         if(i % 7 === 0) {
@@ -64,7 +79,7 @@ var Build = function(URLData) {
   };
 
   /**
-  * this.setUpgradeStage - Set the stage of an upgrade
+  * this.setUpgradeStage - Increment or set the stage of an upgrade
   *
   * @param  {number} row The row where the upgrade is located
   * @param  {number} col The row where the upgrade is located
@@ -72,7 +87,7 @@ var Build = function(URLData) {
   */
   this.setUpgradeStage = function(row, col, stage){
     if(stage !== undefined) {
-      // Note: we actually don't check for the maximum stage
+      // Note: we actually don't check for the maximum stage if the stage is set manually
       purchasedUpgrades[row][col] = stage;
     }
     else {
@@ -99,128 +114,156 @@ var Build = function(URLData) {
   };
 
   /**
-  * this.getRowEffects - Get the effects for the upgrades of a skill (skill effects included)
+  * this.getRowEffects - Get the effects in a row (upgrades current steps + skill effects)
+  * Notes:
+  * NaN may be returned if someone put a string and a number in the same effect
   *
   * @param  {number} row The row to get a list of effects (between 0 - 3)
+  * @returns {object} Something like: {"Skill duration": {value: 234, unit: "s"}, "Damage": {value: 2, unit: ""}}
   */
   this.getRowEffects = function(row){
-    var effectList = {};
-    var skillEffects = naut.getSkills()[row].getEffects();
+    var rowEffects = {};
 
-    // Skill effects
+    // Add the effects from the skill.
+    // This is easy because rowEffects is empty and skill don't have duplicate effects
+    var skill = naut.getSkills(row);
+    var skillEffects = skill.getEffects();
     for(var i = 0; i < skillEffects.length; ++i) {
-      addEffectToEffectList(skillEffects[i], effectList);
+      var skillEffect = skillEffects[i];
+      // TODO: Check if value/coeff is array and copy manually the value. They are going to be changed so we can't just copy it...
+      rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({value: skillEffect.getValue(), coeff: skillEffect.getCoeff(), unit: skillEffect.getUnit()}));
     }
 
-    var upgrades = naut.getSkills()[row].getUpgrades();
-    for(var i = 0; i < upgrades.length; ++i) {
-      if(purchasedUpgrades[row][i] > 0) {
-        var effectStage = upgrades[i].getSteps()[purchasedUpgrades[row][i] - 1];
-        for(var j = 0; j < effectStage.length; ++j) {
-          addEffectToEffectList(effectStage[j], effectList);
-        }
-      }
-    }
+    // Add the effects from upgrades. This require tests to see what to do with the existings effects
+    // Now it's the "hard" part because effects may already exists
+    var upgrades = skill.getUpgrades();
 
-    // TODO: Handle global value like starstorm's statue
-    // TODO: Apply coeff to value
-    // TODO: Add DPS to effect list
+    for(var col = 0; col < upgrades.length; ++col) {
+      var colUpgrade = upgrades[col];
+      if(purchasedUpgrades[row][col] !== 0) {
+        var colEffects = colUpgrade.getSteps(purchasedUpgrades[row][col] - 1);
+        for(var j = 0; j < colEffects.length; ++j) {
+          var stepEffect = colEffects[j];
+          // Same case as above, the effect doesn't exist so we don't have to check anything
 
-    return effectList;
-  };
-
-  /**
-  * var addEffectToEffectList - Add the specified effect to the effect list
-  * Also store the correct unit (%, s or none)
-  *
-  * @param  {object} effect The effect to add
-  * @param  {object} effectList The effect list where the effect will be added
-  */
-  var addEffectToEffectList = function(effect, effectList){
-    var key = effect.getKey();
-    var unit = effect.getUnit();
-    var type = effect.getType();
-
-    // Value and coeffs can be array if it's a numberArray value like 10% > 25% > 40%
-    var value = 0, coefficient = 0;
-
-    if(unit != "%") {
-      // Number or string
-      value = effect.getValue();
-    }
-    else {
-      // Convert 95% to 0.95
-      if(Array.isArray(effect.getValue())) {
-        coefficient = [];
-        for(var i = 0; i < effect.getValue().length; ++i) {
-          coefficient.push(effect.getValue()[i] / 100);
-        }
-      }
-      else {
-        coefficient = effect.getValue() / 100;
-      }
-    }
-
-    // This is the easy part, the effect doesn't exist so we can just create it
-    if(effectList[key] === undefined) {
-      effectList[key] = {unit: unit, value: value, coefficient: coefficient, type: type};
-    }
-    else {
-      var effectListItem = effectList[key];
-      // Unit can be "%" only if "%" is the only unit
-      if(effectListItem.unit == "%" && effect.getUnit() != "%") {
-        effectListItem.unit = effect.getUnit();
-      }
-
-      if(effect.getUnit() == "%") {
-        mergeValueInEffect(coefficient, effectListItem, "coefficient");
-      }
-      else {
-        mergeValueInEffect(value, effectListItem, "value");
-      }
-    }
-  };
-
-  /**
-   * var mergeValueInEffect - Sum value of effects (checks for array)
-   *
-   * @param  {number} value          effect.getValue() (/ 100 if getUnit() == "%")
-   * @param  {type} effectListItem   The item having the same key
-   * @param  {type} type             "coefficient" if value is a "%" or "value" if value is a "value" (or string)
-   */
-  var mergeValueInEffect = function(value, effectListItem, type) {
-    if(Array.isArray(value)) {
-      if(Array.isArray(effectListItem[type])) {
-        // Both are array
-        for(var i = 0; i < value.length; ++i) {
-          if(effectListItem[type][i]) {
-            effectListItem[type][i] += value[i];
+          if(rowEffects[stepEffect.getKey()] === undefined) {
+            // TODO: Check if value/coeff is array and copy manually the value. They are going to be changed so we can't just copy it...
+            rowEffects[stepEffect.getKey()] = JSON.parse(JSON.stringify({value: stepEffect.getValue(), coeff: stepEffect.getCoeff(), unit: stepEffect.getUnit()}));
           }
           else {
-            effectListItem.push(value[i]);
+            var existingEffect = rowEffects[stepEffect.getKey()];
+            // Now we can have a lot of different effect, including: Strings, number, number array, coeff, coeff array...
+            // I could reduce the amount of testing done by imbricate test but it's more readable this way and take less space...
+            if(Array.isArray(stepEffect.getValue()) && Array.isArray(existingEffect.value)) {
+              // Both array
+              for(var k = 0; k < stepEffect.getValue().length; ++k) {
+                // Check if array are the same size, they should but...
+                if(existingEffect.value[k] !== undefined) {
+                  existingEffect.value[k] += stepEffect.getValue(k);
+                }
+                else {
+                  existingEffect.value.push(stepEffect.getValue(k));
+                }
+              }
+            }
+            else if(Array.isArray(stepEffect.getValue()) && !Array.isArray(existingEffect.value)){
+              // New effect is array but old effect isn't
+              // If one is an array but the other isn't, we add the value to each cell of the array
+              var oldValue = existingEffect.value;
+              existingEffect.value = [];
+              for(var k = 0; k < stepEffect.getValue().length; ++k) {
+                existingEffect.value.push(oldValue + stepEffect.getValue(k));
+              }
+            }
+            else if(!Array.isArray(stepEffect.getValue()) && Array.isArray(existingEffect.value)){
+              // Old effect is array but new effect isn't
+              for(var k = 0; k < existingEffect.value.length; ++k) {
+                existingEffect.value[k] += stepEffect.getValue();
+              }
+            }
+            else {
+              // Both aren't
+              existingEffect.value += stepEffect.getValue();
+            }
+
+            // Now we do the same zork for coeff. It could be an idea to create a function
+            if(Array.isArray(stepEffect.getCoeff()) && Array.isArray(existingEffect.coeff)) {
+              // Both array
+              for(var k = 0; k < stepEffect.getCoeff().length; ++k) {
+                // Check if array are the same size, they should but...
+                if(existingEffect.coeff[k] !== undefined) {
+                  existingEffect.coeff[k] += stepEffect.getCoeff(k);
+                }
+                else {
+                  existingEffect.coeff.push(stepEffect.getCoeff(k));
+                }
+              }
+            }
+            else if(Array.isArray(stepEffect.getCoeff()) && !Array.isArray(existingEffect.coeff)){
+              // New effect is array but old effect isn't
+              // If one is an array but the other isn't, we add the value to each cell of the array
+              var oldCoeff = existingEffect.coeff;
+              existingEffect.coeff = [];
+              for(var k = 0; k < stepEffect.getCoeff().length; ++k) {
+                existingEffect.coeff.push(oldCoeff + stepEffect.getCoeff(k));
+              }
+            }
+            else if(!Array.isArray(stepEffect.getCoeff()) && Array.isArray(existingEffect.coeff)){
+              // Old effect is array but new effect isn't
+              for(var k = 0; k < existingEffect.coeff.length; ++k) {
+                existingEffect.coeff[k] += stepEffect.getCoeff();
+              }
+            }
+            else {
+              // Both aren't
+              existingEffect.coeff += stepEffect.getCoeff();
+            }
           }
         }
       }
-      else {
-        // Value is array but effectListItem is not
-        for (var i = 0 ; i < value.length; ++i) {
-          value[i] += effectListItem[type];
+    }
+
+    // Now that everything should be OK; We still have to "value *= 1 + coeff", add DPS and limit the digit to 2
+    for(var k in rowEffects) {
+      var effect = rowEffects[k];
+
+      // And let's go for the stupid array check again
+      if(Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
+        // Both array
+        // If they aren't the same size, I don't really know what to do, it just means there's an error in the spreadsheet
+        for(var i = 0; i < effect.value.length; ++i) {
+          effect.value[i] *= 1 + effect.coeff[i];
         }
-        effectListItem[type] = value;
+      } else if(Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
+        // Value is array but coeff isn't
+        for(var i = 0; i < effect.value.length; ++i) {
+          effect.value[i] *= 1 + effect.coeff;
+        }
+      } else if(!Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
+        // Coeff is array but value isn't
+        var tempValue = effect.value;
+        effect.value = [];
+        for(var i = 0; i < effect.coeff.length; ++i) {
+          effect.value.push((1 + effect.coeff[i]) * tempValue);
+        }
+      } else {
+        // Both are value
+        if(isNumeric(effect.value)) {
+          if(effect.value === 0) {
+            // No value means the upgrade only has a %
+            effect.value = effect.coeff * 100;
+          }
+          else {
+            // If no coeff, it will just multiply the value by 1
+            effect.value *= 1 + effect.coeff;
+          }
+        }
+        // else it's a string and so coeff isn't required
       }
     }
-    else {
-      if(Array.isArray(effectListItem[type])) {
-        // Value is not an array but effectListem is
-        for(var i = 0; i < effectListItem[type].length; ++i) {
-          effectListItem[type][i] += value;
-        }
-      }
-      else {
-        // both are only numbers
-        effectListItem[type] += value;
-      }
-    }
+    // TODO: Add DPS
+    // TODO: toFixed(2) for numbers
+    return rowEffects;
   };
 
   this.setNaut = function(character){
@@ -240,14 +283,9 @@ var Build = function(URLData) {
   init(URLData);
 
   this.debugPrintBuild = function() {
-    /*
-    Test code to test things
-    var b = new Build(); b.setNaut(Naut.list[23]); var c = b.getRowEffects(2);
-
-    for(var k in c) {
-    	console.log(k + ": (" + c[k].value + " / " + c[k].coefficient + ") (" + c[k].unit + ")");
-    }
-    */
+    /* Paste the code below in the console to display the debug shop for penny
+    b = new Build();
+    b.setNaut(Naut.list[20]); b.debugPrintBuild(); */
     $("#debug").remove();
     $("body").append(
       $("<div/>")
@@ -256,30 +294,36 @@ var Build = function(URLData) {
         .css("color", "black")
         .css("font-family", "consolas")
         .attr("id", "debug")
-        .html(naut.getName() + "<br>      Skills              Shop        Cost     Effects<br>")
+        .html(" - " + naut.getName() + " -<br>Skills              Shop         Cost     Effects<br>")
     );
 
-    for(var i = 0; i < purchasedUpgrades.length; ++i) {
-      var txt = "[" + naut.getSkills()[i].getName().padEnd(18, " ") + "] | ";
+    var txt = ["", "", "", ""];
+
+    for(var i = 0; i < naut.getSkills().length; ++i) {
+      txt[i] += "* " + naut.getSkills()[i].getName().padEnd(17, " ");
+    }
+
+    for(var i = 0; i < purchasedUpgrades.length; i++) {
       for(var j = 0; j < purchasedUpgrades[i].length; ++j) {
-        var upgradeName = naut.getSkills()[i].getUpgrades()[j].getName();
-        txt += "<a href='#' onclick='b.setUpgradeStage("+i+","+j+"); b.debugPrintBuild()' >" + (purchasedUpgrades[i][j]) + "</a> ";
+        txt[i] += " <a href='#' onclick='b.setUpgradeStage("+i+", "+j+"); b.debugPrintBuild()'>" + purchasedUpgrades[i][j] + "</a>";
       }
+    }
 
-      var e = this.getRowEffects(i);
-      var txt2 = "";
-
-      for(var k in e) {
-        txt2 += k + ": " + e[k].value + " " + e[k].coefficient + " | ";
+    for(var i = 0; i < 4; ++i) {
+      txt[i] += "  " + (self.getRowPrice(i) + "").padEnd(3, " ") + "      ";
+      var rowEffects = self.getRowEffects(i);
+      for(var k in rowEffects) {
+        if(Array.isArray(rowEffects[k].value)) {
+          txt[i] += k + ": " + rowEffects[k].value.join(" > ")  + "" + (rowEffects[k].unit == "none" ? "" : rowEffects[k].unit) + "; ";
+        }
+        else {
+          txt[i] += k + ": " + rowEffects[k].value  + "" + (rowEffects[k].unit == "none" ? "" : rowEffects[k].unit) + "; ";
+        }
       }
-      $("#debug").append(txt + " | " + (this.getRowPrice(i) + "").padEnd(6, " ") + " | "+ txt2 + "<br>");
+    }
 
+    for(var i = 0; i < txt.length; ++i) {
+      $("#debug").append(txt[i] + "<br>");
     }
   };
 };
-
-// TODO: Remove debug
-setTimeout(function(){
-  b = new Build();
-  b.setNaut(Naut.list[20]); b.debugPrintBuild();
-}, 1000)

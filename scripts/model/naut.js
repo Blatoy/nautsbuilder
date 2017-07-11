@@ -115,10 +115,16 @@ var Naut = function(nautAPIData) {
   /**
    * this.getSkills - Getter
    *
+   * @param {number} row - If specified, return only the skill for the row
    * @returns {array} The array containing the 4 skills of the awesomenauts
    */
-  this.getSkills = function(){
-    return skills;
+  this.getSkills = function(row){
+    if(row !== undefined) {
+      return skills[row];
+    }
+    else {
+      return skills;
+    }
   };
 
 
