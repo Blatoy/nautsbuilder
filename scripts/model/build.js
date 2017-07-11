@@ -224,6 +224,7 @@ var Build = function(URLData) {
     }
 
     // Now that everything should be OK; We still have to "value *= 1 + coeff", add DPS and limit the digit to 2
+    var dpsAttackSpeed = 0, dpsDamage = 0, dpsMultiplier = 1;
     for(var k in rowEffects) {
       var effect = rowEffects[k];
 
@@ -232,19 +233,19 @@ var Build = function(URLData) {
         // Both array
         // If they aren't the same size, I don't really know what to do, it just means there's an error in the spreadsheet
         for(var i = 0; i < effect.value.length; ++i) {
-          effect.value[i] *= 1 + effect.coeff[i];
+          effect.value[i] = round(effect.value[i] * (1 + effect.coeff[i]));
         }
       } else if(Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
         // Value is array but coeff isn't
         for(var i = 0; i < effect.value.length; ++i) {
-          effect.value[i] *= 1 + effect.coeff;
+          effect.value[i] = round(effect.value[i] * (1 + effect.coeff));
         }
       } else if(!Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
         // Coeff is array but value isn't
         var tempValue = effect.value;
         effect.value = [];
         for(var i = 0; i < effect.coeff.length; ++i) {
-          effect.value.push((1 + effect.coeff[i]) * tempValue);
+          effect.value.push(round((1 + effect.coeff[i]) * tempValue));
         }
       } else {
         // Both are value
@@ -255,14 +256,51 @@ var Build = function(URLData) {
           }
           else {
             // If no coeff, it will just multiply the value by 1
-            effect.value *= 1 + effect.coeff;
+            effect.value = round(effect.value * (1 + effect.coeff));
           }
         }
         // else it's a string and so coeff isn't required
       }
+
+      // DPS Calculation
+      // (Attack speed / 60 * Damage) * Damage Multiplier ?
+      // TODO: Don't hardcode this and read it from the spreadsheet
+      switch(k) {
+        case "attack speed": dpsAttackSpeed = effect.value; break;
+        case "damage": dpsDamage = effect.value; break;
+        case "damage multiplier": dpsMultiplier = effect.value; break;
+      }
     }
-    // TODO: Add DPS
-    // TODO: toFixed(2) for numbers
+
+    if(dpsAttackSpeed !== 0 && dpsDamage !== 0) {
+      console.log("...");
+      var dps = [];
+      if(Array.isArray(dpsMultiplier)) {
+         // TODO: Handle it properly
+         // There's currently no case that require an array of multiplier but this may be something nice to do
+        dpsMultiplier = dpsMultiplier[0];
+      }
+
+      if(Array.isArray(dpsDamage) && Array.isArray(dpsAttackSpeed)) {
+        // They must be the same size here or it won't just work...
+        for(var i = 0; i < dpsDamage.length; ++i) {
+          dps.push(dpsAttackSpeed[i] / 60 * dpsDamage[i] * dpsMultiplier);
+        }
+      } else if(!Array.isArray(dpsDamage) && Array.isArray(dpsAttackSpeed)) {
+        for(var i = 0; i < dpsAttackSpeed.length; ++i) {
+          dps.push(dpsAttackSpeed[i] / 60 * dpsDamage * dpsMultiplier);
+        }
+      } else if(Array.isArray(dpsDamage) && !Array.isArray(dpsAttackSpeed)) {
+        for(var i = 0; i < dpsDamage.length; ++i) {
+          dps.push(dpsAttackSpeed / 60 * dpsDamage[i] * dpsMultiplier);
+        }
+      } else {
+        dps = dpsAttackSpeed / 60 * dpsDamage * dpsMultiplier;
+      }
+
+      rowEffects.DPS = {unit: "", value: dps, coeff: 1};
+    }
+
     return rowEffects;
   };
 
