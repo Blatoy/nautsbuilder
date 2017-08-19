@@ -1,6 +1,6 @@
 @font-face {
     font-family: ethnocentric;
-    src: url("/standalone/nautsbuilder/fonts/ethnocentric.ttf");
+    src: url("/nautsbuilder/fonts/ethnocentric.ttf");
 }
 
 body {
@@ -8,18 +8,18 @@ body {
   color: white;
   margin: 0;
 
-  background-image: url("/standalone/nautsbuilder/images/background.jpg");
+  background-color: black;
+  background-image: url("/nautsbuilder/images/background.jpg");
   background-position: center top;
   background-size: 100% auto;
   background-repeat: no-repeat;
-  background-color: black;
 }
 
 input {
   color: #666;
   background-color: rgb(5, 5, 5);
   border: 1px solid transparent;
-  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
 }
 
 a {
@@ -45,12 +45,22 @@ a:hover {
   font-size: 0.75em;
 }
 
-.black-box {
-  font-family: "Verdana", "sans-serif";
-  background-color: black;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-  padding: 10px;
+#settings-container {
+  float: right;
+  width: calc(25% - 20px);
+}
+
+#settings-container div {
+  float: left;
+  margin-top: 12px;
+  margin-right: 15px;
+}
+
+#settings-container img {
+  float: right;
+  vertical-align: middle;
+  margin: 5px;
+  cursor: pointer;
 }
 
 #export-div {
@@ -64,7 +74,382 @@ a:hover {
 
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid transparent;
-  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   z-index: 999;
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+#loading img {
+  margin-top: 20%;
+  -webkit-animation:spin 0.8s linear infinite;
+  -moz-animation:spin 0.8s linear infinite;
+  animation:spin 0.8s linear infinite;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-5px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+
+/*** Naut info ***/
+/* NAUT LIST */
+#naut-list {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+
+  z-index: 103;
+  position: fixed;
+  padding: 4px;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+/* When the page is opened for the first time */
+.naut-list-center {
+  top: 5px;
+  left: 15%;
+  right: 15%;
+  text-align: center;
+}
+
+/* Weh a naut has been clicked */
+.naut-list-right {
+  top: 40px;
+  left: 75%;
+  right: 0;
+
+  text-align: right;
+}
+
+#naut-name {
+  width: 100%;
+  font-size: 1.8em;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+#naut-art {
+  height: 100%;
+  max-width: 100%;
+  -webkit-animation:float 2.8s linear infinite;
+  -moz-animation:float 2.8s linear infinite;
+  animation:float 2.8s linear infinite;
+}
+
+.naut-icon {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 1px;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.naut-icon:hover {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 10px rgba(158, 202, 237, 0.5);
+  border-radius: 2px;
+  filter: brightness(1.2);
+}
+
+/* Aplied to naut-icon */
+.selected {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 0px 3px rgba(88, 220, 233, 0.8)!important;
+  border-radius: 2px!important;
+  filter: brightness(1.3)!important;
+}
+
+/* Description, splash-art and build info only displayed when shop is closed */
+#skill-description, #naut-description {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  min-height: 50%;
+  height: auto;
+  overflow: auto;
+}
+
+#skill-description div, #naut-description div {
+  margin-bottom: 5px;
+}
+
+#naut-description {
+  z-index: 100;
+  right: 0;
+  width: 34%;
+  max-height: 50%;
+  line-height: 0.9;
+}
+
+#naut-display {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 50%;
+  bottom: 22%;
+  text-align: center;
+}
+
+#skill-description {
+  width: 34%;
+  height: auto;
+}
+
+#skill-description img {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+#skill-description span {
+  display: inline-block;
+  width: calc(100% - 60px);
+
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+}
+
+
+/* BUILD */
+.build-description-category {
+  font-size: 1em;
+}
+
+.info-box {
+  position: fixed;
+  font-family: "Verdana", "sans-serif";
+  background-color: rgba(10, 10, 10, 0.6);
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  border-radius: 0px;
+  padding: 9px;
+}
+
+#build-info-1, #build-info-2, #build-info-3, #build-info-4, #about {
+  position: fixed;
+  width: 22%;
+  height: 15%;
+  overflow: auto;
+}
+
+#build-info-1, #build-info-2, #build-info-3, #build-info-4 {
+  left: calc(50% + 15px);
+  font-size: 0.8em;
+}
+
+#about {
+  bottom: 0;
+  right: 0px;
+  color: #00A0A0;
+  font-size: 0.75em;
+}
+
+#build-info-1 {
+  top: 2%;
+}
+
+#build-info-2 {
+  top: 22%;
+}
+
+#build-info-3 {
+  top: 42%;
+}
+
+#build-info-4 {
+  top: 62%;
+}
+
+#build-summary {
+  top: 82%;
+}
+
+/*** Shop ***/
+#naut-shop, #build-order {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+#naut-shop {
+  display: none;
+  z-index: 101;
+  border: 3px solid transparent;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 80%;
+  border-image: url("/nautsbuilder/images/border-shop.png") 5 round;
+  overflow: hidden;
+}
+
+.shop-row {
+  text-align: center;
+  width: 100%;
+  height: 25%;
+  border-top: 2px solid black;
+  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+}
+
+#shop-row-1, #shop-row-3 {
+  background-color: rgba(0, 31, 51, 0.8);
+
+}
+
+#shop-row-2, #shop-row-4 {
+  background-color: rgba(0, 16, 29, 0.8);
+}
+
+#build-order {
+  display: none;
+  z-index: 102;
+  position: fixed;
+  left: 0;
+  top: calc(80% + 20px);
+  height: 20%;
+  width: 50%;
+  background-color: rgba(0, 16, 29, 0.8);
+  border: 3px solid transparent;
+  border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
+  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  overflow: auto;
+}
+
+#draggedUprade .shop-item-container{
+  position: fixed;
+  width: 50px;
+  height: 50px;
+}
+
+#build-order-content .shop-item-container {
+  width: 7%;
+  vertical-align: middle;
+}
+
+#build-order-content .selected {
+  z-index: 999;
+  box-shadow: 0 0 0px 3px rgba(38, 200, 233, 0.8)!important;
+  opacity: 0.5;
+}
+/*** Tooltips ***/
+#tooltip {
+  display: none;
+  max-width: 20%;
+  font-family: "Verdana", "sans-serif";
+  font-size: 0.95em;
+  z-index: 1000;
+  padding: 10px;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+}
+
+.tooltip-upgrades {
+  font-size: 0.85em;
+  color: yellow;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+/*** Upgrades ***/
+
+.shop-item-container {
+  margin-left: 5px;
+  width: 12%;
+  display: inline-block;
+  position: relative;
+}
+
+.shop-item-price, .shop-item-stage {
+  position: absolute;
+  left: 25%;
+  font-size: 0.8em;
+  text-align: center;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+.shop-skill-container {
+  display: inline-block;
+  cursor: pointer;
+  width: 12%;
+  margin-right: 5%;
+}
+
+.shop-item-image {
+  vertical-align: middle;
+}
+
+.shop-item-stage {
+  top: 5%;
+  left: calc(25% + 4px);
+}
+
+.shop-item-price {
+  bottom: 5%;
+}
+
+.shop-item-skill, .shop-item-upgrade {
+  width: 100%;
+}
+
+.shop-item-upgrade {
+  cursor: pointer;
+  filter: brightness(0.3);
+}
+
+.shop-item-upgrade:hover {
+  cursor: pointer;
+  filter: brightness(0.5);
+}
+
+.purchased {
+  filter: brightness(1.1)!important;
+}
+
+.locked {
+  cursor: default!important;
+  filter: brightness(0.7)!important;
 }

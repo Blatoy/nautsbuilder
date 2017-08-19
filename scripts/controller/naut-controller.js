@@ -2,22 +2,35 @@
 * var NautController - Handle everything related to nauts
 * Upgrades are moved into skills once loaded and skills are moved to nauts
 */
-var NautController = new function(){
+var NautController = new function() {
   var self = this;
   var apiToLoadCount = 3; // The number of API to load, used to track when everything is loaded.
-
+  this.nautSelected = false;
+  this.canHoverNautSelection = true;
   /**
    * this.init - "Constructor" for this "class" should be called when all the scripts are ready to be used
    */
-  this.init = function(){
+  this.init = function() {
     loadDataFromAPIs();
+    $("#naut-list").on("mouseleave", function(){
+      self.canHoverNautSelection = true;
+      if(self.nautSelected) {
+        ShopView.displayShop();
+        ShopView.displayBuyOrder();
+        NautView.hideArt();
+        NautView.hideName();
+        InfoBoxView.displayAbout();
+        InfoBoxView.hideLore();
+        InfoBoxView.hideSkills();
+      }
+    });
   };
 
   /**
    * var loadDataFromAPIs - Query APIs, instanciate corresponding classes
    * Call onAPILoaded everytime an API is loaded
    */
-  var loadDataFromAPIs = function(){
+  var loadDataFromAPIs = function() {
     queryAPI("nautsbuilder-get-characters", function(data, textStatus){
       if(data) {
         for(var i = 0; i < data.length; ++i) {
@@ -62,6 +75,10 @@ var NautController = new function(){
     if(apiToLoadCount === 0) {
       addSkillsToNauts();
       addUpgradesToSkills();
+      MainView.onLoaded();
+      InfoBoxView.onLoaded();
+      NautView.displayNautList(Naut.list);
+      NautView.addRandomIconToNautList();
     }
   };
 
@@ -132,16 +149,55 @@ var NautController = new function(){
     }
   };
 
-
-  /**
-   * this.onNautClicked - Create a new empty Build
-   */
-  this.onNautClicked = function() {
+  // TODO: Add desc
+  this.selectNaut = function(nautName) {
+    NautView.moveNautSelectionToRight();
+    NautView.hideArt();
+    NautView.hideName();
+    InfoBoxView.hideSkills();
+    InfoBoxView.hideLore();
+    InfoBoxView.displayAbout();
+    this.nautSelected = true;
+    this.canHoverNautSelection = false;
+    BuildController.onNautSelected(Naut.getByName(nautName));
   /*  Build.current = new Build();
     Build.setNaut("...");*/
   };
 
-  this.onNautHovered = function() {
+  // TODO: Add desc
+  this.selectRandomNaut = function() {
+    NautView.moveNautSelectionToRight();
+    var randomNaut = Naut.list[Math.floor(Naut.list.length * Math.random())];
+    NautView.setSelectedNaut(NautView.getIconElementForNaut(randomNaut));
+    NautView.hideName();
+    NautView.hideArt();
+    BuildController.onNautSelected(randomNaut);
+  };
 
+  // TODO: Add desc
+  this.previewNaut = function(nautName) {
+    // Prevent displaying nauts info after selecting a naut
+    if(!this.canHoverNautSelection) {
+      return;
+    }
+    var naut = Naut.getByName(nautName);
+    InfoBoxView.displaySkills(naut);
+    InfoBoxView.displayLore(naut);
+    ShopView.hideShop();
+    ShopView.hideBuyOrder();
+    NautView.displayName(naut);
+    NautView.displayArt(naut);
+  };
+
+  // TODO: Add desc
+  this.previewRandomNaut = function() {
+    // Prevent displaying nauts info after selecting a naut
+    if(!this.canHoverNautSelection) {
+      return;
+    }
+    ShopView.hideShop();
+    ShopView.hideBuyOrder();
+    InfoBoxView.displayRandomNaut();
+    NautView.displayRandomNaut();
   };
 };

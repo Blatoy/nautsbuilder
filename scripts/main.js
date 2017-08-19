@@ -1,18 +1,18 @@
 /**
- * Include all scripts and styles required in the app
+ * Include all scripts required in the app
  */
 var Main = new function() {
   var scriptListLength;
   var loadedScripts;
   var self = this;
+
   /**
-   * Load scripts and styles
+   * Load scripts
    */
   var init = function(){
     scriptListLength = CONFIG.scriptList.length;
     loadedScripts = 0;
 
-    includeStyles();
     includeScripts();
   };
 
@@ -22,6 +22,9 @@ var Main = new function() {
   var onScriptsLoaded = function(){
     if(++loadedScripts == scriptListLength) {
       NautController.init();
+      BuildController.init();
+      InfoBoxView.init();
+      ShopView.init();
     }
   };
 
@@ -31,21 +34,6 @@ var Main = new function() {
   var includeScripts = function(){
     for(var i = 0; i < CONFIG.scriptList.length; ++i) {
       self.getScript(CONFIG.path.scripts + CONFIG.scriptList[i], onScriptsLoaded);
-    }
-  };
-
-  /**
-   * Load all the styles specified in the configuration file
-   * TODO: Maybe move this back to index.php to reduce loading time?
-   */
-  var includeStyles = function() {
-    var headElement = document.getElementsByTagName('head')[0];
-    for(var i = 0; i < CONFIG.styleList.length; ++i) {
-      var linkElem = document.createElement('link');
-      headElement.appendChild(linkElem);
-      linkElem.rel = 'stylesheet';
-      linkElem.type = 'text/css';
-      linkElem.href = CONFIG.path.styles + CONFIG.styleList[i];
     }
   };
 

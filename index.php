@@ -5,12 +5,21 @@
         <title>NautsBuilder V2</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="/standalone/nautsbuilder/images/favicon.png"/>
+        <link rel="icon" type="image/png" href="/nautsbuilder/images/favicon.png"/>
+        <link rel="stylesheet" type="text/css" href="/nautsbuilder/styles/main.css">
     </head>
     <body>
+        <div id="settings-container">
+          <div style="n">Game version: <span id="game-version">4.2</span></div>
+          <img src="http://i.imgur.com/oKZ2pjD.png"/>
+        </div>
         <!-- Nauts presentation, hidden while shop open -->
-        <div id="naut-splash-art"></div>
-        <div id="naut-list" class="naut-list-center"></div>
+        <div id="naut-display">
+          <div id="naut-name"></div>
+          <img id="naut-art"/>
+        </div>
+        <div id="naut-list" class="naut-list-center">
+        </div>
         <div class="black-box" id="naut-description"></div>
         <div class="black-box" id="skill-description"></div>
 
@@ -23,8 +32,8 @@
         </div>
 
         <!-- Buy order -->
-        <div id="build-order">
-          <div style="margin: 5px;">Buy order <span class="small-text">(Click 2 items to swap)</span></div>
+        <div id="build-order" style="display: none;">
+          <div style="margin: 5px;">Buy order <span style="float: right;" class="small-text"><a href="#">Disable</a></span></div>
           <div id="build-order-content"></div>
         </div>
 
@@ -50,9 +59,13 @@
         <!-- These 2 scripts can't be included automatically -->
         <script src="/nautsbuilder/config/config.js"></script>
         <script src="/nautsbuilder/scripts/main.js"></script>
+        <div id="loading">
+          <img src="/nautsbuilder/images/loading.png"/><br>
+          <span>Loading Nautsbuilder...</span>
+        </div>
 
         <!-- Used to count visitors -->
-        <iframe style="display:none;" src="https://orikaru.net/resources/logic/php/ajax/account.php"></iframe>
+        <!--<iframe style="display:none;" src="https://orikaru.net/resources/logic/php/ajax/account.php"></iframe>-->
         <!-- Google Analytics  -->
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

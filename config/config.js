@@ -1,7 +1,7 @@
 // If you want to change the path, you will also have to change:
 // - index.php, src to main.js and config.js
 // - All the css: urls to images
-var CONFIG = new function(){
+var CONFIG = new function() {
   this.scriptList = [
     "libs/jquery.min.js",
     "libs/event-manager.js",
@@ -14,17 +14,10 @@ var CONFIG = new function(){
     "model/naut.js",
     "model/skill.js",
     "model/upgrade.js",
+    "view/main-view.js",
     "view/info-box-view.js",
     "view/naut-view.js",
     "view/shop-view.js"
-  ];
-
-  this.styleList = [
-    "main.css",
-    "naut-info.css",
-    "shop.css",
-    "tooltip.css",
-    "upgrade.css"
   ];
 
   this.apiURL = "https://orikaru.net/resources/logic/php/ajax/awesomenauts.php";
@@ -33,7 +26,6 @@ var CONFIG = new function(){
   path.base = "/nautsbuilder/";
   path.scripts = path.base + "scripts/";
   path.images = path.base + "images/";
-  path.styles = path.base + "styles/";
 
   this.path = path;
 };

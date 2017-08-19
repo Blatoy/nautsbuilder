@@ -144,5 +144,12 @@ var Naut = function(nautAPIData) {
 Naut.list = [];
 Naut.EXPANSION_NONE = "none"; // We don't need the other because we never check for a specific expansion
 
-Naut.getByName = function(){};
-Naut.displayList = function(){};
+Naut.getByName = function(nautName){
+  nautName = getCleanString(nautName).toLowerCase();
+  for(var i = 0; i < Naut.list.length; ++i) {
+    if(getCleanString(Naut.list[i].getName()).toLowerCase() == nautName) {
+      return Naut.list[i];
+    }
+  }
+  return false;
+};

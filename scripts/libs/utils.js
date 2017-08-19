@@ -9,6 +9,11 @@ function nl2br(string) {
   return string.replace(/\n/g, "<br>");
 }
 
+// TODO: Desc§
+function htmlToText(string) {
+  return nl2br($("<p>" + string + "</p>").text());
+}
+
 /**
  * Send a query to the requested API, call the callback method if failed / successful
  * @param {string} action - The action to request on the API
@@ -24,6 +29,7 @@ function queryAPI(action, callback) {
 
 /**
  * Load an image an store it into an array to load it.
+ * TODO: Store in local storage and check if it's already present to reduce loading time
  * @param {string} src - The source of the image
  */
 function preloadImage(src){
@@ -78,7 +84,7 @@ function shuffleString(str) {
  * Returns a string usable for an element ID
  * @param {string} str - The string to clean
  */
-function getValidElementId(str) {
+function getCleanString(str) {
   return str.replace(/^[^a-z]+|[^\w:.-]+/gi, "");
 }
 
