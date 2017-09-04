@@ -10,7 +10,7 @@
     </head>
     <body>
         <div id="settings-container">
-          <div style="n">Game version: <span id="game-version">4.2</span></div>
+          <!--<div style="n">Game version: <span id="game-version">4.2</span></div>-->
           <img src="http://i.imgur.com/oKZ2pjD.png"/>
         </div>
         <!-- Nauts presentation, hidden while shop open -->
@@ -33,7 +33,7 @@
 
         <!-- Buy order -->
         <div id="build-order" style="display: none;">
-          <div style="margin: 5px;">Buy order <span style="float: right;" class="small-text"><a href="#">Disable</a></span></div>
+          <div style="margin: 5px;"><span id="buy-order-text">Buy order</span><span style="float: right;" class="small-text"><a onclick="Setting.toggleBuyOrder()" id="buy-order-status" href="#">Disable</a></span></div>
           <div id="build-order-content"></div>
         </div>
 
@@ -76,5 +76,7 @@
           ga('create', 'UA-62317289-1', 'auto');
           ga('send', 'pageview');
         </script>
+        <!--- TODO Remove this as it's used for debug purpose only -->
+        <script src="http://localhost:35729/livereload.js"></script>
     </body>
 </html>

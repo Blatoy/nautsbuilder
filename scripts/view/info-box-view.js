@@ -3,14 +3,14 @@ var InfoBoxView = new function() {
 
   this.init = function() {
     infoBoxes = {
-      about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by the community.<br>" +
+      about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by <a onclick='MessageBoxView.displayContributors()' href='#'>the community.</a><br>" +
         "Made by <a href='steamcommunity.com/id/blatoy/'>Blatoy</a>, inspired by <a href='http://nautsbuilder.com'>Nautsbuilder</a><br>" +
         "If you want to support this tool consider making a small <a href='/donation'>donation!</a><hr>" +
         "<a href='#'>Report errors</a> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
-        "<a href='https://discord.gg/TvPaMhW'>Discord</a>", "about"),
+        "<a href='https://discord.gg/GsE29w7'>Discord</a>", "about"),
       skills: new InfoBox("", "skill-description"),
-      lore: new InfoBox("", "naut-description"),
+      lore: new InfoBox("", "naut-description")
     };
   };
 
@@ -25,13 +25,18 @@ var InfoBoxView = new function() {
   // TODO: Add desc
   this.displaySkills = function(naut){
     var content = "";
+    var element = $("<div>");
+    element.append("<div>Skills</div>");
+
     for(var i = 0; i < naut.getSkills().length; ++i) {
       var skill = naut.getSkills(i);
-      content += "<img src='" + skill.getIcon() + "'/>";
-      content += "<span>" + skill.getDescription() + "</span>";
-      content += "<hr>";
+      var skillImage = $("<img/>").attr("src", skill.getIcon());
+      element.append(skillImage);
+      element.append("<span>" + skill.getDescription() + "</span><hr>")
+      Tooltip.createDefault(skillImage, skill.toString());
     }
-    infoBoxes.skills.setContent("<div>Skills</div>" + content);
+
+    infoBoxes.skills.setContent(element);
     infoBoxes.skills.setVisibility(true, true);
   };
 

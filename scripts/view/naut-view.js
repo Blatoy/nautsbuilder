@@ -24,16 +24,18 @@ var NautView = new function() {
     );
   };
 
+  // TODO: Function desc
   this.setSelectedNaut = function(element) {
     $(".naut-icon").removeClass("selected");
     element.addClass("selected");
   };
 
+  // TODO: Function desc
   this.getIconElementForNaut = function(naut) {
     var element = false;
     $(".naut-icon").each(function(i) {
       if(this.src == naut.getIcon()) {
-        return element = $(this);
+        return element = $(this); // wtf there's probably a meaning to that. TODO: Check why it's done this way
       }
     });
     return element;
@@ -42,16 +44,16 @@ var NautView = new function() {
   // TODO: Function desc
   this.getNautIcon = function(naut){
     var icon = $("<img>");
-      icon.addClass("naut-icon")
-        .attr("src", naut.getIcon())
-        .attr("title", naut.getName())
-        .click(function() {
-          self.setSelectedNaut(icon);
-          NautController.selectNaut(naut.getName());
-        })
-        .mouseenter(function() {
-          NautController.previewNaut(naut.getName());
-        });
+    icon.addClass("naut-icon")
+      .attr("src", naut.getIcon())
+      .attr("title", naut.getName())
+      .click(function() {
+        self.setSelectedNaut(icon);
+        NautController.selectNaut(naut.getName());
+      })
+      .mouseenter(function() {
+        NautController.previewNaut(naut.getName());
+      });
     return icon;
   };
 
@@ -78,7 +80,8 @@ var NautView = new function() {
   // TODO: Function desc
   this.displayName = function(naut){
     $("#naut-name").show();
-    $("#naut-name").text(naut.getName());
+    var devText = Setting.get("displayDevNames") ? "<br><span class='small-text'>" + naut.getDevName() + "</span>" : "";
+    $("#naut-name").html(htmlToText(naut.getName()) + devText);
   };
 
   // TODO: Function desc

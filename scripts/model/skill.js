@@ -83,8 +83,13 @@ var Skill = function(skillAPIData) {
    *
    * @returns {array}  The array of Effect for this skill
    */
-  this.getEffects = function(){
-    return effects;
+  this.getEffects = function(i){
+    if(i !== undefined) {
+      return effects[i];
+    }
+    else {
+      return effects;
+    }
   };
 
   /**
@@ -100,6 +105,19 @@ var Skill = function(skillAPIData) {
     else {
       return upgrades;
     }
+  };
+
+  this.toString = function() {
+    var txt = "<b>" + htmlToText(this.getName()) + "</b>";
+    txt += "<br><br>Effects<br><span class='tooltip-upgrades'>";
+    for(var i = 0; i < this.getEffects().length; ++i) {
+      txt += " - " + this.getEffects(i).toString() + "<br>";
+    }
+    txt += "</span><br><span class='small-text'>";
+    txt += htmlToText(this.getDescription());
+    txt += "</span>";
+
+    return txt;
   };
 
   /**

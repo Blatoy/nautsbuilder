@@ -49,6 +49,10 @@ var Naut = function(nautAPIData) {
     return nautData.icon;
   };
 
+  this.getDevName = function(){
+    return nautData.devname || "";
+  };
+
   /**
    * this.getAttackType - Getter
    *
@@ -126,7 +130,6 @@ var Naut = function(nautAPIData) {
       return skills;
     }
   };
-
 
   /**
    * this.addSkill - Add a skill to this naut

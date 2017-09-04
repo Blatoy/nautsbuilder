@@ -14,10 +14,14 @@ var CONFIG = new function() {
     "model/naut.js",
     "model/skill.js",
     "model/upgrade.js",
+    "model/tooltip.js",
+    "model/message-box.js",
+    "model/setting.js",
     "view/main-view.js",
     "view/info-box-view.js",
     "view/naut-view.js",
-    "view/shop-view.js"
+    "view/shop-view.js",
+    "view/message-box-view.js"
   ];
 
   this.apiURL = "https://orikaru.net/resources/logic/php/ajax/awesomenauts.php";

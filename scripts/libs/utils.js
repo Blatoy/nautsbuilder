@@ -9,9 +9,9 @@ function nl2br(string) {
   return string.replace(/\n/g, "<br>");
 }
 
-// TODO: Desc§
+// TODO: Desc
 function htmlToText(string) {
-  return nl2br($("<p>" + string + "</p>").text());
+  return nl2br($("<p>" + string + "</p>").text()).replace("*","<i>").replace("*", "</i>");
 }
 
 /**

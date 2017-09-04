@@ -4,14 +4,20 @@
 */
 var NautController = new function() {
   var self = this;
-  var apiToLoadCount = 3; // The number of API to load, used to track when everything is loaded.
+  var apiToLoadCount = 4  ; // Used to track when everything is loaded.
+  // TODO: Move misc API somewhere else
+  this.API = {CHARACTERS: "nautsbuilder-get-characters", UPGRADES: "nautsbuilder-get-upgrades", SKILLS: "nautsbuilder-get-skills", CONTRIBUTORS: "nautsbuilder-get-contributors"};
   this.nautSelected = false;
   this.canHoverNautSelection = true;
+
   /**
    * this.init - "Constructor" for this "class" should be called when all the scripts are ready to be used
    */
   this.init = function() {
-    loadDataFromAPIs();
+    for(var k in this.API) {
+      loadAPI(this.API[k]);
+    }
+
     $("#naut-list").on("mouseleave", function(){
       self.canHoverNautSelection = true;
       if(self.nautSelected) {
@@ -27,50 +33,61 @@ var NautController = new function() {
   };
 
   /**
-   * var loadDataFromAPIs - Query APIs, instanciate corresponding classes
-   * Call onAPILoaded everytime an API is loaded
+   * var loadAPI - Query the specified API if no local cache is found
    */
-  var loadDataFromAPIs = function() {
-    queryAPI("nautsbuilder-get-characters", function(data, textStatus){
-      if(data) {
-        for(var i = 0; i < data.length; ++i) {
-          Naut.list.push(new Naut(data[i]));
-        }
-        onAPILoaded();
+  var loadAPI = function(API) {
+    var data = localStorage.getItem(API);
+
+    if(Setting.get("disableCache") || data === null) {
+      if(Setting.get("disableCache")) {
+        console.log("Cache disable in settings");
       }
       else {
-        // TODO: Error handling
+        console.log("No cache found for " + API);
       }
-    });
-    queryAPI("nautsbuilder-get-skills", function(data, textStatus){
-      if(data) {
-        for(var i = 0; i < data.length; ++i) {
-          Skill.list.push(new Skill(data[i]));
+
+      queryAPI(API, function(data, textStatus){
+        if(data) {
+          localStorage.setItem(API, JSON.stringify(data));
+          onAPILoaded(API, data);
         }
-        onAPILoaded();
-      }
-      else {
-        // TODO: Error handling
-      }
-    });
-    queryAPI("nautsbuilder-get-upgrades", function(data, textStatus){
-      if(data) {
-        for(var i = 0; i < data.length; ++i) {
-          Upgrade.list.push(new Upgrade(data[i]));
+        else {
+          // TODO: Error handling
         }
-        onAPILoaded();
-      }
-      else {
-        // TODO: Error handling
-      }
-    });
+      });
+    }
+    else {
+      console.log("Using cache for " + API)
+      onAPILoaded(API, JSON.parse(data));
+    }
   };
 
   /**
    * var onAPILoaded - Called each time an API is loaded, when all API are loaded
    * addUpgradesToSkills() and addSkillsToNauts() are called
    */
-  var onAPILoaded = function() {
+  var onAPILoaded = function(API, data) {
+    switch(API) {
+      case self.API.CHARACTERS:
+        for(var i = 0; i < data.length; ++i) {
+          Naut.list.push(new Naut(data[i]));
+        }
+        break;
+      case self.API.SKILLS:
+        for(var i = 0; i < data.length; ++i) {
+          Skill.list.push(new Skill(data[i]));
+        }
+        break;
+      case self.API.UPGRADES:
+        for(var i = 0; i < data.length; ++i) {
+          Upgrade.list.push(new Upgrade(data[i]));
+        }
+        break;
+      case self.API.CONTRIBUTORS:
+        contributors = data;
+        break;
+    }
+
     apiToLoadCount--;
     if(apiToLoadCount === 0) {
       addSkillsToNauts();
@@ -79,6 +96,10 @@ var NautController = new function() {
       InfoBoxView.onLoaded();
       NautView.displayNautList(Naut.list);
       NautView.addRandomIconToNautList();
+      // We preload all splash art because they display faster if we do it
+      for(var i = 0; i < Naut.list.length; ++i) {
+        preloadImage(Naut.list[i].getSplashArt());
+      }
     }
   };
 
@@ -99,7 +120,8 @@ var NautController = new function() {
         for(var k = 0; k < upgrades.length; ++k) {
           var upgrade = upgrades[k];
 
-          // In summary: check if the naut own the upgrade
+          // In summary:
+          // check if the naut own the upgrade and
           // we're in the last row and the upgrade is not attached to any naut and
           // if the upgrade is used by everyone (e.g. piggy) or naut's expansion = upgrade's expansion or
           // if the upgrade is for no expansion only and the naut hasn't an expansion

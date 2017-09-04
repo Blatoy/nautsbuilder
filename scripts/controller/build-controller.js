@@ -11,6 +11,7 @@ var BuildController = new function(){
   this.onNautSelected = function(naut) {
     Build.current.setNaut(naut);
   //  Build.current.debugPrintBuild();
+    ShopView.setSkillsAndUpgrades(naut);
     ShopView.displayShop();
     ShopView.displayBuyOrder();
   };
@@ -38,6 +39,7 @@ var BuildController = new function(){
   this.onBuyOrderUpgradeMouseMove = function(e){
     // Build.(index)
   };
+  
   this.onBuyOrderUpgradeMouseUp = function(e){};
   this.importBuildFromURLData = function(data){};
 };

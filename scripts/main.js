@@ -12,7 +12,6 @@ var Main = new function() {
   var init = function(){
     scriptListLength = CONFIG.scriptList.length;
     loadedScripts = 0;
-
     includeScripts();
   };
 
@@ -21,10 +20,12 @@ var Main = new function() {
    */
   var onScriptsLoaded = function(){
     if(++loadedScripts == scriptListLength) {
+      InfoBoxView.init();
       NautController.init();
       BuildController.init();
-      InfoBoxView.init();
       ShopView.init();
+      MessageBox.init();
+      MessageBoxView.init();
     }
   };
 

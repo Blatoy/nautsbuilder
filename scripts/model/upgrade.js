@@ -1,4 +1,4 @@
-/**
+  /**
  * var Upgrade - Describes an upgrade, see the spreadsheet for more details
  * Instances of this class are stored in a Skill
  * @param  {JSONObject} upgradeAPIData The data taken from the API for a single Upgrade
@@ -7,6 +7,8 @@ var Upgrade = function(upgradeAPIData) {
   var self = this;
   var upgradeData = false;
   var steps = [];
+  var devNames = [];
+
   /**
    * var init - "Constructor" for this "class"
    * Stores naut data in the class
@@ -19,23 +21,58 @@ var Upgrade = function(upgradeAPIData) {
     }
     else {
       upgradeData = upgradeAPIData;
-      // Get upgrade stage effects
+      // Get upgrade stage effects and dev names
       for(var i = 0; i < Upgrade.MAX_STEP_AVAILABLE; ++i) {
-        if(upgradeData["step" + (i + 1)] === undefined) {
-          break;
-        }
+        if(upgradeData["step" + (i + 1)] !== undefined) {
+          var rawEffects = upgradeData["step" + (i + 1)].split(Effect.EFFECT_SEPARATOR);
+          var effects = [];
 
-        var rawEffects = upgradeData["step" + (i + 1)].split(Effect.EFFECT_SEPARATOR);
-        var effects = [];
-
-        for(var j = 0; j < rawEffects.length; ++j) {
-          if(rawEffects[j].replace(/\s/g, "") !== "") {
-            effects.push(new Effect(rawEffects[j]));
+          for(var j = 0; j < rawEffects.length; ++j) {
+            if(rawEffects[j].replace(/\s/g, "") !== "") {
+              effects.push(new Effect(rawEffects[j]));
+            }
           }
+          steps.push(effects);
         }
-        steps.push(effects);
+
+        if(upgradeData["devname" + (i + 1)] !== undefined) {
+          devNames.push(upgradeData["devname" + (i + 1)]);
+        }
       }
     }
+  };
+
+  this.toString = function() {
+    var txt = "<b>" + htmlToText(this.getName()) + "</b><br><br>";
+    txt += "<img style='vertical-align: middle;' src='" + CONFIG.path.images + "solar-icon.png'/>" + htmlToText(this.getCost());
+    txt += "";
+    for(var i = 0; i < this.getSteps().length; ++i) {
+      txt += "<br><br>Stage " + (i + 1) + "<span class='tooltip-upgrades'>";
+      for(var j = 0; j < this.getSteps(i).length; ++j) {
+        txt += "<br>- " + this.getSteps(i)[j].toString();
+      }
+      txt += "</span>";
+    }
+    txt += "<br><br>";
+    txt += "<span class='small-text'>" + htmlToText(this.getDescription()) + "</span>";
+
+    // TODO: Press ctrl + click to copy dev name
+    if(Setting.get("displayDevNames")) {
+      var devNames = this.getDevName();
+      if(devNames.length != 0) {
+        txt += "<hr><span class='small-text'><b>Dev name</b>";
+        for(var i = 0; i < devNames.length; ++i) {
+          txt += "<br>Stage " + (i + 1) + ": " + htmlToText(devNames[i]);
+        }
+
+        txt += "</span>";
+      }
+      else {
+        txt += "<hr><span class='small-text'><b>Dev name missing for this upgrade.</b>";
+      }
+    }
+
+    return txt;
   };
 
   /**
@@ -63,6 +100,16 @@ var Upgrade = function(upgradeAPIData) {
    */
   this.getName = function(){
     return upgradeData.name;
+  };
+
+  // TODO: Function desc
+  this.getDevName = function(index){
+    if(index === undefined) {
+      return devNames;
+    }
+    else {
+      return devNames[index];
+    }
   };
 
   /**

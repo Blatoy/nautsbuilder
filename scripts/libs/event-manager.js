@@ -1,3 +1,4 @@
+// TODO: Delete this class
 var EventManager = new function() {
   /**
    * Add an event

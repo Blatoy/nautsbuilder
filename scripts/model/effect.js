@@ -28,6 +28,16 @@ var Effect = function(effectData) {
     }
   };
 
+  this.toString = function() {
+    var displayValue = value;
+    var displayUnit = (unit == "none" ? "" : unit);
+    if(Array.isArray(displayValue)) {
+      displayValue = displayValue.join(displayUnit + " > ");
+    }
+
+    return htmlToText(key + ": " + displayValue + "" + displayUnit);
+  };
+
   /**
    * this.getUnit - getter
    *

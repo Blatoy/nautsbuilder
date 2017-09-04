@@ -15,6 +15,23 @@ body {
   background-repeat: no-repeat;
 }
 
+label {
+  display: inline-block;
+  min-width: 300px;
+  color: #ccc;
+}
+
+input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -1px;
+  *overflow: hidden;
+}
+
 input {
   color: #666;
   background-color: rgb(5, 5, 5);
@@ -39,10 +56,21 @@ a:hover {
     color:#256C9B;
 }
 
+.default-font {
+  font-family: "Verdana", "sans-serif";
+  color: #eee;
+  font-size: 1.1em;
+}
+
 .small-text {
   color: #00A0A0;
   text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
   font-size: 0.75em;
+}
+
+#contributors {
+  max-height: 200px;
+  overflow: auto;
 }
 
 #settings-container {
@@ -77,6 +105,28 @@ a:hover {
   border-image: url("/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   z-index: 999;
+}
+
+#message-box-background {
+  position: fixed;
+  z-index: 999;
+  top: 0; bottom: 0; left: 0; right: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+#message-box {
+  position: fixed;
+  z-index: 1000;
+  border: 2px solid transparent;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-radius: 2px;
+  width: auto;
+  top: 30%;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: default;
 }
 
 #loading {
@@ -157,9 +207,9 @@ a:hover {
 #naut-art {
   height: 100%;
   max-width: 100%;
-  -webkit-animation:float 2.8s linear infinite;
-  -moz-animation:float 2.8s linear infinite;
-  animation:float 2.8s linear infinite;
+  -webkit-animation:float 2.8s ease-in-out infinite;
+  -moz-animation:float 2.8s ease-in-out infinite;
+  animation:float 2.8s ease-in-out infinite;
 }
 
 .naut-icon {
@@ -311,6 +361,11 @@ hr {
   transition: all 0.5s ease;
 }
 
+.panel-disabled {
+  background-color: rgba(30, 30, 30, 0.5)!important;
+  height: 25px!important;
+}
+
 #naut-shop {
   display: none;
   z-index: 101;
@@ -373,7 +428,7 @@ hr {
   opacity: 0.5;
 }
 /*** Tooltips ***/
-#tooltip {
+.tooltip {
   display: none;
   max-width: 20%;
   font-family: "Verdana", "sans-serif";
@@ -385,7 +440,7 @@ hr {
   left: 50px;
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid transparent;
-  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
 }
 
 .tooltip-upgrades {
@@ -432,7 +487,7 @@ hr {
 }
 
 .shop-item-skill, .shop-item-upgrade {
-  width: 100%;
+  width: 90%;
 }
 
 .shop-item-upgrade {
@@ -452,4 +507,77 @@ hr {
 .locked {
   cursor: default!important;
   filter: brightness(0.7)!important;
+}
+
+input[type="range"] {
+    margin: auto;
+    -webkit-appearance: none;
+    position: relative;
+    overflow: hidden;
+    height: 10px;
+    width: 200px;
+    cursor: pointer;
+    border-radius: 0; /* iOS */
+}
+
+::-webkit-slider-runnable-track {
+    background: #222;
+}
+
+/*
+ * 1. Set to 0 height and width, and remove border for a slider without a thumb
+ */
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; /* 1 */
+    height: 40px; /* 1 */
+    background: #fff;
+    box-shadow: -100vw 0 0 100vw #37A1E8;
+    border: 2px solid #999; /* 1 */
+}
+
+::-moz-range-track {
+    height: 40px;
+    background: #222;
+}
+
+::-moz-range-thumb {
+    background: #fff;
+    height: 40px;
+    width: 20px;
+    border: 3px solid #999;
+    border-radius: 0 !important;
+    box-shadow: -100vw 0 0 100vw dodgerblue;
+    box-sizing: border-box;
+}
+
+::-ms-fill-lower {
+    background: dodgerblue;
+}
+
+::-ms-thumb {
+    background: #fff;
+    border: 2px solid #999;
+    height: 40px;
+    width: 20px;
+    box-sizing: border-box;
+}
+
+::-ms-ticks-after {
+    display: none;
+}
+
+::-ms-ticks-before {
+    display: none;
+}
+
+::-ms-track {
+    background: #ddd;
+    color: transparent;
+    height: 40px;
+    border: none;
+}
+
+::-ms-tooltip {
+    display: none;
 }
