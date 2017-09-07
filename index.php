@@ -33,7 +33,7 @@
 
         <!-- Buy order -->
         <div id="build-order" style="display: none;">
-          <div style="margin: 5px;"><span id="buy-order-text">Buy order</span><span style="float: right;" class="small-text"><a onclick="Setting.toggleBuyOrder()" id="buy-order-status" href="#">Disable</a></span></div>
+          <div style="margin: 5px;"><span id="buy-order-text">Buy order <span class='small-text'>(Drag to reorder)</span></span><span style="float: right;" class="small-text"><a onclick="Setting.toggleBuyOrder()" id="buy-order-status" href="#">Disable</a></span></div>
           <div id="build-order-content"></div>
         </div>
 

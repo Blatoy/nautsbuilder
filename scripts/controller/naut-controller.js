@@ -4,9 +4,18 @@
 */
 var NautController = new function() {
   var self = this;
-  var apiToLoadCount = 4  ; // Used to track when everything is loaded.
+  var apiLoaded = false; // Prevent APIs to be loaded twice
+  var apiToLoadCount = 6; // Used to track when everything is loaded.
   // TODO: Move misc API somewhere else
-  this.API = {CHARACTERS: "nautsbuilder-get-characters", UPGRADES: "nautsbuilder-get-upgrades", SKILLS: "nautsbuilder-get-skills", CONTRIBUTORS: "nautsbuilder-get-contributors"};
+  this.API = {
+    CHARACTERS: "nautsbuilder-get-characters",
+    UPGRADES: "nautsbuilder-get-upgrades",
+    SKILLS: "nautsbuilder-get-skills",
+    CONTRIBUTORS: "nautsbuilder-get-contributors",
+    CONFIG: "nautsbuilder-get-config",
+    EFFECTS: "nautsbuilder-get-effects"
+  };
+
   this.nautSelected = false;
   this.canHoverNautSelection = true;
 
@@ -14,9 +23,20 @@ var NautController = new function() {
    * this.init - "Constructor" for this "class" should be called when all the scripts are ready to be used
    */
   this.init = function() {
-    for(var k in this.API) {
-      loadAPI(this.API[k]);
-    }
+    var cacheVersion = localStorage.getItem("cacheVersion");
+
+    // Force using cache if the website cannot be reached
+    timeout = setTimeout(loadAllAPIs, 3000);
+    // Check if the cache is up to date
+    queryAPI("nautsbuilder-get-version", function(data, textStatus) {
+      clearTimeout(timeout);
+      if(parseInt(cacheVersion) != parseInt(data)) {
+        console.log("Cache outdated! CV: " + cacheVersion + " NV:" + data + " - Local cache deleted!");
+        self.clearAPICache();
+      }
+      localStorage.setItem("cacheVersion", data);
+      loadAllAPIs();
+    });
 
     $("#naut-list").on("mouseleave", function(){
       self.canHoverNautSelection = true;
@@ -32,6 +52,25 @@ var NautController = new function() {
     });
   };
 
+  // TODO: Desc
+  var loadAllAPIs = function() {
+    if(apiLoaded) {
+      return;
+    }
+
+    apiLoaded = true;
+    for(var k in self.API) {
+      loadAPI(self.API[k]);
+    }
+  };
+
+  // TODO: Desc
+  this.clearAPICache = function() {
+    for(var k in self.API) {
+      localStorage.removeItem(self.API[k]);
+    }
+  };
+
   /**
    * var loadAPI - Query the specified API if no local cache is found
    */
@@ -43,7 +82,7 @@ var NautController = new function() {
         console.log("Cache disable in settings");
       }
       else {
-        console.log("No cache found for " + API);
+        console.log("No cache found for " + API + ". Loading data from server.");
       }
 
       queryAPI(API, function(data, textStatus){

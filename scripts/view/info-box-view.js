@@ -4,9 +4,9 @@ var InfoBoxView = new function() {
   this.init = function() {
     infoBoxes = {
       about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by <a onclick='MessageBoxView.displayContributors()' href='#'>the community.</a><br>" +
-        "Made by <a href='steamcommunity.com/id/blatoy/'>Blatoy</a>, inspired by <a href='http://nautsbuilder.com'>Nautsbuilder</a><br>" +
-        "If you want to support this tool consider making a small <a href='/donation'>donation!</a><hr>" +
-        "<a href='#'>Report errors</a> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
+        "Nautsbuilder V2 made by <a href='steamcommunity.com/id/blatoy/'>Blatoy</a>.<br>" +
+        "If you want to support this tool consider making a small <a href='/donation'>donation</a> to help me pay the server!<hr>" +
+        "<a href='#' onclick='MessageBoxView.displayErrorReport()'>Report errors</a> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
         "<a href='https://discord.gg/GsE29w7'>Discord</a>", "about"),
       skills: new InfoBox("", "skill-description"),

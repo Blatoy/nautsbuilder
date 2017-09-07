@@ -16,6 +16,7 @@ body {
 }
 
 label {
+  vertical-align: top;
   display: inline-block;
   min-width: 300px;
   color: #ccc;
@@ -37,6 +38,26 @@ input {
   background-color: rgb(5, 5, 5);
   border: 1px solid transparent;
   border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+}
+
+input[type="button"] {
+  cursor: pointer;
+  float: right;
+  color: #ddd;
+  padding: 7px;
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: rgb(20, 30, 40);
+  border-radius: 4px;
+  font-family: ethnocentric;
+  border: 1px solid transparent;
+  border-image: url("/nautsbuilder/images/border-full.png") 4;
+  text-shadow: 2px 2px black;
+}
+
+input[type="button"]:hover {
+  background-color: rgb(10, 20, 30);
+  text-shadow: none;
 }
 
 a {
@@ -305,6 +326,13 @@ hr {
   font-size: 1em;
 }
 
+#moving-upgrade {
+  position: fixed;
+  width: 50px;
+  z-index: 10000;
+  opacity: 0.5;
+}
+
 .info-box {
   position: fixed;
   font-family: "Verdana", "sans-serif";
@@ -507,6 +535,10 @@ hr {
 .locked {
   cursor: default!important;
   filter: brightness(0.7)!important;
+}
+
+.locked-big {
+  margin-bottom: 17px;
 }
 
 input[type="range"] {

@@ -11,11 +11,12 @@
 var Build = function(URLData) {
   /**
   * @var purchasedUpgrades - Stores a 2D array of the current stage of an upgrade ([row][col])
-  * @var buildOrder - Stores a list of upgrade index (to support old nautsbuilder format)
+  * @var buildOrder - Stores a list of upgrade index (to support old nautsbuilder format, includes skills)
   * @var naut - The naut of this build
   */
   var buildOrder = [], naut = {};
   var errors = [];
+  var naut = false;
   var purchasedUpgrades = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
   var self = this;
 
@@ -84,16 +85,85 @@ var Build = function(URLData) {
   * @param  {number} row The row where the upgrade is located
   * @param  {number} col The row where the upgrade is located
   * @param  {number} stage Optional. If not specified it will increment the stage by 1 and reset it if > maxStage
+  * @return  {number} The stage after setting it
   */
   this.setUpgradeStage = function(row, col, stage){
     if(stage !== undefined) {
       // Note: we actually don't check for the maximum stage if the stage is set manually
       purchasedUpgrades[row][col] = stage;
+      this.addUpgradeToBuildOrder(row, col + 1); // + 1 because in the old format you can buy skills
+      return stage;
     }
     else {
       var maxUpgradeStage = naut.getSkills()[row].getUpgrades()[col].getStageCount();
+
       purchasedUpgrades[row][col] = purchasedUpgrades[row][col] + 1 > maxUpgradeStage ? 0 : purchasedUpgrades[row][col] + 1;
+      if(purchasedUpgrades[row][col] == 0) {
+        this.removeUpgradeFromBuildOrder(row, col + 1);
+      }
+      else {
+        this.addUpgradeToBuildOrder(row, col + 1);
+      }
+      return purchasedUpgrades[row][col];
     }
+  };
+
+  // TODO: Desc
+  this.getBuildOrder = function() {
+    return buildOrder;
+  };
+
+  // TODO: Desc
+  this.getUpgradeFromIndex = function(index) {
+    var rc = Build.getRowColFromIndex(index - 1);
+    var skill = naut.getSkills(rc.row);
+
+    return skill.getUpgrades(rc.col);
+  };
+
+  // TODO: Desc
+  this.addUpgradeToBuildOrder = function(indexOrRow, col) {
+    if(col !== undefined) {
+      buildOrder.push(Build.getIndexFromRowCol(indexOrRow, col));
+    }
+    else {
+      buildOrder.push(indexOrRow);
+    }
+  };
+
+  // TODO: Desc
+  this.removeUpgradeFromBuildOrder = function(indexOrRow, col) {
+    var index = indexOrRow;
+    if(col !== undefined) {
+      index = Build.getIndexFromRowCol(indexOrRow, col);
+    }
+    buildOrder = buildOrder.filter(function(a){ return a != index; });
+  };
+
+  // TODO: Desc
+  this.removeItemFromBuildOrder = function(index) {
+    buildOrder.splice(index, 1);
+  };
+
+  // TODO: Desc
+  this.addUpgradeToBuildOrderAtIndex = function(upgrade, index) {
+    buildOrder.splice(index, 0, upgrade);
+  };
+
+  // TODO: Desc
+  this.getRowUpgradeCount = function(row) {
+    var count = 0;
+    for(var i = 0; i < purchasedUpgrades[row].length; ++i) {
+      if(purchasedUpgrades[row][i] != 0) {
+        ++count;
+      }
+    }
+    return count;
+  };
+
+  // TODO: Desc
+  this.getUpgradeStage = function(row, col) {
+    return purchasedUpgrades[row][col];
   };
 
   /**
@@ -273,7 +343,6 @@ var Build = function(URLData) {
     }
 
     if(dpsAttackSpeed !== 0 && dpsDamage !== 0) {
-      console.log("...");
       var dps = [];
       if(Array.isArray(dpsMultiplier)) {
          // TODO: Handle it properly
@@ -305,11 +374,22 @@ var Build = function(URLData) {
   };
 
   this.setNaut = function(character){
-      naut = character;
+    naut = character;
   };
 
   this.generateRandom = function(){};
-  this.setBuildOrderIndex = function(initialIndex, finalIndex){};
+
+  // TODO: Desc
+  this.swapBuildOrderElement = function(initialIndex, finalIndex){
+    var tmp = buildOrder[initialIndex];
+    buildOrder[initialIndex] = buildOrder[finalIndex];
+    buildOrder[finalIndex] = tmp;
+  };
+
+  // TODO: Desc
+  this.moveBuildOrderElement = function(itemIndex, posIndex) {
+    buildOrder.splice(posIndex, 0, buildOrder[itemIndex]);
+  };
 
   /**
   * this.toString - Generate something like "Nibbs/1001000100200010010001000000/3" format: "nautname/purchasedUpgrades/build-order"
@@ -364,4 +444,14 @@ var Build = function(URLData) {
       $("#debug").append(txt[i] + "<br>");
     }
   };
+};
+
+// TODO: Desc
+Build.getIndexFromRowCol = function(row, col) {
+  return 7 * row + col;
+};
+
+// TODO: Desc
+Build.getRowColFromIndex = function(index) {
+  return {col: index % 7, row: Math.floor(index / 7)};
 };

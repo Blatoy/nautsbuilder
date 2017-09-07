@@ -6,25 +6,19 @@ var Tooltip = function(content) {
   this.visible = false;
   this.jQueryElement = undefined;
 
-  var init = function(content) {
-    self.visible = false;
+  this.show = function() {
+    this.visible = true;
     self.jQueryElement = $("<div/>");
     self.jQueryElement.html(content);
     self.jQueryElement.addClass("tooltip");
-    self.jQueryElement.hide();
+    self.jQueryElement.show();
     self.jQueryElement.appendTo("body");
-    Tooltip.list.push(self);
-  };
-
-  this.show = function() {
-    this.visible = true;
-    this.jQueryElement.show();
     Tooltip.updateList.push(this);
   };
 
   this.hide = function() {
     this.visible = false;
-    this.jQueryElement.hide();
+    this.jQueryElement.remove();
     Tooltip.updateList.splice(Tooltip.updateList.indexOf(this), 1);
   };
 
@@ -36,8 +30,6 @@ var Tooltip = function(content) {
   this.setContent = function(content) {
     this.jQueryElement.html(content);
   };
-
-  init(content);
 };
 
 Tooltip.createDefault = function(jQueryElement, content) {

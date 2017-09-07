@@ -50,7 +50,7 @@ var Setting = new function() {
   // TODO: Desc
   this.toggleBuyOrder = function(value) {
     settings.buyOrderEnabled = !settings.buyOrderEnabled;
-    ShopView.setBuyOrderStatus(settings.buyOrderEnabled); 
+    ShopView.showBuildOrderPanel(settings.buyOrderEnabled); 
   };
 
   // TODO: Desc
