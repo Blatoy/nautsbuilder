@@ -9,10 +9,6 @@
         <link rel="stylesheet" type="text/css" href="/nautsbuilder/styles/main.css">
     </head>
     <body>
-        <div id="settings-container">
-          <!--<div style="n">Game version: <span id="game-version">4.2</span></div>-->
-          <img src="http://i.imgur.com/oKZ2pjD.png"/>
-        </div>
         <!-- Nauts presentation, hidden while shop open -->
         <div id="naut-display">
           <div id="naut-name"></div>

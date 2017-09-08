@@ -8,9 +8,15 @@ var InfoBoxView = new function() {
         "If you want to support this tool consider making a small <a href='/donation'>donation</a> to help me pay the server!<hr>" +
         "<a href='#' onclick='MessageBoxView.displayErrorReport()'>Report errors</a> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
-        "<a href='https://discord.gg/GsE29w7'>Discord</a>", "about"),
+        "<a href='https://discord.gg/GsE29w7'>Discord</a>" +
+        '<div id="settings-container"><img src="http://i.imgur.com/oKZ2pjD.png"/></div>', "about"),
       skills: new InfoBox("", "skill-description"),
-      lore: new InfoBox("", "naut-description")
+      lore: new InfoBox("", "naut-description"),
+      buildInfo1: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-1"),
+      buildInfo2: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-2"),
+      buildInfo3: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-3"),
+      buildInfo4: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-4"),
+      buildSummary: new InfoBox("displayBuildSummary() error. Please retry.", "build-summary")
     };
   };
 
@@ -41,6 +47,44 @@ var InfoBoxView = new function() {
   };
 
   // TODO: Add desc
+  this.displayBuildSummary = function() {
+    for(var i = 1; i < 5; ++i) {
+      infoBoxes["buildInfo" + i].setVisibility(true, true);
+    }
+    infoBoxes.buildSummary.setVisibility(true, true);
+  };
+
+  // TODO: Add desc
+  this.hideBuildSummary = function() {
+    for(var i = 1; i < 5; ++i) {
+      infoBoxes["buildInfo" + i].setVisibility(false, true);
+    }
+    infoBoxes.buildSummary.setVisibility(false, true);
+  };
+
+  // TODO: Add desc
+  this.setBuildSummaryContent = function() {
+    for(var i = 0; i < 4; ++i) {
+      infoBoxes["buildInfo" + (i + 1)].setContent("");
+      var effects = Build.current.getRowEffects(i);
+      var content = "";
+
+      for(var k in effects) {
+        content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + "<br>";
+      }
+
+      content += "<span class='build-summary-cost'>" + Build.current.getRowPrice(i) + "<img src='" + CONFIG.path.images + "solar-icon.png'></span>"
+      infoBoxes["buildInfo" + (i + 1)].setContent(content);
+    }
+
+    infoBoxes.buildSummary.setContent("Total cost: <span class='colored-text'>" + Build.current.getPrice() + "</span> " +
+      "<img style='vertical-align: top;' src='" + CONFIG.path.images + "solar-icon.png" + "'></img>" +
+      "<hr>Forum link: <input type='text' value='[build]" + Build.current.toString() + "[/build]'>" +
+      "<hr><a href='#'>Export as image</a> - <a href='#'>Random build</a>"
+    );
+  };
+
+  // TODO: Add desc
   this.hideSkills = function() {
     infoBoxes.skills.setVisibility(false, true);
   };
@@ -60,16 +104,6 @@ var InfoBoxView = new function() {
     this.hideLore();
     this.hideSkills();
     this.displayAbout();
-  };
-
-  // TODO: Add desc
-  this.displayBuildSummary = function() {
-
-  };
-
-  // TODO: Add desc
-  this.displaySkillSummary = function() {
-
   };
 
   this.onLoaded = function() {

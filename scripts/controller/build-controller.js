@@ -17,6 +17,7 @@ var BuildController = new function(){
   this.onMouseMove = function(e) {
     mousePos.x = e.pageX;
     mousePos.y = e.pageY;
+
     ShopView.setSelectedUpgradePosition(mousePos.x, mousePos.y);
     self.handleBuildOrderReorder();
   };
@@ -74,13 +75,17 @@ var BuildController = new function(){
     Build.current.setNaut(naut);
   //  Build.current.debugPrintBuild();
     ShopView.displaySkillsAndUpgrades(naut);
+    ShopView.updateBuildOrderDisplay();
     ShopView.displayShop();
     ShopView.displayBuyOrder();
+    InfoBoxView.setBuildSummaryContent();
   };
 
   // TODO: Desc
   this.onUpgradeClick = function(row, col){
-    return Build.current.setUpgradeStage(row, col);
+    var stage = Build.current.setUpgradeStage(row, col);
+    InfoBoxView.setBuildSummaryContent();
+    return stage;
   };
 
   this.importBuildFromURLData = function(data){};

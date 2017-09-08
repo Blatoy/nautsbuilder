@@ -87,6 +87,7 @@ var ShopView = new function() {
       // Skill container
       $("<div>")
         .addClass("shop-skill-container")
+        .on('dragstart', function(e) { e.preventDefault(); })
         .append(skillImageElement)
         .append($("<span>")
           .addClass("shop-item-price")
@@ -104,7 +105,6 @@ var ShopView = new function() {
           var upgradeImageElement = $("<img>")
             .attr("src", upgrade.getIcon())
             .data("default-url", upgrade.getIcon())
-            .on('dragstart', function(e) { e.preventDefault(); })
             .addClass("shop-item-upgrade");
 
           // Upgrade container
@@ -119,7 +119,6 @@ var ShopView = new function() {
                 // Solar icon
                 $("<img>")
                 .addClass("shop-item-image")
-                .on('dragstart', function(e) { e.preventDefault(); })
                 .attr("src", CONFIG.path.images + "/" + "solar-icon.png")
               )
             )
@@ -171,16 +170,18 @@ var ShopView = new function() {
   // TODO: Desc
   this.hideBuyOrder = function() {
     $("#build-order").css("left", (-$("#build-order").outerWidth() - 200) + "px");
+    InfoBoxView.hideBuildSummary();
   };
 
   // TODO: Desc
   this.displayShop = function() {
-   $("#naut-shop").css("left", "0px");
+    InfoBoxView.displayBuildSummary();
+   $("#naut-shop").css("left", "-3px");
   };
 
   // TODO: Desc
   this.displayBuyOrder = function() {
-   $("#build-order").css("left", "0px");
+   $("#build-order").css("left", "-3px");
   };
 
   // TODO: Desc
@@ -247,8 +248,7 @@ var ShopView = new function() {
             tooltip = Tooltip.createDefault(img, upgrade.toString());
           }
 
-          img
-            .attr("src", upgrade.getIcon())
+          img.attr("src", upgrade.getIcon())
             .addClass("shop-item-upgrade purchased")
             .on("mousedown", function(){
                 if(tempUpgradeIndex === undefined) {
@@ -256,7 +256,6 @@ var ShopView = new function() {
                 }
                 BuildController.onBuyOrderUpgradeMouseDown(upgrade, this, buildOrder[i], i);
             });
-
 
           // Add it to the buy order
           $("#build-order-content").append($("<div>").addClass("shop-item-container").append(img));

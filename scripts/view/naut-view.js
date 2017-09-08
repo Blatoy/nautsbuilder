@@ -74,6 +74,7 @@ var NautView = new function() {
   // TODO: Function desc
   this.displayArt = function(naut) {
     $("#naut-art").show();
+    $(document.body).css("background-image", "url(/nautsbuilder/images/bg-light.jpg)");
     $("#naut-art").attr("src", naut.getSplashArt());
   };
 
@@ -91,6 +92,7 @@ var NautView = new function() {
 
   // TODO: Function desc
   this.hideArt = function() {
+    $(document.body).css("background-image", "url(/nautsbuilder/images/bg.jpg)");
     $("#naut-art").hide();
   };
 };

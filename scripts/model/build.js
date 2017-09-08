@@ -17,7 +17,7 @@ var Build = function(URLData) {
   var buildOrder = [], naut = {};
   var errors = [];
   var naut = false;
-  var purchasedUpgrades = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+  var purchasedUpgrades = false;
   var self = this;
 
   /**
@@ -181,6 +181,46 @@ var Build = function(URLData) {
     }
 
     return price;
+  };
+
+  // TODO: Desc
+  this.getPrice = function() {
+    var price = 0;
+    for(var i = 0; i < 4; ++i) {
+      price += this.getRowPrice(i);
+    }
+    return price;
+  };
+
+  /**
+  * this.toString - Generate something like "Nibbs/1001000100200010010001000000/3" format: "nautname/purchasedUpgrades/build-order"
+  *
+  * @returns  {String} something like "Nibbs/1001000100200010010001000000/3" format: "nautname/purchasedUpgrades/build-order"
+  */
+  this.toString = function() {
+    // Naut name
+    var str = getCleanString(naut.getName());
+    str += "/";
+
+    // Item list
+    for(var i = 0; i < purchasedUpgrades.length; ++i) {
+      for(var j = 0; j < purchasedUpgrades[i].length; ++j) {
+        // We keep a retro-compatibility with the old nautsbuilder format since the skill is also in the URL
+        if(j == 0) {
+          str += "1";
+        }
+        str += purchasedUpgrades[i][j] + "";
+      }
+    }
+
+    // Buy order
+    str += "/";
+    for(var i = 0; i < buildOrder.length; ++i) {
+      str += buildOrder[i] + "-";
+    }
+    str = str.substring(0, str.length - 1); // Remove last "-"
+
+    return str;
   };
 
   /**
@@ -367,16 +407,25 @@ var Build = function(URLData) {
         dps = dpsAttackSpeed / 60 * dpsDamage * dpsMultiplier;
       }
 
-      rowEffects.DPS = {unit: "", value: dps, coeff: 1};
+      rowEffects.DPS = {unit: "", value: round(dps), coeff: 1};
     }
-
     return rowEffects;
   };
 
+  // TODO: Desc
+  this.reset = function() {
+    buildOrder = [];
+    naut = false;
+    purchasedUpgrades = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+  };
+
+  // TODO: Desc
   this.setNaut = function(character){
+    this.reset();
     naut = character;
   };
 
+  // TODO: Desc
   this.generateRandom = function(){};
 
   // TODO: Desc
@@ -390,13 +439,6 @@ var Build = function(URLData) {
   this.moveBuildOrderElement = function(itemIndex, posIndex) {
     buildOrder.splice(posIndex, 0, buildOrder[itemIndex]);
   };
-
-  /**
-  * this.toString - Generate something like "Nibbs/1001000100200010010001000000/3" format: "nautname/purchasedUpgrades/build-order"
-  *
-  * @returns  {object} {buildOrder: [], purchasedUpgrades: [[], [], [], []], nautName: "Nibbs"}
-  */
-  this.toString = function(){};
 
   init(URLData);
 

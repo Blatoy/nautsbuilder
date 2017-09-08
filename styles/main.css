@@ -8,11 +8,17 @@ body {
   color: white;
   margin: 0;
 
+  background: url("/nautsbuilder/images/bg.jpg") no-repeat center center fixed;
   background-color: black;
-  background-image: url("/nautsbuilder/images/background.jpg");
-  background-position: center top;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;
+  -webkit-transition: background 0.3s ease;
+  -moz-transition: background 0.3s ease;
+  -o-transition: background 0.3s ease;
+  -ms-transition: background 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 label {
@@ -83,10 +89,14 @@ a:hover {
   font-size: 1.1em;
 }
 
-.small-text {
+.small-text, .colored-text, .info-box .effect-value-colored {
   color: #00A0A0;
   text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
   font-size: 0.75em;
+}
+
+.colored-text, .info-box .effect-value-colored {
+  font-size: 1em;
 }
 
 #contributors {
@@ -95,8 +105,11 @@ a:hover {
 }
 
 #settings-container {
-  float: right;
-  width: calc(25% - 20px);
+/*  float: right;
+  width: calc(25% - 20px);*/
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 
 #settings-container div {
@@ -108,7 +121,8 @@ a:hover {
 #settings-container img {
   float: right;
   vertical-align: middle;
-  margin: 5px;
+  margin-top: calc(1% + 5px);
+  margin-right: 3px;
   cursor: pointer;
 }
 
@@ -210,11 +224,12 @@ a:hover {
 
 /* Weh a naut has been clicked */
 .naut-list-right {
-  top: 40px;
-  left: 75%;
+  top: calc(1% - 5px);
+  margin: 0;
+  padding: 0;
+  left: calc(74.53125%);
+  text-align: center;
   right: 0;
-
-  text-align: right;
 }
 
 #naut-name {
@@ -226,8 +241,8 @@ a:hover {
 }
 
 #naut-art {
-  height: 100%;
-  max-width: 100%;
+  height: 89%;
+
   -webkit-animation:float 2.8s ease-in-out infinite;
   -moz-animation:float 2.8s ease-in-out infinite;
   animation:float 2.8s ease-in-out infinite;
@@ -289,7 +304,7 @@ a:hover {
   left: 0;
   right: 0;
   height: 50%;
-  bottom: 22%;
+  bottom: 25%;
   text-align: center;
 }
 
@@ -342,19 +357,33 @@ hr {
   padding: 9px;
 }
 
-#build-info-1, #build-info-2, #build-info-3, #build-info-4, #about {
+.build-summary-cost {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: inline-block;
+}
+
+.build-summary-cost img {
+  vertical-align: -4px;
+  margin-left: 5px;
+}
+
+#build-info-1, #build-info-2, #build-info-3, #build-info-4, #about, #build-summary {
   position: fixed;
   width: 22%;
   height: 15%;
   overflow: auto;
 }
 
-#build-info-1, #build-info-2, #build-info-3, #build-info-4 {
+#build-info-1, #build-info-2, #build-info-3, #build-info-4, #build-summary {
   left: calc(50% + 15px);
   font-size: 0.8em;
 }
 
 #about {
+  height: 20%;
+  width: calc(24.46875% - 15px);
   bottom: 0;
   right: 0px;
   color: #00A0A0;
@@ -362,23 +391,24 @@ hr {
 }
 
 #build-info-1 {
-  top: 2%;
+  top: 1%;
 }
 
 #build-info-2 {
-  top: 22%;
+  top: 20%;
 }
 
 #build-info-3 {
-  top: 42%;
+  top: 39%;
 }
 
 #build-info-4 {
-  top: 62%;
+  top: 58%;
 }
 
 #build-summary {
-  top: 82%;
+  bottom: 0;
+  height: 20%;
 }
 
 /*** Shop ***/
@@ -401,8 +431,8 @@ hr {
   position: fixed;
   left: 0;
   top: 0;
-  width: 50%;
-  height: 80%;
+  width: calc(50% + 3px);
+  height: 75%;
   border-image: url("/nautsbuilder/images/border-shop.png") 5 round;
   overflow: hidden;
 }
@@ -413,11 +443,11 @@ hr {
   height: 25%;
   border-top: 2px solid black;
   background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  overflow: auto;
 }
 
 #shop-row-1, #shop-row-3 {
   background-color: rgba(0, 31, 51, 0.8);
-
 }
 
 #shop-row-2, #shop-row-4 {
@@ -429,9 +459,9 @@ hr {
   z-index: 102;
   position: fixed;
   left: 0;
-  top: calc(80% + 20px);
-  height: 20%;
-  width: 50%;
+  top: calc(75% + 15px);
+  height: calc(25% - 15px);
+  width: calc(50% + 3px);
   background-color: rgba(0, 16, 29, 0.8);
   border: 3px solid transparent;
   border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
@@ -447,7 +477,16 @@ hr {
 
 #build-order-content .shop-item-container {
   width: 7%;
+  margin-top: 5px;
+  margin-bottom: 5px;
   vertical-align: middle;
+}
+
+#build-order-content {
+  padding-top: 5px;
+  max-height: calc(100% - 40px);
+  overflow: auto;
+  margin-left: 5px;
 }
 
 #build-order-content .selected {
@@ -484,6 +523,7 @@ hr {
   width: 12%;
   display: inline-block;
   position: relative;
+  overflow: auto;
 }
 
 .shop-item-price, .shop-item-stage {
@@ -507,7 +547,9 @@ hr {
 
 .shop-item-stage {
   top: 5%;
-  left: calc(25% + 4px);
+  left: 0%;
+  width: 100%;
+  text-align: center;
 }
 
 .shop-item-price {

@@ -136,6 +136,13 @@ function getNumberInfo(str){
   }
 }
 
+// Source: https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+function capitalizeFirstLetter(string) {
+  if(string === undefined)
+    return;
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function round(number) {
   return Math.round(number * 100) / 100;
 }

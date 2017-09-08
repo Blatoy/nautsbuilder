@@ -10,8 +10,8 @@ var MessageBoxView = new function() {
         title: "Settings",
         content:
         "<label>Team level: <span style='color: white;' id='team-level-label'>1</span></label><input oninput='Setting.setTeamLevel(this.value)' id='team-level' type='range' min='1' max='20' value='1' step='1'><hr>" +
-        Setting.getSettingCheckbox("Display dev names*", "displayDevNames") + "<hr>" +
-        Setting.getSettingCheckbox("Disable local caching*", "disableCache") + "<hr>" +
+        Setting.getSettingCheckbox("Display dev names*", "displayDevNames", "setting-dev-name") + "<hr>" +
+        Setting.getSettingCheckbox("Disable local caching*", "disableCache", "setting-local-cache") + "<hr>" +
         "<label>Clear local cache</label><a href='#' onclick='localStorage.clear(); location.reload();'>Clear</a><br>" +
         "<span class='default-font'><hr>*You must <a href=''>refresh the page</a> to apply these settings</span>"},
       contributors: {
@@ -45,6 +45,8 @@ var MessageBoxView = new function() {
     MessageBox.show(messageBoxes.settings.title, messageBoxes.settings.content);
     $("#team-level-label").text(Setting.get("teamLevel"));
     $("#team-level").val(Setting.get("teamLevel"));
+    $("#setting-dev-name").attr("checked", Setting.get("displayDevNames"));
+    $("#setting-local-cache").attr("checked", Setting.get("disableCache"));
   };
 
   this.displayErrorReport = function() {

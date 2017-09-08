@@ -28,14 +28,9 @@ var Effect = function(effectData) {
     }
   };
 
+  // TODO: Desc
   this.toString = function() {
-    var displayValue = value;
-    var displayUnit = (unit == "none" ? "" : unit);
-    if(Array.isArray(displayValue)) {
-      displayValue = displayValue.join(displayUnit + " > ");
-    }
-
-    return htmlToText(key + ": " + displayValue + "" + displayUnit);
+    return Effect.toString({unit: unit, value: value, key: key});
   };
 
   /**
@@ -177,6 +172,18 @@ Effect.parseString = function(effectData) {
     }
   }
   return {unit: unit, key: key, value: value, type: type};
+};
+
+// TODO: Desc
+Effect.toString = function(objectEffect) {
+  var displayValue = objectEffect.value;
+  var displayUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
+
+  if(Array.isArray(displayValue)) {
+    displayValue = displayValue.join(displayUnit + " > ");
+  }
+
+  return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayValue) + htmlToText(displayUnit) + "</span>";
 };
 
 Effect.EFFECT_SEPARATOR = ";";

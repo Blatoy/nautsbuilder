@@ -3,6 +3,7 @@
  */
 var Tooltip = function(content) {
   var self = this;
+
   this.visible = false;
   this.jQueryElement = undefined;
 
@@ -13,6 +14,8 @@ var Tooltip = function(content) {
     self.jQueryElement.addClass("tooltip");
     self.jQueryElement.show();
     self.jQueryElement.appendTo("body");
+    // NB: This is a workaround because sometimes onmouseleave is called with no reason and I didn't find another way to fix it...
+    self.setPosition(MainView.mousePos.x, MainView.mousePos.y);
     Tooltip.updateList.push(this);
   };
 
@@ -23,8 +26,8 @@ var Tooltip = function(content) {
   };
 
   this.setPosition = function(x, y) {
-    this.jQueryElement.css("left", x + "px");
-    this.jQueryElement.css("top",  y + "px");
+    this.jQueryElement.css("left", Math.min(x + Tooltip.offset.x, $(window).width() - this.jQueryElement.outerWidth()) + "px");
+    this.jQueryElement.css("top",  Math.min((y + Tooltip.offset.y), $(window).height() - this.jQueryElement.outerHeight()) + "px");
   };
 
   this.setContent = function(content) {
@@ -36,6 +39,7 @@ Tooltip.createDefault = function(jQueryElement, content) {
   var t = new Tooltip(content);
   jQueryElement.on("mouseenter", function(){t.show();});
   jQueryElement.on("mouseleave", function(){t.hide();});
+
   return t;
 };
 
@@ -48,8 +52,6 @@ Tooltip.onMouseMove = function(e){
   var y = e.pageY || e.clientY;
 
   for(var i = 0; i < Tooltip.updateList.length; ++i) {
-    var tooltip = Tooltip.updateList[i];
-    tooltip.setPosition(Math.min(x + Tooltip.offset.x, $(window).width() - tooltip.jQueryElement.outerWidth()),
-                        Math.min((y + Tooltip.offset.y), $(window).height() - tooltip.jQueryElement.outerHeight()));
+    Tooltip.updateList[i].setPosition(x, y);
   }
 };

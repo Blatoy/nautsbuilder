@@ -32,11 +32,10 @@ var Setting = new function() {
   };
 
   // TODO: Desc
-  this.getSettingCheckbox = function(label, key) {
-    var randomId = Math.random();
+  this.getSettingCheckbox = function(label, key, id) {
     var checked = this.get(key) ? "checked" : "";
-    return "<label for='" + randomId + "'>" + label + "</label>" +
-            " <input id='" + randomId + "' onclick='Setting.set(\"" + key + "\", this.checked)' type='checkbox' " + checked + ">";
+    return "<label for='" + id + "'>" + label + "</label>" +
+            " <input id='" + id + "' onclick='Setting.set(\"" + key + "\", this.checked)' type='checkbox' " + checked + ">";
   };
 
   this.setTeamLevel = function(value) {
@@ -50,7 +49,7 @@ var Setting = new function() {
   // TODO: Desc
   this.toggleBuyOrder = function(value) {
     settings.buyOrderEnabled = !settings.buyOrderEnabled;
-    ShopView.showBuildOrderPanel(settings.buyOrderEnabled); 
+    ShopView.showBuildOrderPanel(settings.buyOrderEnabled);
   };
 
   // TODO: Desc
