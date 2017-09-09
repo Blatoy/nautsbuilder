@@ -1,4 +1,19 @@
 /**
+<<<<<<< HEAD
+ * Include all scripts required in the app
+ */
+var Main = new function() {
+  var scriptListLength;
+  var loadedScripts;
+  var self = this;
+
+  /**
+   * Load scripts
+   */
+  var init = function(){
+    scriptListLength = CONFIG.scriptList.length;
+    loadedScripts = 0;
+=======
  * Load all the scripts and all the styles and instanciate everything
  */
 var Main = new function(){
@@ -12,10 +27,24 @@ var Main = new function(){
    */
   this.init = function(){
     includeStyles();
+>>>>>>> master
     includeScripts();
   };
 
   /**
+<<<<<<< HEAD
+   * Init the main controller
+   */
+  var onScriptsLoaded = function(){
+    if(++loadedScripts == scriptListLength) {
+      InfoBoxView.init();
+      NautController.init();
+      BuildController.init();
+      ShopView.init();
+      MessageBox.init();
+      MessageBoxView.init();
+    }
+=======
    * Instanciate and init classes
    */
   var onScriptsLoaded = function(){
@@ -23,12 +52,17 @@ var Main = new function(){
     UIManager.init();
     NautsBuilder.init();
     addEventListner();
+>>>>>>> master
   };
 
   /**
    * Load all the scripts specified in the configuration file, call onScriptsLoaded when all loaded
    */
   var includeScripts = function(){
+<<<<<<< HEAD
+    for(var i = 0; i < CONFIG.scriptList.length; ++i) {
+      self.getScript(CONFIG.path.scripts + CONFIG.scriptList[i], onScriptsLoaded);
+=======
     var loadedScripts = 0;
     for(var i = 0; i < CONFIG.scriptList.length; ++i) {
       self.getScript(CONFIG.path.scripts + CONFIG.scriptList[i], function(){
@@ -51,10 +85,13 @@ var Main = new function(){
       linkElem.rel = 'stylesheet';
       linkElem.type = 'text/css';
       linkElem.href = CONFIG.path.styles + CONFIG.styleList[i];
+>>>>>>> master
     }
   };
 
   /**
+<<<<<<< HEAD
+=======
    * Add all global events
    */
   var addEventListner = function(){
@@ -70,6 +107,7 @@ var Main = new function(){
   };
 
   /**
+>>>>>>> master
    * Load the specified javascript script
    * Source: https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
    * @param {string} source - The URL to the script
@@ -91,7 +129,14 @@ var Main = new function(){
 
      script.src = source;
      prior.parentNode.insertBefore(script, prior);
+<<<<<<< HEAD
+   };
+
+   init();
+};
+=======
    }
 };
 
 Main.init();
+>>>>>>> master

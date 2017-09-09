@@ -1,6 +1,6 @@
 @font-face {
     font-family: ethnocentric;
-    src: url("/standalone/nautsbuilder/fonts/ethnocentric.ttf");
+    src: url("/nautsbuilder/fonts/ethnocentric.ttf");
 }
 
 body {
@@ -8,18 +8,62 @@ body {
   color: white;
   margin: 0;
 
-  background-image: url("/standalone/nautsbuilder/images/background.jpg");
-  background-position: center top;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
+  background: url("/nautsbuilder/images/bg.jpg") no-repeat center center fixed;
   background-color: black;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;
+  -webkit-transition: background 0.3s ease;
+  -moz-transition: background 0.3s ease;
+  -o-transition: background 0.3s ease;
+  -ms-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+}
+
+label {
+  vertical-align: top;
+  display: inline-block;
+  min-width: 300px;
+  color: #ccc;
+}
+
+input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -1px;
+  *overflow: hidden;
 }
 
 input {
   color: #666;
   background-color: rgb(5, 5, 5);
   border: 1px solid transparent;
-  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+}
+
+input[type="button"] {
+  cursor: pointer;
+  float: right;
+  color: #ddd;
+  padding: 7px;
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: rgb(20, 30, 40);
+  border-radius: 4px;
+  font-family: ethnocentric;
+  border: 1px solid transparent;
+  border-image: url("/nautsbuilder/images/border-full.png") 4;
+  text-shadow: 2px 2px black;
+}
+
+input[type="button"]:hover {
+  background-color: rgb(10, 20, 30);
+  text-shadow: none;
 }
 
 a {
@@ -39,18 +83,67 @@ a:hover {
     color:#256C9B;
 }
 
-.small-text {
+button:hover {
+  color:#256C9B;
+}
+
+button:active {
+  border: none;
+}
+
+button {
+  outline: none;
+   background:none!important;
+   color:inherit;
+   border:none;
+   padding:0!important;
+   font: inherit;
+   color:#37A1E8;
+   text-decoration:none;
+   cursor: pointer;
+}
+
+.default-font {
+  font-family: "Verdana", "sans-serif";
+  color: #eee;
+  font-size: 1.1em;
+}
+
+.small-text, .colored-text, .info-box .effect-value-colored {
   color: #00A0A0;
   text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
   font-size: 0.75em;
 }
 
-.black-box {
-  font-family: "Verdana", "sans-serif";
-  background-color: black;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-  padding: 10px;
+.colored-text, .info-box .effect-value-colored {
+  font-size: 1em;
+}
+
+#contributors {
+  max-height: 200px;
+  overflow: auto;
+}
+
+#settings-container {
+/*  float: right;
+  width: calc(25% - 20px);*/
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
+#settings-container div {
+  float: left;
+  margin-top: 12px;
+  margin-right: 15px;
+}
+
+#settings-container img {
+  float: right;
+  vertical-align: middle;
+  margin-top: calc(1% + 5px);
+  margin-right: 3px;
+  cursor: pointer;
 }
 
 #export-div {
@@ -64,7 +157,554 @@ a:hover {
 
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid transparent;
-  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   z-index: 999;
+}
+
+#message-box-background {
+  position: fixed;
+  z-index: 999;
+  top: 0; bottom: 0; left: 0; right: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+#message-box {
+  position: fixed;
+  z-index: 1000;
+  border: 2px solid transparent;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-radius: 2px;
+  width: auto;
+  top: 20%;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+#loading img {
+  margin-top: 20%;
+  -webkit-animation:spin 0.8s linear infinite;
+  -moz-animation:spin 0.8s linear infinite;
+  animation:spin 0.8s linear infinite;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-5px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+
+/*** Naut info ***/
+/* NAUT LIST */
+#naut-list {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+
+  z-index: 103;
+  position: fixed;
+  padding: 4px;
+  max-height: 48%;
+  overflow-y: auto;
+}
+
+/* When the page is opened for the first time */
+.naut-list-center {
+  top: 5px;
+  left: 15%;
+  right: 15%;
+  text-align: center;
+}
+
+/* Weh a naut has been clicked */
+.naut-list-right {
+  top: calc(1% - 5px);
+  margin: 0;
+  padding: 0;
+  left: calc(74.53125%);
+  text-align: center;
+  right: 0;
+}
+
+#naut-name {
+  width: 100%;
+  font-size: 1.8em;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+#naut-art {
+  height: 89%;
+
+  -webkit-animation:float 2.8s ease-in-out infinite;
+  -moz-animation:float 2.8s ease-in-out infinite;
+  animation:float 2.8s ease-in-out infinite;
+}
+
+.naut-icon {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 1px;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.naut-icon:hover {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 10px rgba(158, 202, 237, 0.5);
+  border-radius: 2px;
+  filter: brightness(1.2);
+}
+
+/* Aplied to naut-icon */
+.selected {
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 0px 3px rgba(88, 220, 233, 0.8)!important;
+  border-radius: 2px!important;
+  filter: brightness(1.3)!important;
+}
+
+/* Description, splash-art and build info only displayed when shop is closed */
+#skill-description, #naut-description {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  min-height: 50%;
+  height: auto;
+  overflow: auto;
+}
+
+#skill-description div, #naut-description div {
+  margin-bottom: 5px;
+}
+
+#naut-description {
+  z-index: 100;
+  right: 0;
+  width: 34%;
+  max-height: 50%;
+  line-height: 0.9;
+}
+
+#naut-display {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 50%;
+  bottom: 25%;
+  text-align: center;
+}
+
+#skill-description {
+  width: 34%;
+  height: auto;
+}
+
+#skill-description img {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+#skill-description span {
+  display: inline-block;
+  width: calc(100% - 60px);
+
+  color: #00A0A0;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  font-size: 0.75em;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+}
+
+
+/* BUILD */
+.build-description-category {
+  font-size: 1em;
+}
+
+#moving-upgrade {
+  position: fixed;
+  width: 50px;
+  z-index: 10000;
+  opacity: 0.5;
+}
+
+.info-box {
+  position: fixed;
+  font-family: "Verdana", "sans-serif";
+  background-color: rgba(10, 10, 10, 0.6);
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+  border-radius: 0px;
+  padding: 9px;
+}
+
+.build-summary-cost {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: inline-block;
+}
+
+.build-summary-cost img {
+  vertical-align: -4px;
+  margin-left: 5px;
+}
+
+#build-info-1, #build-info-2, #build-info-3, #build-info-4, #about, #build-summary {
+  position: fixed;
+  width: 22%;
+  height: 15%;
+  overflow: auto;
+}
+
+#build-info-1, #build-info-2, #build-info-3, #build-info-4, #build-summary {
+  left: calc(50% + 15px);
+  font-size: 0.8em;
+}
+
+#build-info-1 {
+  top: 1%;
+}
+
+#build-info-2 {
+  top: 20%;
+}
+
+#build-info-3 {
+  top: 39%;
+}
+
+#build-info-4 {
+  top: 58%;
+}
+
+#build-summary {
+/*  font-size: 0.8em;
+  bottom: 0;
+  height: 20%;*/
+  bottom: 22%;
+  height: 23%;
+  top: 50%;
+  left: auto;
+  right: 0;
+  width: calc(24.46875% - 15px);
+}
+
+#build-summary img{
+  vertical-align: -3px;
+}
+
+#build-summary label {
+  min-width: 130px;
+  display: inline-block;
+}
+
+#about {
+  height: 20%;
+  width: calc(24.46875% - 15px);
+  bottom: 0;
+  right: 0px;
+  color: #00A0A0;
+  font-size: 0.8em;
+  /*width: calc(50% - 33px);*/
+}
+
+
+/*** Shop ***/
+#naut-shop, #build-order {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.panel-disabled {
+  background-color: rgba(30, 30, 30, 0.5)!important;
+/*  height: 25px!important;*/
+}
+
+#naut-shop {
+  display: none;
+  z-index: 101;
+  border: 3px solid transparent;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: calc(50% + 3px);
+  height: 75%;
+  border-image: url("/nautsbuilder/images/border-shop.png") 5 round;
+  overflow: hidden;
+}
+
+.shop-row {
+  text-align: center;
+  width: 100%;
+  height: 25%;
+  border-top: 2px solid black;
+  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  overflow: auto;
+}
+
+#shop-row-1, #shop-row-3 {
+  background-color: rgba(0, 31, 51, 0.8);
+}
+
+#shop-row-2, #shop-row-4 {
+  background-color: rgba(0, 16, 29, 0.8);
+}
+
+#build-order {
+  border: 3px solid transparent;
+  border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
+
+  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  background-color: rgba(0, 16, 29, 0.8);
+
+  position: fixed;
+  height: calc(20% + 19px);
+  top: calc(80% - 19px);
+
+  width: calc(72% + 32px);
+  overflow: auto;
+
+  z-index: 102;
+
+
+/*  display: none;
+  z-index: 102;
+  position: fixed;
+  left: 0;
+  top: 80%;
+  height: calc(22% + 5px);
+  bottom: 0;
+  width: calc(72% + 32px);
+  background-color: rgba(0, 16, 29, 0.8);
+  border: 3px solid transparent;
+*/
+}
+
+#draggedUprade .shop-item-container{
+  position: fixed;
+  width: 50px;
+  height: 50px;
+}
+
+#build-order-content .shop-item-container {
+  width: 5%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  vertical-align: middle;
+}
+
+#build-order-content {
+  padding-top: 5px;
+  max-height: calc(100% - 40px);
+  overflow: auto;
+  margin-left: 5px;
+}
+
+#build-order-content .selected {
+  z-index: 999;
+  box-shadow: 0 0 0px 3px rgba(38, 200, 233, 0.8)!important;
+  opacity: 0.5;
+}
+/*** Tooltips ***/
+.tooltip {
+  display: none;
+  max-width: 20%;
+  font-family: "Verdana", "sans-serif";
+  font-size: 0.95em;
+  z-index: 1000;
+  padding: 10px;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+}
+
+.tooltip-upgrades {
+  font-size: 0.85em;
+  color: yellow;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+/*** Upgrades ***/
+
+.shop-item-container {
+  margin-left: 5px;
+  width: 12%;
+  display: inline-block;
+  position: relative;
+  overflow: auto;
+}
+
+.shop-item-price, .shop-item-stage {
+  position: absolute;
+  left: 25%;
+  font-size: 0.8em;
+  text-align: center;
+  text-shadow: 1px -1px 2px black, 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black;
+}
+
+.shop-skill-container {
+  display: inline-block;
+  cursor: pointer;
+  width: 12%;
+  margin-right: 5%;
+}
+
+.shop-item-image {
+  vertical-align: middle;
+}
+
+.shop-item-stage {
+  top: 5%;
+  left: 0%;
+  width: 100%;
+  text-align: center;
+}
+
+.shop-item-price {
+  bottom: 5%;
+}
+
+.shop-item-skill, .shop-item-upgrade {
+  width: 90%;
+}
+
+.shop-item-upgrade {
+  cursor: pointer;
+  filter: brightness(0.3);
+}
+
+.shop-item-upgrade:hover {
+  cursor: pointer;
+  filter: brightness(0.5);
+}
+
+.purchased {
+  filter: brightness(1.1)!important;
+}
+
+.locked {
+  cursor: default!important;
+  filter: brightness(0.7)!important;
+}
+
+.locked-big {
+  margin-bottom: 17px;
+}
+
+input[type="range"] {
+    margin: auto;
+    -webkit-appearance: none;
+    position: relative;
+    overflow: hidden;
+    height: 10px;
+    width: 200px;
+    cursor: pointer;
+    border-radius: 0; /* iOS */
+}
+
+::-webkit-slider-runnable-track {
+    background: #222;
+}
+
+/*
+ * 1. Set to 0 height and width, and remove border for a slider without a thumb
+ */
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; /* 1 */
+    height: 40px; /* 1 */
+    background: #fff;
+    box-shadow: -100vw 0 0 100vw #37A1E8;
+    border: 2px solid #999; /* 1 */
+}
+
+::-moz-range-track {
+    height: 40px;
+    background: #222;
+}
+
+::-moz-range-thumb {
+    background: #fff;
+    height: 40px;
+    width: 20px;
+    border: 3px solid #999;
+    border-radius: 0 !important;
+    box-shadow: -100vw 0 0 100vw dodgerblue;
+    box-sizing: border-box;
+}
+
+::-ms-fill-lower {
+    background: dodgerblue;
+}
+
+::-ms-thumb {
+    background: #fff;
+    border: 2px solid #999;
+    height: 40px;
+    width: 20px;
+    box-sizing: border-box;
+}
+
+::-ms-ticks-after {
+    display: none;
+}
+
+::-ms-ticks-before {
+    display: none;
+}
+
+::-ms-track {
+    background: #ddd;
+    color: transparent;
+    height: 40px;
+    border: none;
+}
+
+::-ms-tooltip {
+    display: none;
 }

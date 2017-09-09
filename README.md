@@ -1,11 +1,20 @@
 # NautsBuilder V2
-Live link: https://orikaru.net/nautsbuilder
+Create and share your Awesomenauts builds using this web application!
+Link: https://orikaru.net/nautsbuilder
 
-Create builds for the game Awesomenauts in this web-application. Data are stored in a API that can be updated by members of the community.
+## How to update nauts data
+Data are stored in a big spreadsheet and can be manually pushed to the live server using [this link](https://orikaru.net/pages/games/awesomenauts/nautsbuilder-import.php)
+You will need an Orikaru account with specials permissions to update the spreadsheet.
+If you want to request permissions join https://discord.gg/GsE29w7 and ask Blatoy#1574
 
-This tool is based on the first version that can be found here https://github.com/Leimi/nautsbuilder and was created because the first one was outdated.
+## Libraries used
+NautsBuilder V2 uses the following libraries:
+* [jQuery](jquery.com)
 
-This tool has been made from scratch but it uses the same spreadsheet as NautsBuilder V1
+## Credits
+Inspired by the first version of this tool by Leimi: https://github.com/Leimi/nautsbuilder
+Thanks to everyone who helped updating the spreadsheet!
+Images taken from the game [Awesomenauts](awesomenauts.com)
 
 # How is the tool updated
 There's a big spreadsheet with information concerning all the nauts. The spreadsheet can be uploaded to the live version through https://orikaru.net/pages/games/awesomenauts/nautsbuilder-import.php but you will need a special permission to access the page.
