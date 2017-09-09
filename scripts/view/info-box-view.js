@@ -3,20 +3,20 @@ var InfoBoxView = new function() {
 
   this.init = function() {
     infoBoxes = {
-      about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by <a onclick='MessageBoxView.displayContributors()' href='#'>the community.</a><br>" +
-        "Nautsbuilder V2 made by <a href='steamcommunity.com/id/blatoy/'>Blatoy</a>.<br>" +
+      about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by <button onclick='MessageBoxView.displayContributors()'>the community.</button><br>" +
+        "Nautsbuilder V2 made with love by <a href='http://steamcommunity.com/id/blatoy/'>Blatoy</a>.<br>" +
         "If you want to support this tool consider making a small <a href='/donation'>donation</a> to help me pay the server!<hr>" +
-        "<a href='#' onclick='MessageBoxView.displayErrorReport()'>Report errors</a> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
+        "<button onclick='MessageBoxView.displayErrorReport()'>Report errors</button> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
         "<a href='https://discord.gg/GsE29w7'>Discord</a>" +
         '<div id="settings-container"><img src="http://i.imgur.com/oKZ2pjD.png"/></div>', "about"),
       skills: new InfoBox("", "skill-description"),
       lore: new InfoBox("", "naut-description"),
       buildInfo1: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-1"),
-      buildInfo2: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-2"),
-      buildInfo3: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-3"),
-      buildInfo4: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-4"),
-      buildSummary: new InfoBox("displayBuildSummary() error. Please retry.", "build-summary")
+      buildInfo2: new InfoBox("...", "build-info-2"),
+      buildInfo3: new InfoBox("...", "build-info-3"),
+      buildInfo4: new InfoBox("...", "build-info-4"),
+      buildSummary: new InfoBox("...", "build-summary")
     };
   };
 
@@ -77,11 +77,18 @@ var InfoBoxView = new function() {
       infoBoxes["buildInfo" + (i + 1)].setContent(content);
     }
 
-    infoBoxes.buildSummary.setContent("Total cost: <span class='colored-text'>" + Build.current.getPrice() + "</span> " +
-      "<img style='vertical-align: top;' src='" + CONFIG.path.images + "solar-icon.png" + "'></img>" +
-      "<hr>Forum link: <input type='text' value='[build]" + Build.current.toString() + "[/build]'>" +
-      "<hr><a href='#'>Export as image</a> - <a href='#'>Random build</a>"
+    infoBoxes.buildSummary.setContent(
+      "<label>Total cost:</label> <span class='solar-price'>" + Build.current.getPrice() + "</span> " +
+      "<img src='" + CONFIG.path.images + "solar-icon.png" + "'></img>" +
+      "<hr><label>Forum link:</label><input type='text' value='[build]" + Build.current.toString() + "[/build]'>" +
+      "<hr><label>Team level: <span style='color: white; margin-right: 10px;' id='team-level-label'>" + Setting.get("teamLevel") + "</span></label><input oninput='InfoBoxView.setTeamLevelDisplay(this.value)' onmouseup='Setting.setTeamLevel(this.value)' id='team-level' type='range' min='1' max='20' value='" + Setting.get("teamLevel") + "' step='1'>" +
+      "<hr><button onclick='MessageBoxView.displayExportImage()'>Export as image</button> - <button onclick='BuildController.setRandomBuild()'>Random build</button>"
     );
+  };
+
+  // TODO: Add desc
+  this.setTeamLevelDisplay = function(level) {
+    $("#team-level-label").text(level);
   };
 
   // TODO: Add desc

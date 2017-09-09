@@ -5,16 +5,16 @@
  *
  * @param  {string} effectData Something like: "Damage: 95"
  */
-var Effect = function(effectData) {
+var Effect = function(effectData, scalingTypeRaw) {
   // Type can be: "text", "number" (most upgrades) or "numberArray" (things with > > )
-  var unit, key, value, type;
+  var unit, key, value, type, scalingType;
 
   /**
    * var init - "Constructor" for this "class"
    *
    * @param  {string} effectData See class description
    */
-  var init = function(effectData){
+  var init = function(effectData, scalingTypeRaw){
     if(!effectData) {
       console.error("effect.js: constructor can't be called without args");
       return false;
@@ -25,6 +25,7 @@ var Effect = function(effectData) {
       key = effectParsed.key;
       value = effectParsed.value;
       type = effectParsed.type;
+      scalingType = scalingTypeRaw;
     }
   };
 
@@ -32,6 +33,15 @@ var Effect = function(effectData) {
   this.toString = function() {
     return Effect.toString({unit: unit, value: value, key: key});
   };
+
+  /**
+   * this.getEffectScaling - getter
+   *
+   * @returns {string}  The effectScaling of this effect. Should be "heal", "damage" or "none"
+   */
+   this.getEffectScaling = function() {
+     return scalingType || "none";
+   };
 
   /**
    * this.getUnit - getter
@@ -108,7 +118,7 @@ var Effect = function(effectData) {
     return type;
   };
 
-  init(effectData);
+  init(effectData, scalingTypeRaw);
 };
 
 /**

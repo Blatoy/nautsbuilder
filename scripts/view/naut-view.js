@@ -66,7 +66,7 @@ var NautView = new function() {
 
   // TODO: Function desc
   this.displayRandomNaut = function(){
-    $("#naut-art").stop(true, true);
+    $("#naut-art").show();
     $("#naut-art").attr("src", CONFIG.path.images + "naut-random.png");
     $("#naut-name").text("Random");
   };

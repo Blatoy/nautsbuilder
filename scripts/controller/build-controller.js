@@ -10,6 +10,7 @@ var BuildController = new function(){
   // TODO: Desc
   this.init = function(){
     Build.current = new Build();
+
     $(window).on("mousemove", self.onMouseMove);
   };
 
@@ -68,24 +69,46 @@ var BuildController = new function(){
     Build.current.addUpgradeToBuildOrderAtIndex(buildOrderSelectedUpgradeId, buildOrderSelectedUpgradeNewIndex);
     ShopView.onBuildOrderUpgradeDragEnd();
     ShopView.updateBuildOrderDisplay();
+    this.refreshViewsAndURL();
   };
 
   // TODO: Desc
   this.onNautSelected = function(naut) {
     Build.current.setNaut(naut);
-  //  Build.current.debugPrintBuild();
-    ShopView.displaySkillsAndUpgrades(naut);
-    ShopView.updateBuildOrderDisplay();
+    this.setAllViews();
+  };
+
+  // TODO: Desc
+  this.setRandomBuild = function() {
+    Build.current.setRandomBuild();
+    this.setAllViews();
+    ShopView.updateAllUpgradeStage();
+  };
+
+  // TODO: Desc
+  this.setAllViews = function() {
+    ShopView.displaySkillsAndUpgrades(Build.current.getNaut());
     ShopView.displayShop();
     ShopView.displayBuyOrder();
-    InfoBoxView.setBuildSummaryContent();
+    this.refreshViewsAndURL();
   };
 
   // TODO: Desc
   this.onUpgradeClick = function(row, col){
     var stage = Build.current.setUpgradeStage(row, col);
-    InfoBoxView.setBuildSummaryContent();
+    this.refreshViewsAndURL();
     return stage;
+  };
+
+  // TODO: Desc
+  this.setUrlData = function() {
+    setHash(Build.current.toString());
+  };
+
+  this.refreshViewsAndURL = function(){
+    ShopView.updateBuildOrderDisplay();
+    InfoBoxView.setBuildSummaryContent();
+    this.setUrlData();
   };
 
   this.importBuildFromURLData = function(data){};

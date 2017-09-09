@@ -83,6 +83,26 @@ a:hover {
     color:#256C9B;
 }
 
+button:hover {
+  color:#256C9B;
+}
+
+button:active {
+  border: none;
+}
+
+button {
+  outline: none;
+   background:none!important;
+   color:inherit;
+   border:none;
+   padding:0!important;
+   font: inherit;
+   color:#37A1E8;
+   text-decoration:none;
+   cursor: pointer;
+}
+
 .default-font {
   font-family: "Verdana", "sans-serif";
   color: #eee;
@@ -158,7 +178,7 @@ a:hover {
   border-image: url("/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   width: auto;
-  top: 30%;
+  top: 20%;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.8);
   cursor: default;
@@ -210,7 +230,7 @@ a:hover {
   z-index: 103;
   position: fixed;
   padding: 4px;
-  max-height: 50%;
+  max-height: 48%;
   overflow-y: auto;
 }
 
@@ -381,15 +401,6 @@ hr {
   font-size: 0.8em;
 }
 
-#about {
-  height: 20%;
-  width: calc(24.46875% - 15px);
-  bottom: 0;
-  right: 0px;
-  color: #00A0A0;
-  font-size: 0.75em;
-}
-
 #build-info-1 {
   top: 1%;
 }
@@ -407,9 +418,36 @@ hr {
 }
 
 #build-summary {
+/*  font-size: 0.8em;
   bottom: 0;
-  height: 20%;
+  height: 20%;*/
+  bottom: 22%;
+  height: 23%;
+  top: 50%;
+  left: auto;
+  right: 0;
+  width: calc(24.46875% - 15px);
 }
+
+#build-summary img{
+  vertical-align: -3px;
+}
+
+#build-summary label {
+  min-width: 130px;
+  display: inline-block;
+}
+
+#about {
+  height: 20%;
+  width: calc(24.46875% - 15px);
+  bottom: 0;
+  right: 0px;
+  color: #00A0A0;
+  font-size: 0.8em;
+  /*width: calc(50% - 33px);*/
+}
+
 
 /*** Shop ***/
 #naut-shop, #build-order {
@@ -421,7 +459,7 @@ hr {
 
 .panel-disabled {
   background-color: rgba(30, 30, 30, 0.5)!important;
-  height: 25px!important;
+/*  height: 25px!important;*/
 }
 
 #naut-shop {
@@ -455,18 +493,33 @@ hr {
 }
 
 #build-order {
-  display: none;
+  border: 3px solid transparent;
+  border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
+
+  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  background-color: rgba(0, 16, 29, 0.8);
+
+  position: fixed;
+  height: calc(20% + 19px);
+  top: calc(80% - 19px);
+
+  width: calc(72% + 32px);
+  overflow: auto;
+
+  z-index: 102;
+
+
+/*  display: none;
   z-index: 102;
   position: fixed;
   left: 0;
-  top: calc(75% + 15px);
-  height: calc(25% - 15px);
-  width: calc(50% + 3px);
+  top: 80%;
+  height: calc(22% + 5px);
+  bottom: 0;
+  width: calc(72% + 32px);
   background-color: rgba(0, 16, 29, 0.8);
   border: 3px solid transparent;
-  border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
-  background-image: url("/nautsbuilder/images/shop-hexagon.png");
-  overflow: auto;
+*/
 }
 
 #draggedUprade .shop-item-container{
@@ -476,7 +529,7 @@ hr {
 }
 
 #build-order-content .shop-item-container {
-  width: 7%;
+  width: 5%;
   margin-top: 5px;
   margin-bottom: 5px;
   vertical-align: middle;

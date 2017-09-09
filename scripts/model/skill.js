@@ -23,8 +23,12 @@ var Skill = function(skillAPIData) {
 
       var rawEffects = skillData.effects.split(Effect.EFFECT_SEPARATOR);
       for(var j = 0; j < rawEffects.length; ++j) {
+        var effectScaling = [];
+        if(skillData.effectscaling) {
+          effectScaling = skillData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
+        }
         if(rawEffects[j].replace(/\s/g, "") !== "") {
-          effects.push(new Effect(rawEffects[j]));
+          effects.push(new Effect(rawEffects[j], effectScaling[j]));
         }
       }
     }

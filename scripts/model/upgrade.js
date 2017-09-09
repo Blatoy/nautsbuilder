@@ -25,11 +25,15 @@ var Upgrade = function(upgradeAPIData) {
       for(var i = 0; i < Upgrade.MAX_STEP_AVAILABLE; ++i) {
         if(upgradeData["step" + (i + 1)] !== undefined) {
           var rawEffects = upgradeData["step" + (i + 1)].split(Effect.EFFECT_SEPARATOR);
+          var effectScaling = [];
+          if(upgradeData.effectscaling) {
+            effectScaling = upgradeData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
+          }
           var effects = [];
 
           for(var j = 0; j < rawEffects.length; ++j) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
-              effects.push(new Effect(rawEffects[j]));
+              effects.push(new Effect(rawEffects[j], effectScaling[j]));
             }
           }
           steps.push(effects);
@@ -156,7 +160,7 @@ var Upgrade = function(upgradeAPIData) {
    */
   this.getSteps = function(step){
     if(step !== undefined) {
-      return steps[step];
+      return steps[step] || [];
     }
     else {
       return steps;

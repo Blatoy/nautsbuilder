@@ -125,20 +125,53 @@ var NautController = new function() {
       case self.API.CONTRIBUTORS:
         contributors = data;
         break;
+      case self.API.CONFIG:
+        for(var k in data[0]) {
+          // Prevent replacing existing things
+          if(!CONFIG[k]) {
+            CONFIG[k] = data[0][k];
+          }
+        }
+        break;
     }
 
     apiToLoadCount--;
     if(apiToLoadCount === 0) {
-      addSkillsToNauts();
-      addUpgradesToSkills();
-      MainView.onLoaded();
-      InfoBoxView.onLoaded();
-      NautView.displayNautList(Naut.list);
-      NautView.addRandomIconToNautList();
-      // We preload all splash art because they display faster if we do it
-      for(var i = 0; i < Naut.list.length; ++i) {
-        preloadImage(Naut.list[i].getSplashArt());
-      }
+      onAllAPILoaded();
+    }
+  };
+
+  var onAllAPILoaded = function() {
+    // All API Loaded
+    addSkillsToNauts();
+    addUpgradesToSkills();
+    MainView.onLoaded();
+    InfoBoxView.onLoaded();
+    NautView.displayNautList(Naut.list);
+    NautView.addRandomIconToNautList();
+
+    var buildData = getURLData();
+    if(buildData !== false && buildData != "") {
+      Build.current.setFromData(buildData);
+      BuildController.setAllViews();
+
+      ShopView.updateAllUpgradeStage();
+
+      self.canHoverNautSelection = true;
+      self.nautSelected = true;
+
+      $(".naut-icon").each(function(){
+        if($(this).attr("title") == Build.current.getNaut().getName()) {
+          $(this).addClass("selected");
+        }
+      });
+
+      ShopView.updateBuildOrderDisplay();
+    }
+
+    // We preload all splash art because they display faster if we do it
+    for(var i = 0; i < Naut.list.length; ++i) {
+      preloadImage(Naut.list[i].getSplashArt());
     }
   };
 
@@ -211,7 +244,7 @@ var NautController = new function() {
   };
 
   // TODO: Add desc
-  this.selectNaut = function(nautName) {
+  this.selectNaut = function(nautName, keepCurrentBuild) {
     NautView.moveNautSelectionToRight();
     NautView.hideArt();
     NautView.hideName();
@@ -220,7 +253,9 @@ var NautController = new function() {
     InfoBoxView.displayAbout();
     this.nautSelected = true;
     this.canHoverNautSelection = false;
-    BuildController.onNautSelected(Naut.getByName(nautName));
+    if(!keepCurrentBuild) {
+      BuildController.onNautSelected(Naut.getByName(nautName));
+    }
   /*  Build.current = new Build();
     Build.setNaut("...");*/
   };

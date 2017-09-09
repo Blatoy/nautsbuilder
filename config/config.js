@@ -23,8 +23,15 @@ var CONFIG = new function() {
     "view/shop-view.js",
     "view/message-box-view.js"
   ];
-
+  // DPS: 840
   this.apiURL = "https://orikaru.net/resources/logic/php/ajax/awesomenauts.php";
+
+  this.dpsCalculationRegex = {
+    damage: /(.*)damage$/,
+    speed: /(.*)attack\sspeed$/,
+    multiplier: /(.*)damage\smultiplier$/,
+  };
+
 
   var path = {};
   path.base = "/nautsbuilder/";

@@ -44,11 +44,13 @@ var Setting = new function() {
     // TODO: Create and call MessageBoxView.setSettingTeamLevel()
     $("#team-level-label").text(value);
     settings.teamLevel = value;
+    InfoBoxView.setBuildSummaryContent();
   };
 
   // TODO: Desc
-  this.toggleBuyOrder = function(value) {
+  this.toggleBuyOrder = function() {
     settings.buyOrderEnabled = !settings.buyOrderEnabled;
+    BuildController.refreshViewsAndURL();
     ShopView.showBuildOrderPanel(settings.buyOrderEnabled);
   };
 

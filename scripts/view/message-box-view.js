@@ -9,7 +9,7 @@ var MessageBoxView = new function() {
       settings: {
         title: "Settings",
         content:
-        "<label>Team level: <span style='color: white;' id='team-level-label'>1</span></label><input oninput='Setting.setTeamLevel(this.value)' id='team-level' type='range' min='1' max='20' value='1' step='1'><hr>" +
+      //  "<label>Team level: <span style='color: white;' id='team-level-label'>1</span></label><input oninput='Setting.setTeamLevel(this.value)' id='team-level' type='range' min='1' max='20' value='1' step='1'><hr>" +
         Setting.getSettingCheckbox("Display dev names*", "displayDevNames", "setting-dev-name") + "<hr>" +
         Setting.getSettingCheckbox("Disable local caching*", "disableCache", "setting-local-cache") + "<hr>" +
         "<label>Clear local cache</label><a href='#' onclick='localStorage.clear(); location.reload();'>Clear</a><br>" +
@@ -29,10 +29,15 @@ var MessageBoxView = new function() {
           "<label>Description</label><textarea placeholder='This field is mandatory' id='re-desc'></textarea><hr>" +
           "<input type='button' id='re-send' value='Submit'>",
         sent: "<span class='default-font'>Thanks! Your report will be examined as soon as possible.</span>"
+      },
+      imageExport: {
+        title: "Export as image",
+        content: "<canvas width='360' height='400' id='export-image-canvas'>"
       }
     };
   };
 
+  // TODO: Desc
   this.displayContributors = function() {
     MessageBox.show(messageBoxes.contributors.title, messageBoxes.contributors.content);
     $("#contributors").html("");
@@ -41,6 +46,7 @@ var MessageBoxView = new function() {
     }
   };
 
+  // TODO: Desc
   this.displaySettings = function(){
     MessageBox.show(messageBoxes.settings.title, messageBoxes.settings.content);
     $("#team-level-label").text(Setting.get("teamLevel"));
@@ -49,6 +55,18 @@ var MessageBoxView = new function() {
     $("#setting-local-cache").attr("checked", Setting.get("disableCache"));
   };
 
+  // TODO: Desc
+  this.displayExportImage = function(){
+    MessageBox.show(messageBoxes.imageExport.title, messageBoxes.imageExport.content);
+    var canvas = document.getElementById("export-image-canvas");
+    ctx = canvas.getContext("2d");
+    if(!Setting.get("buyOrderEnabled")) {
+      canvas.height = 320;
+    }
+    Build.current.drawBuildOnCanvas(ctx, canvas);
+  };
+
+  // TODO: Desc
   this.displayErrorReport = function() {
     MessageBox.show(messageBoxes.errorsReport.title, messageBoxes.errorsReport.content);
     // Add nauts to the list

@@ -40,20 +40,28 @@ function preloadImage(src){
 
 /**
  * Change the URL with the specified paramValue
- * @param {string} paramName - The paramater to change in the URL
- * @param {string} paramValue - The string to add in the URL
+ * @param {string} hash - The value to set after the default URL
  */
-function setGetParameter(paramName, paramValue) {
-  window.history.replaceState(paramValue, "", paramValue);
+function setHash(hash) {
+  location.replace("#" + hash);
 }
 
 /**
- * Get the text of a parameter in the URL
- * Source: http://stackoverflow.com/questions/11582512/how-to-get-url-parameters-with-javascript/11582513#11582513
- * @param {string} name - The name of the parametic
+ * TODO: Desc
  */
-function getURLParameter(name) {
-  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+function getURLData() {
+  var url = window.location.href;
+  if(url.indexOf("?b=") != -1) {
+    url = url.split("?b");
+    window.history.pushState({}, "", url[0]);
+    return url[1];
+  }
+
+  if(url.indexOf("#") != -1) {
+    return url.split("#")[1];
+  }
+
+  return false;
 }
 
 /**

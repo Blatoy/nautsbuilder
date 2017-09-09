@@ -11,6 +11,17 @@ var ShopView = new function() {
     $(window).on("resize", self.onWindowResize);
   };
 
+  this.updateAllUpgradeStage = function() {
+    var upgradeStages = Build.current.getAllUpgradeStage();
+    for(var i = 0; i < upgradeStages.length; ++i) {
+      for(var j = 0; j < upgradeStages[i].length; ++j) {
+        ShopView.setDisplayStage(i, j, upgradeStages[i][j], Build.current.getStageCount(i, j));
+      }
+    }
+
+    this.lockUpgradesWhenRowFull();
+  };
+
   // TODO: Desc
   this.setDisplayStage = function(row, col, stage, stageCount) {
     var row = $("#shop-row-" + (row + 1));
@@ -28,13 +39,10 @@ var ShopView = new function() {
         $(".shop-item-stage", this.parentElement).text(stage + " / " + stageCount);
       }
     });
-
-    this.updateBuildOrderDisplay();
-    lockUpgradesWhenRowFull();
   };
 
   // TODO: Desc
-  var lockUpgradesWhenRowFull = function() {
+  this.lockUpgradesWhenRowFull = function() {
     for(var i = 0; i < 4; ++i) {
       var row = $("#shop-row-" + (i + 1));
 
@@ -132,6 +140,8 @@ var ShopView = new function() {
               var stage = BuildController.onUpgradeClick(i, j);
               // Display new stage
               self.setDisplayStage(i, j, stage, upgrade.getStageCount());
+              self.updateBuildOrderDisplay();
+              self.lockUpgradesWhenRowFull();
             })
             .appendTo("#shop-row-" + (i + 1));
 
@@ -175,6 +185,7 @@ var ShopView = new function() {
 
   // TODO: Desc
   this.displayShop = function() {
+    NautView.moveNautSelectionToRight();
     InfoBoxView.displayBuildSummary();
    $("#naut-shop").css("left", "-3px");
   };

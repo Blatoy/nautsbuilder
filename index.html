@@ -1,4 +1,3 @@
-<?php header('Content-Type: text/html; charset=utf-8'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -29,25 +28,9 @@
 
         <!-- Buy order -->
         <div id="build-order" style="display: none;">
-          <div style="margin: 5px;"><span id="buy-order-text">Buy order <span class='small-text'>(Drag to reorder)</span></span><span style="float: right;" class="small-text"><a onclick="Setting.toggleBuyOrder()" id="buy-order-status" href="#">Disable</a></span></div>
+          <div style="margin: 5px;"><span id="buy-order-text">Buy order <span class='small-text'>(Drag to reorder)</span></span><span style="float: right;" class="small-text"><button onclick="Setting.toggleBuyOrder()" id="buy-order-status">Disable</button></span></div>
           <div id="build-order-content"></div>
         </div>
-
-        <!-- Build summary -->
-        <!--<div class="black-box build-info" id="build-info-1"></div>
-        <div class="black-box build-info" id="build-info-2"></div>
-        <div class="black-box build-info" id="build-info-3"></div>
-        <div class="black-box build-info" id="build-info-4"></div>
-        <div class="black-box build-info" id="build-summary"></div>-->
-
-        <!-- About -->
-        <!--<div class="black-box" id="about">
-          Assets taken from <a href="http://store.steampowered.com/app/204300/Awesomenauts/">Awesomenauts</a>, data gathered by the community!<br>
-          Join <a href="https://discord.gg/GsE29w7">this Discord</a> if you want to report anything wrong with the upgrades.
-          If you have any feedback check the <a href="http://github.com/Blatoy/nautsbuilder/issues">github page</a>.<br>
-          Made with love by <a href="http://steamcommunity.com/id/blatoy/">Blatoy</a>, inspired by <a href="http://nautsbuilder.com">Nautsbuilder</a>.<br>
-          If you want to help me, you can buy me a <a href="/donate">coffee</a>!
-        </div>-->
 
         <!-- Export image div -->
         <div id="export-div"></div>
@@ -59,7 +42,7 @@
           <img src="/nautsbuilder/images/loading.png"/><br>
           <span>Loading Nautsbuilder...</span>
         </div>
-
+        <script src="http://localhost:35729/livereload.js"></script>
         <!-- Used to count visitors -->
         <!--<iframe style="display:none;" src="https://orikaru.net/resources/logic/php/ajax/account.php"></iframe>-->
         <!-- Google Analytics  -->
@@ -72,7 +55,5 @@
           ga('create', 'UA-62317289-1', 'auto');
           ga('send', 'pageview');
         </script>
-        <!--- TODO Remove this as it's used for debug purpose only -->
-        <script src="http://localhost:35729/livereload.js"></script>
     </body>
 </html>
