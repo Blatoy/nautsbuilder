@@ -66,7 +66,7 @@ var Build = function(URLData) {
     if(data[2]) {
       order = data[2].split("-");
       for(var i = 0; i < order.length; ++i) {
-        if(isNaN(parseInt(order[i])) || order[i] <= 0) {
+        if(isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 27 || order % 7 == 0) {
           order = [];
           break;
         }
