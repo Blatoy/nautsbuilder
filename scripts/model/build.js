@@ -47,7 +47,7 @@ var Build = function(URLData) {
     if(data[1]) {
       //data[1] = data[1].substring(0, 28);
       // We convert the string to a 2 dimensional array where rows are skills and cols are upgrades
-      for(var i = 0; i < data[1].length; ++i) {
+      for(var i = 0; i < 28; ++i) {
         // The old nautsbuilder stores the stage for the skill but unlocking skills has been removed from the game
         if(i % 7 === 0) {
           continue;
@@ -65,6 +65,12 @@ var Build = function(URLData) {
     // Build order
     if(data[2]) {
       order = data[2].split("-");
+      for(var i = 0; i < order.length; ++i) {
+        if(isNaN(parseInt(order[i])) || order[i] <= 0) {
+          order = [];
+          break;
+        }
+      }
     }
 
     return {nautName: name, purchasedUpgrades: build, order: order};
