@@ -28,7 +28,7 @@ var Skill = function(skillAPIData) {
           effectScaling = skillData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
         }
         if(rawEffects[j].replace(/\s/g, "") !== "") {
-          effects.push(new Effect(rawEffects[j], effectScaling[j]));
+          effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
         }
       }
     }

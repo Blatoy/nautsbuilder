@@ -33,7 +33,7 @@ var Upgrade = function(upgradeAPIData) {
 
           for(var j = 0; j < rawEffects.length; ++j) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
-              effects.push(new Effect(rawEffects[j], effectScaling[j]));
+              effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
             }
           }
           steps.push(effects);

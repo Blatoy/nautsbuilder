@@ -89,6 +89,7 @@ var MessageBoxView = new function() {
 
       // Add the list of skill - upgrades for the naut
       for(var j = 0; j < naut.getSkills().length; ++j) {
+        $("#re-upgrade-list").append("<option>" +  naut.getSkills(j).getName() + "</option>");
         for(var k = 0; k < naut.getSkills(j).getUpgrades().length; ++k) {
           $("#re-upgrade-list").append("<option>" +  naut.getSkills(j).getName() + " - " + naut.getSkills(j).getUpgrades(k).getName()  + "</option>");
         }

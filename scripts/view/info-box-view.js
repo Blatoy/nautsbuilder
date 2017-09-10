@@ -5,7 +5,7 @@ var InfoBoxView = new function() {
     infoBoxes = {
       about: new InfoBox("Assets taken from <a href='http://awesomenauts.com'>Awesomenauts</a>, data gathered by <button onclick='MessageBoxView.displayContributors()'>the community.</button><br>" +
         "Nautsbuilder V2 made with love by <a href='http://steamcommunity.com/id/blatoy/'>Blatoy</a>.<br>" +
-        "If you want to support this tool consider making a small <a href='/donation'>donation</a> to help me pay the server!<hr>" +
+        "If you want to support this tool consider making a small <a href='/donate'>donation</a> to help me pay the server!<hr>" +
         "<button onclick='MessageBoxView.displayErrorReport()'>Report errors</button> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
         "<a href='https://discord.gg/GsE29w7'>Discord</a>" +
@@ -70,7 +70,7 @@ var InfoBoxView = new function() {
       var content = "";
 
       for(var k in effects) {
-        content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + "<br>";
+        content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + effects[k].scaleType + " <br>";
       }
 
       content += "<span class='build-summary-cost'>" + Build.current.getRowPrice(i) + "<img src='" + CONFIG.path.images + "solar-icon.png'></span>"
