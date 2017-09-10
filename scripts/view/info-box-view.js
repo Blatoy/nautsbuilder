@@ -70,7 +70,7 @@ var InfoBoxView = new function() {
       var content = "";
 
       for(var k in effects) {
-        content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + effects[k].scaleType + " <br>";
+        content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + "<br>";
       }
 
       content += "<span class='build-summary-cost'>" + Build.current.getRowPrice(i) + "<img src='" + CONFIG.path.images + "solar-icon.png'></span>"
