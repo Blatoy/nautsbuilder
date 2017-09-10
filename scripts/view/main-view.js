@@ -13,6 +13,14 @@ var MainView = new function() {
       Tooltip.onMouseMove(e);
     });
 
+    $(document).on("keydown", function(e){
+      switch(e.keyCode) {
+        case 115: // F4
+          MessageBoxView.displayDebug();
+          break;
+      }
+    });
+
     $("#settings-container").click(function(){MessageBoxView.displaySettings();});
   };
 };

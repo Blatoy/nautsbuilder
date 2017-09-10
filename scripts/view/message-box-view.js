@@ -21,6 +21,10 @@ var MessageBoxView = new function() {
           "Thanks to everyone who gave me feedback, especially people from the <b>United Map Makers of Awesomenauts</b>!<br>" +
           "Thanks to everyone listed below for keeping the current spreadsheet up to date!<hr><b>List of approved contributors:</b><br><div id='contributors'></div><span class='small-text'>Want to help / your name is missing? Join discord and ask @Blatoy about Nautsbuilder!</span></div>"
       },
+      debug: {
+        title: "Debug tools",
+        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle display scaling type</button>"
+      },
       errorsReport: {
         title: "Report errors",
         content: "<span class='default-font'>If you want to report a wrong value, please select the Awesomenauts and the Upgrade. Otherwise just fill the description.</span><hr>" +
@@ -64,6 +68,11 @@ var MessageBoxView = new function() {
       canvas.height = 320;
     }
     Build.current.drawBuildOnCanvas(ctx, canvas);
+  };
+
+  // TODO: Desc
+  this.displayDebug = function() {
+    MessageBox.show(messageBoxes.debug.title, messageBoxes.debug.content);
   };
 
   // TODO: Desc

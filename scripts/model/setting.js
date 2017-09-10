@@ -4,7 +4,8 @@ var Setting = new function() {
     displayDevNames: false,
     disableCache: false,
     teamLevel: 1,
-    buyOrderEnabled: true
+    buyOrderEnabled: true,
+    debugDisplayScaleType: false
   };
 
   // TODO: Desc
@@ -62,6 +63,12 @@ var Setting = new function() {
         settings[k] = JSON.parse(localStorage.getItem("config" + k));
       }
     }
+  };
+
+
+  this.debugToggleScaleDisplay = function() {
+    settings.debugDisplayScaleType = !settings.debugDisplayScaleType;
+    InfoBoxView.setBuildSummaryContent();
   };
 
   this.init();

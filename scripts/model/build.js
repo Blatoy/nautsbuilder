@@ -341,7 +341,7 @@ var Build = function(URLData) {
     }
 
     // Now that everything should be OK; We still have to "value *= 1 + coeff", add DPS, limit the digit to 2 and check for team level
-    var dpsAttackSpeed = {}, dpsDamage = {}, dpsMultiplier = {}, dotDpsDamage = 0, dotDpsDuration = 0;
+    var dpsAttackSpeed = {}, dpsDamage = {}, dpsMultiplier = {}, dotDpsDamage = 0, dotDpsDuration = 0, dotDpsScaleType = "";
     for(var k in rowEffects) {
       var effect = rowEffects[k];
 
@@ -407,15 +407,20 @@ var Build = function(URLData) {
         dpsMultiplier[multiplierType] = effect.value;
       }
 
+      if(k == "damage over time")
+      console.log(effect);
       switch(k) {
-        case "damage over time": dotDpsDamage = effect.value; break;
-        case "damage duration": dotDpsDuration = effect.value; break;
+        case "damage over time":
+          dotDpsScaleType = effect.scaleType;
+          dotDpsDamage = Build.reverseTeamScaling(effect.value, effect.scaleType);
+        break;
+        case "damage duration": dotDpsDuration = Build.reverseTeamScaling(effect.value, effect.scaleType); break;
       }
     }
 
     // Dot dps calculation
     if(dotDpsDuration !== 0 && dotDpsDamage !== 0) {
-      rowEffects["Dot DPS"] = {unit: "", value: round(dotDpsDamage / dotDpsDuration), coeff: 1};
+      rowEffects["Dot DPS"] = {unit: "", value: round(Build.getValueAfterTeamScaling(dotDpsDamage / dotDpsDuration, dotDpsScaleType)), coeff: 1};
     }
 
     // Dps calculation
@@ -669,4 +674,8 @@ Build.getScalingFromEffectTypeAndLevel = function(effectType) {
 // TODO: Desc
 Build.getValueAfterTeamScaling = function(value, scaleType) {
   return round(value * (1 + Build.getScalingFromEffectTypeAndLevel(scaleType)));
+};
+
+Build.reverseTeamScaling = function(value, scaleType) {
+  return round(value / (1 + Build.getScalingFromEffectTypeAndLevel(scaleType)));
 };
