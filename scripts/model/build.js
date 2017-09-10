@@ -368,7 +368,6 @@ var Build = function(URLData) {
           //  effect.value.push(Build.getValueAfterTeamScaling(round((1 + effect.coeff[i]) * tempValue)), effect.scaleType);
           // No value means the upgrade only has a %
           if(tempValue === 0) {
-          //  console.log();
             effect.value.push(Build.getValueAfterTeamScaling(round((effect.coeff[i]) * 100), effect.scaleType));
           }
           else {
@@ -407,8 +406,6 @@ var Build = function(URLData) {
         dpsMultiplier[multiplierType] = effect.value;
       }
 
-      if(k == "damage over time")
-      console.log(effect);
       switch(k) {
         case "damage over time":
           dotDpsScaleType = effect.scaleType;
