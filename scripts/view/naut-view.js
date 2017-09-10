@@ -12,7 +12,7 @@ var NautView = new function() {
     $("#naut-list").append(
       $("<img>")
         .addClass("naut-icon")
-        .attr("src", "/nautsbuilder/images/icon-random.png")
+        .attr("src", CONFIG.path.images + "icon-random.png")
         .attr("title", "Random character")
         .click(function() {
           NautController.selectRandomNaut();
@@ -74,7 +74,7 @@ var NautView = new function() {
   // TODO: Function desc
   this.displayArt = function(naut) {
     $("#naut-art").show();
-    $(document.body).css("background-image", "url(/nautsbuilder/images/bg-light.jpg)");
+    $(document.body).css("background-image", "url(" + CONFIG.path.images + "bg-light.jpg)");
     $("#naut-art").attr("src", naut.getSplashArt());
   };
 
@@ -92,7 +92,7 @@ var NautView = new function() {
 
   // TODO: Function desc
   this.hideArt = function() {
-    $(document.body).css("background-image", "url(/nautsbuilder/images/bg.jpg)");
+    $(document.body).css("background-image", "url(" + CONFIG.path.images + "bg.jpg)");
     $("#naut-art").hide();
   };
 };
