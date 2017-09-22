@@ -51,6 +51,11 @@ var Skill = function(skillAPIData) {
     return skillData.name;
   };
 
+  // TODO: Desc
+  this.getDevName = function() {
+    return skillData.devname;
+  };
+
   /**
    * this.getDescription - Getter
    *
@@ -120,6 +125,13 @@ var Skill = function(skillAPIData) {
     txt += "</span><br><span class='small-text'>";
     txt += htmlToText(this.getDescription());
     txt += "</span>";
+
+    if(!this.getDevName()) {
+      txt += "<hr><span class='small-text'><b>Dev name missing for this skill</b>";
+    }
+    else {
+      txt += "<hr><span class='small-text'><b>Dev name:</b> " + this.getDevName();
+    }
 
     return txt;
   };
