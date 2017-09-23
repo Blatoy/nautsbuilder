@@ -77,30 +77,7 @@ var MessageBoxView = new function() {
 
     $("#custom-import").on("input", function(){
       var data = $("#custom-import").val();
-      var d = JSON.parse(data);
-      if(d[0]) {
-        var e = d[0];
-        $("#custom-import").val("Refresh to apply.");
-
-        if(e.ischaracterstab) {
-          localStorage.setItem(NautController.API.CHARACTERS, data);
-        }
-        else if(e.isskillstab) {
-          localStorage.setItem(NautController.API.SKILLS, data);
-        }
-        else if(e.isupgradestab) {
-          localStorage.setItem(NautController.API.UPGRADES, data);
-        }
-        else if(e.iseffectstab) {
-          localStorage.setItem(NautController.API.EFFECTS, data);
-        }
-        else if(e.isconfigtab) {
-          localStorage.setItem(NautController.API.CONFIG, data);
-        }
-        else {
-          $("#custom-import").val("Invalid data");
-        }
-      }
+      NautController.debugSetTempSpreadsheetData(data);
     });
   };
 

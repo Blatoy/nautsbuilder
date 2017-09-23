@@ -30,11 +30,18 @@ var NautController = new function() {
     // Check if the cache is up to date
     queryAPI("nautsbuilder-get-version", function(data, textStatus) {
       clearTimeout(timeout);
-      if(parseInt(cacheVersion) != parseInt(data)) {
+
+      if(cacheVersion != "-1" && parseInt(cacheVersion) != parseInt(data)) {
         console.log("Cache outdated! CV: " + cacheVersion + " NV:" + data + " - Local cache deleted!");
         self.clearAPICache();
       }
-      localStorage.setItem("cacheVersion", data);
+
+      if(cacheVersion != "-1") {
+        localStorage.setItem("cacheVersion", data);
+      }
+      else {
+        console.log("Cache auto-updating disabled!");
+      }
       loadAllAPIs();
     });
 
@@ -239,6 +246,41 @@ var NautController = new function() {
           naut.addSkill(skill);
           break; // NB: This may be a cause of error
         }
+      }
+    }
+  };
+
+  /**
+   * this.addSkillsToNauts - Replaces the current (api) cache by data
+   * API is automatically detected from data. Prevent the cache to be automatically updated
+   */
+  this.debugSetTempSpreadsheetData = function(data) {
+    var d = JSON.parse(data);
+    if(d[0]) {
+      var e = d[0];
+      $("#custom-import").val("Refresh to apply.");
+      if(localStorage.getItem("cacheVersion") != "-1") {
+        localStorage.setItem("cacheVersion", "-1");
+        alert("Cache auto-updating has been disabled. Setting > Clear cache to enable it again.")
+      }
+
+      if(e.ischaracterstab) {
+        localStorage.setItem(NautController.API.CHARACTERS, data);
+      }
+      else if(e.isskillstab) {
+        localStorage.setItem(NautController.API.SKILLS, data);
+      }
+      else if(e.isupgradestab) {
+        localStorage.setItem(NautController.API.UPGRADES, data);
+      }
+      else if(e.iseffectstab) {
+        localStorage.setItem(NautController.API.EFFECTS, data);
+      }
+      else if(e.isconfigtab) {
+        localStorage.setItem(NautController.API.CONFIG, data);
+      }
+      else {
+        $("#custom-import").val("Invalid data");
       }
     }
   };
