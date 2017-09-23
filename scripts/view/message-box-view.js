@@ -23,7 +23,8 @@ var MessageBoxView = new function() {
       },
       debug: {
         title: "Debug tools",
-        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle display scaling type</button>"
+        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle display scaling type</button>" +
+          "<hr><label>Import custom spreadsheet</label><input id='custom-import' type='text'><hr>"
       },
       errorsReport: {
         title: "Report errors",
@@ -73,6 +74,34 @@ var MessageBoxView = new function() {
   // TODO: Desc
   this.displayDebug = function() {
     MessageBox.show(messageBoxes.debug.title, messageBoxes.debug.content);
+
+    $("#custom-import").on("input", function(){
+      var data = $("#custom-import").val();
+      var d = JSON.parse(data);
+      if(d[0]) {
+        var e = d[0];
+        $("#custom-import").val("Refresh to apply.");
+
+        if(e.ischaracterstab) {
+          localStorage.setItem(NautController.API.CHARACTERS, data);
+        }
+        else if(e.isskillstab) {
+          localStorage.setItem(NautController.API.SKILLS, data);
+        }
+        else if(e.isupgradestab) {
+          localStorage.setItem(NautController.API.UPGRADES, data);
+        }
+        else if(e.iseffectstab) {
+          localStorage.setItem(NautController.API.EFFECTS, data);
+        }
+        else if(e.isconfigtab) {
+          localStorage.setItem(NautController.API.CONFIG, data);
+        }
+        else {
+          $("#custom-import").val("Invalid data");
+        }
+      }
+    });
   };
 
   // TODO: Desc
