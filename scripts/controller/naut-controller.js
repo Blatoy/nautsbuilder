@@ -309,7 +309,13 @@ var NautController = new function() {
     NautView.setSelectedNaut(NautView.getIconElementForNaut(randomNaut));
     NautView.hideName();
     NautView.hideArt();
+    InfoBoxView.hideSkills();
+    InfoBoxView.hideLore();
+    InfoBoxView.displayAbout();
+    this.nautSelected = true;
+    this.canHoverNautSelection = false;
     BuildController.onNautSelected(randomNaut);
+    BuildController.setRandomBuild()
   };
 
   // TODO: Add desc

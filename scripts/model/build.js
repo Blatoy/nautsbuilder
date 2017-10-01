@@ -556,7 +556,10 @@ var Build = function(URLData) {
       for(var j = 0; j < s.length; ++j) {
         purchasedUpgrades[i][j] = parseInt(s.charAt(j));
         if(purchasedUpgrades[i][j] != 0) {
-          buildOrder.push(Build.getIndexFromRowCol(i, j + 1));
+          purchasedUpgrades[i][j] = naut.getSkills()[i].getUpgrades()[j].getStageCount()
+          for(var k = 0; k < purchasedUpgrades[i][j]; ++k) {
+            buildOrder.push(Build.getIndexFromRowCol(i, j + 1));
+          }
         }
       }
     }
