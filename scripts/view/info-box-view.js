@@ -1,5 +1,6 @@
 var InfoBoxView = new function() {
   var infoBoxes;
+  var self = this;
 
   this.init = function() {
     infoBoxes = {
@@ -8,15 +9,15 @@ var InfoBoxView = new function() {
         "If you want to support this tool consider making a small <a href='/donate'>donation</a> to help me pay the server!<hr>" +
         "<button onclick='MessageBoxView.displayErrorReport()'>Report errors</button> - <a href='https://github.com/Blatoy/nautsbuilder/'>Github</a>" +
         " - <a href='https://www.awesomenauts.com/forum/viewtopic.php?f=14&t=50115&sid=dbaf3f08554b809a95e0415f31dc3159'>Forum</a> - " +
-        "<a href='https://discord.gg/GsE29w7'>Discord</a>" +
-        '<div id="settings-container"><img src="http://i.imgur.com/oKZ2pjD.png"/></div>', "about"),
+        "<a href='https://discord.gg/GsE29w7'>Discord</a><div id='cacheDisabledInfo'><hr><b style='color: red;'>Cache auto-update disabled!</b></div>" +
+        '<div id="settings-container"><img src="' +  CONFIG.path.images + 'gear.png"/></div>', "about"),
       skills: new InfoBox("", "skill-description"),
       lore: new InfoBox("", "naut-description"),
       buildInfo1: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-1"),
-      buildInfo2: new InfoBox("...", "build-info-2"),
-      buildInfo3: new InfoBox("...", "build-info-3"),
-      buildInfo4: new InfoBox("...", "build-info-4"),
-      buildSummary: new InfoBox("...", "build-summary")
+      buildInfo2: new InfoBox("", "build-info-2"),
+      buildInfo3: new InfoBox("", "build-info-3"),
+      buildInfo4: new InfoBox("", "build-info-4"),
+      buildSummary: new InfoBox("", "build-summary")
     };
   };
 
@@ -109,6 +110,13 @@ var InfoBoxView = new function() {
   // TODO: Add desc
   this.displayAbout = function() {
     infoBoxes.about.setVisibility(true, true);
+
+    if(localStorage.getItem("cacheVersion") == "-1") {
+      $("#cacheDisabledInfo").show();
+    }
+    else {
+      $("#cacheDisabledInfo").hide();
+    }
   };
 
   // TODO: Add desc
@@ -120,9 +128,14 @@ var InfoBoxView = new function() {
 
   this.onLoaded = function() {
     infoBoxes.about.getElement().fadeIn(200);
-    infoBoxes.about.setVisibility(true, true);
+    self.displayAbout();
   };
   this.setAboutVisibility = function(visible){
-    infoBoxes.about.setVisibility(visible, true);
+    if(visible) {
+      self.displayAbout();
+    }
+    else {
+      infoBoxes.about.setVisibility(false, true);
+    }
   };
 };

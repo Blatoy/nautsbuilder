@@ -148,6 +148,12 @@ Naut.list = [];
 Naut.EXPANSION_NONE = "none"; // We don't need the other because we never check for a specific expansion
 
 Naut.getByName = function(nautName){
+  // We sadly have to hard-code this one to keep compatibility with the old Nautsbuilder links
+  // New nauts won't need this since the old Nautsbuilder isn't updated anymore
+  if(nautName == "Skolldir") {
+    nautName = "Sklldir";
+  }
+
   nautName = getCleanString(nautName).toLowerCase();
   for(var i = 0; i < Naut.list.length; ++i) {
     if(getCleanString(Naut.list[i].getName()).toLowerCase() == nautName) {

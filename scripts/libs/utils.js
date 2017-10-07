@@ -93,7 +93,7 @@ function shuffleString(str) {
  * @param {string} str - The string to clean
  */
 function getCleanString(str) {
-  return str.replace(/^[^a-z]+|[^\w:.-]+/gi, "");
+  return str.replace(/^[^a-z]+|[^\w:.-]+|[_]/gi, "");
 }
 
 /**
