@@ -481,7 +481,7 @@ hr {
   height: 25%;
   border-top: 2px solid black;
   background-image: url("/nautsbuilder/images/shop-hexagon.png");
-  overflow: auto;
+  overflow: hidden;
 }
 
 #shop-row-1, #shop-row-3 {
@@ -504,7 +504,7 @@ hr {
   top: calc(80% - 19px);
 
   width: calc(72% + 32px);
-  overflow: auto;
+  overflow: hidden;
 
   z-index: 102;
 
@@ -576,7 +576,7 @@ hr {
   width: 12%;
   display: inline-block;
   position: relative;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .shop-item-price, .shop-item-stage {
