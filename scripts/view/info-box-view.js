@@ -86,7 +86,7 @@ var InfoBoxView = new function() {
     infoBoxes.buildSummary.setContent(
       "<label>Total cost:</label> <span class='solar-price'>" + Build.current.getPrice() + "</span> " +
       "<img src='" + CONFIG.path.images + "solar-icon.png" + "'></img>" +
-      "<hr><label>Forum link:</label><input type='text' value='[build]" + Build.current.toString() + "[/build]'>" +
+      "<hr><label>Forum link:</label><input type='text' value='[build]" + Build.current.toString(true) + "[/build]'>" +
       "<hr><label>Team level: <span style='color: white; margin-right: 10px;' id='team-level-label'>" + Setting.get("teamLevel") + "</span></label><input oninput='InfoBoxView.setTeamLevelDisplay(this.value)' onmouseup='Setting.setTeamLevel(this.value)' id='team-level' type='range' min='1' max='20' value='" + Setting.get("teamLevel") + "' step='1'>" +
       "<hr><button onclick='MessageBoxView.displayExportImage()'>Export as image</button> - <button onclick='BuildController.setRandomBuild()'>Random build</button>"
     );

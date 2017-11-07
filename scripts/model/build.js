@@ -65,10 +65,38 @@ var Build = function(URLData) {
     // Build order
     if(data[2]) {
       order = data[2].split("-");
-      for(var i = 0; i < order.length; ++i) {
-        if(isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 27 || order % 7 == 0) {
-          order = [];
-          break;
+      // Old build order doens't use the same format because it contains skills
+      // It's possible to detect if it's an old building using buildOrder length
+      // This means, all incomplete build from nautsbuilder1 won't have a build order / an invalid one
+      // The idea is the same however it's index - 1 and index 1 and 8 should be ignorer
+      var uniqueOrder = order.filter(function(item, pos){return order.indexOf(item) == pos});
+      var useOldBuildOrder = uniqueOrder.length == 14;
+
+      if(useOldBuildOrder) {
+        for(var i = 0; i < order.length; ++i) {
+          if(isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 28) {
+            order = [];
+            break;
+          }
+          else {
+            // We remove 1 and 8 since they are skills and this is not handled by nb2
+            if(order[i] == 1 || order[i] == 8) {
+              order.splice(i, 1);
+              i--;
+            }
+            else {
+              // Old build index = new build index + 1 so we fix it
+              order[i]--;
+            }
+          }
+        }
+      }
+      else {
+        for(var i = 0; i < order.length; ++i) {
+          if(isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 27) {
+            order = [];
+            break;
+          }
         }
       }
     }
@@ -207,7 +235,7 @@ var Build = function(URLData) {
   *
   * @returns  {String} something like "Nibbs/1001000100200010010001000000/3" format: "nautname/purchasedUpgrades/build-order"
   */
-  this.toString = function() {
+  this.toString = function(enableRetrocompatibility) {
     // Naut name
     var str = getCleanString(naut.getName());
     str += "/";
@@ -219,6 +247,7 @@ var Build = function(URLData) {
         if(j == 0) {
           str += "1";
         }
+
         str += purchasedUpgrades[i][j] + "";
       }
     }
@@ -226,8 +255,18 @@ var Build = function(URLData) {
     // Buy order
     if(Setting.get("buyOrderEnabled")) {
       str += "/";
-      for(var i = 0; i < buildOrder.length; ++i) {
-        str += buildOrder[i] + "-";
+      if(enableRetrocompatibility == true) {
+        str += "1-8-"
+        for(var i = 0; i < buildOrder.length; ++i) {
+          str += (parseInt(buildOrder[i]) + 1) + "-";
+        }
+      }
+      else {
+        // Doesn't put the skill, and index = index -1
+        // This was done by mistake but can't be changed since a lot of link use this system
+        for(var i = 0; i < buildOrder.length; ++i) {
+          str += buildOrder[i] + "-";
+        }
       }
       str = str.substring(0, str.length - 1); // Remove last "-"
     }
