@@ -301,6 +301,11 @@ var Build = function(URLData) {
     for(var col = 0; col < upgrades.length; ++col) {
       var colUpgrade = upgrades[col];
 
+      if(colUpgrade.getSpecialEffect() == "AFFECT_ALL") {
+        // Upgrades that affect all other upgrades don't need to add their stats
+        continue;
+      }
+
       // Upgrade is purchased
       if(purchasedUpgrades[row][col] !== 0) {
         var colEffects = colUpgrade.getSteps(purchasedUpgrades[row][col] - 1);
@@ -316,6 +321,9 @@ var Build = function(URLData) {
           else {
             // Yes => We merge the values
             var existingEffect = rowEffects[stepEffect.getKey()];
+            if(row == 2 && col == 3) {
+              console.log(existingEffect.value, stepEffect.getValue());
+            }
             existingEffect.value = mergeValues(existingEffect.value, stepEffect.getValue());
             existingEffect.coeff = mergeValues(existingEffect.coeff, stepEffect.getCoeff());
           }
@@ -465,9 +473,10 @@ var Build = function(URLData) {
     // Both value are array
     if(Array.isArray(val1) && Array.isArray(val2)) {
       var res = [];
+      var count = val1.length > val2.length ? val1.length : val2.length;
       // We just add the value together or 0 if they doesn't exist
-      for(var i = 0; i < val1.length; ++i) {
-        res.push((val1[i] === undefined ? 0 : val1[i]) + val2[i] === undefined ? 0 : val2[i]);
+      for(var i = 0; i < count; ++i) {
+        res.push((val1[i] === undefined ? 0 : val1[i]) + (val2[i] === undefined ? 0 : val2[i]));
       }
 
       return res;
