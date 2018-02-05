@@ -89,6 +89,15 @@ var Upgrade = function(upgradeAPIData) {
   };
 
   /**
+   * this.getSpecialEffect - Getter
+   *
+   * @returns {string}  The special effect of this upgrade
+   */
+  this.getSpecialEffect = function(){
+    return upgradeData.specialEffect;
+  }
+
+  /**
    * this.getSkillName - Getter
    *
    * @returns {string}  The name of the Skill who own this upgrade
