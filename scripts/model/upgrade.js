@@ -91,10 +91,15 @@ var Upgrade = function(upgradeAPIData) {
   /**
    * this.getSpecialEffect - Getter
    *
-   * @returns {string}  The special effect of this upgrade
+   * @returns {string}  The special effect of this upgrade or false if it doesn't have one
    */
   this.getSpecialEffect = function(){
-    return upgradeData.specialEffect;
+    if(upgradeData.specialeffect && upgradeData.specialeffect != "") {
+      return upgradeData.specialeffect;
+    }
+    else {
+      return false;
+    }
   }
 
   /**

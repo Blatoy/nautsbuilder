@@ -323,6 +323,29 @@ var Build = function(URLData) {
       }
     }
 
+    // Check for special effects that would affect this row
+    for(var i = 0; i < naut.getSkills().length; ++i) {
+      for(var j = 0; j < naut.getSkills(i).getUpgrades().length; ++j) {
+        var upgrade = naut.getSkills(i).getUpgrades(j);
+        switch(upgrade.getSpecialEffect()) {
+          case "AFFECT_ALL":
+            // Check if the upgrade was bought
+            if(purchasedUpgrades[i][j] !== 0) {
+              // Apply effects to the existing effects
+              var effectsToApply = upgrade.getSteps(purchasedUpgrades[i][j] - 1);
+              for(var k = 0; k < effectsToApply.length; ++k) {
+                var newEffect = effectsToApply[k];
+                if(rowEffects[newEffect.getKey()] !== undefined) {
+                  rowEffects[newEffect.getKey()].value = mergeValues(rowEffects[newEffect.getKey()].value, newEffect.getValue());
+                  rowEffects[newEffect.getKey()].coeff = mergeValues(rowEffects[newEffect.getKey()].coeff, newEffect.getCoeff());
+                }
+              }
+            }
+
+            break;
+        }
+      }
+    }
 
     // It's possible to have multiple source of DPS, but only 1 kind of DOTps is possible
     var dpsAttackSpeed = {}, dpsDamage = {}, dpsMultiplier = {};
