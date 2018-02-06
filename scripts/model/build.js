@@ -316,7 +316,10 @@ var Build = function(URLData) {
           // Does it already exist?
           if(rowEffects[stepEffect.getKey()] === undefined) {
             // No => Same as if it was new, nothing to do
-            rowEffects[stepEffect.getKey()] = JSON.parse(JSON.stringify({value: stepEffect.getValue(), coeff: stepEffect.getCoeff(), unit: stepEffect.getUnit(), scaleType: stepEffect.getEffectScaling()}));
+            rowEffects[stepEffect.getKey()] = JSON.parse(JSON.stringify(
+              {value: this.resolveCrossRow(stepEffect.getValue()),
+               coeff: this.resolveCrossRow(stepEffect.getCoeff()), unit: stepEffect.getUnit(),
+               scaleType: stepEffect.getEffectScaling()}));
           }
           else {
             // Yes => We merge the values
@@ -324,8 +327,8 @@ var Build = function(URLData) {
             if(row == 2 && col == 3) {
               console.log(existingEffect.value, stepEffect.getValue());
             }
-            existingEffect.value = mergeValues(existingEffect.value, stepEffect.getValue());
-            existingEffect.coeff = mergeValues(existingEffect.coeff, stepEffect.getCoeff());
+            existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
+            existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
           }
         }
       }
@@ -641,6 +644,64 @@ var Build = function(URLData) {
     }
   };
 
+  this.resolveCrossRow = function(values) {
+    // Force everything to be an array as it's easier for values like 0 > 1 > 2 > ...
+    var array = Array.isArray(values) ? values : [values];
+    for(var i = 0; i < array.length; ++i) {
+      var res = array[i] + ""; // Force string conversion
+      if(res.indexOf("//") !== -1) {
+        res = res.split("//");
+        res = res[0];
+      }
+
+      // Replace |row,col,index|
+      res = res.replace(/\|(.+?),(.+?),(.+?)\|/g, function(match, row, col, index){
+        var stage = purchasedUpgrades[row][col] - 1;
+        if(stage === -1) {
+          return 0;
+        }
+        else {
+          return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue();
+        }
+      });
+
+      // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
+      res = res.replace(/\|(.+?),(.+?)\|/g, function(match, row, col){
+        return purchasedUpgrades[row][col] == 0 ? 0 : 1; // I prefer having 0 or 1 than a falsy/trusy value since it will be parsed using a math lib
+      });
+
+      // Replace ¦row, index¦ Get Same as |row,col,index| but for skills
+      res = res.replace(/\¦(.+?),(.+?)\¦/g, function(match, row, index){
+          return self.getNaut().getSkills(row).getEffects()[index].getValue();
+      });
+
+      // Math eval of everything inside []
+      res = res.replace(/\[(.*)\]/g, function(match, capture){
+        try {
+          return math.eval(capture);
+        }
+        catch(err) {
+          console.error("Math evaluation failed for " + capture);
+        }
+        return 0;
+      });
+
+      // math.eval
+      // Make sure to recreate a number if it was a number ot keep the string
+      if(!isNaN(parseFloat(res))) {
+        res = parseFloat(res);
+      }
+      array[i] = res;
+    }
+
+    if(Array.isArray(values)) {
+      return array;
+    }
+    else {
+      return array[0];
+    }
+  }
+
   // Get the current naut
   this.getNaut = function() {
     return naut;
@@ -713,6 +774,7 @@ Build.getScalingFromEffectTypeAndLevel = function(effectType) {
   }
 };
 
+// TODO: Desc
 Build.applyDPS = function(attackSpeed, damage, multiplier) {
   return round(attackSpeed / 60 * damage * multiplier);
 }
