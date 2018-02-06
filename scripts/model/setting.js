@@ -5,7 +5,10 @@ var Setting = new function() {
     disableCache: false,
     teamLevel: 1,
     buyOrderEnabled: true,
-    debugDisplayScaleType: false
+    debugDisplayNaut: false,
+    debugDisplayScaleType: false,
+    debugDisableCrossRowParser: false,
+    debugDisableMathParser: false
   };
 
   // TODO: Desc
@@ -46,6 +49,7 @@ var Setting = new function() {
     $("#team-level-label").text(value);
     settings.teamLevel = value;
     InfoBoxView.setBuildSummaryContent();
+    // Reset current infoboxes
   };
 
   // TODO: Desc
@@ -70,6 +74,25 @@ var Setting = new function() {
     settings.debugDisplayScaleType = !settings.debugDisplayScaleType;
     InfoBoxView.setBuildSummaryContent();
   };
+
+  this.debugToggleDebugNaut = function() {
+    this.set("debugDisplayNaut", !this.get("debugDisplayNaut"));
+    document.location.reload();
+  }
+
+  this.debugToggleCrossRow = function() {
+    settings.debugDisableCrossRowParser = !settings.debugDisableCrossRowParser;
+    InfoBoxView.setBuildSummaryContent();
+    // Dirty reset to refresh boxes
+    NautController.selectNaut(Build.current.getNaut().getName());
+  }
+
+  this.debugToggleMathParser = function() {
+    settings.debugDisableMathParser = !settings.debugDisableMathParser;
+    InfoBoxView.setBuildSummaryContent();
+    // Dirty reset to refresh boxes
+    NautController.selectNaut(Build.current.getNaut().getName());
+  }
 
   this.init();
   return this;

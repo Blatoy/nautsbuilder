@@ -116,7 +116,9 @@ var NautController = new function() {
     switch(API) {
       case self.API.CHARACTERS:
         for(var i = 0; i < data.length; ++i) {
-          Naut.list.push(new Naut(data[i]));
+          if(data[i].beta != 2 || Setting.get("debugDisplayNaut")) {
+            Naut.list.push(new Naut(data[i]));
+          }
         }
         break;
       case self.API.SKILLS:

@@ -194,8 +194,14 @@ Effect.toString = function(objectEffect) {
     displayValue = displayValue.join(displayUnit + " > ");
   }
 
-  var displayValueParsed = displayValue.split("//");
-  displayValueParsed = (displayValueParsed[1] ? displayValueParsed[1] : displayValueParsed[0]);
+  var displayValueParsed;
+  if(!Setting.get("debugDisableCrossRowParser")) {
+    displayValueParsed = displayValue.split("//");
+    displayValueParsed = (displayValueParsed[1] ? displayValueParsed[1] : displayValueParsed[0]);
+  }
+  else {
+    displayValueParsed = displayValue;
+  }
 
   return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayValueParsed) + htmlToText(displayUnit) + "</span>";
 };

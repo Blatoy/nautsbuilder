@@ -645,6 +645,9 @@ var Build = function(URLData) {
   };
 
   this.resolveCrossRow = function(values) {
+    // Debug: No resolving
+    if(Setting.get("debugDisableCrossRowParser")) return values;
+
     // Force everything to be an array as it's easier for values like 0 > 1 > 2 > ...
     var array = Array.isArray(values) ? values : [values];
     for(var i = 0; i < array.length; ++i) {
@@ -675,16 +678,18 @@ var Build = function(URLData) {
           return self.getNaut().getSkills(row).getEffects()[index].getValue();
       });
 
-      // Math eval of everything inside []
-      res = res.replace(/\[(.*)\]/g, function(match, capture){
-        try {
-          return math.eval(capture);
-        }
-        catch(err) {
-          console.error("Math evaluation failed for " + capture);
-        }
-        return 0;
-      });
+      if(!Setting.get("debugDisableMathParser")) {
+        // Math eval of everything inside []
+        res = res.replace(/\[(.*)\]/g, function(match, capture){
+          try {
+            return math.eval(capture);
+          }
+          catch(err) {
+            console.error("Math evaluation failed for " + capture);
+          }
+          return 0;
+        });
+      }
 
       // math.eval
       // Make sure to recreate a number if it was a number ot keep the string

@@ -11,7 +11,12 @@ function nl2br(string) {
 
 // TODO: Desc
 function htmlToText(string) {
-  return nl2br($("<p>" + string + "</p>").text()).replace("*","<i>").replace("*", "</i>");
+  if(!Setting.get("debugDisableCrossRowParser") && !Setting.get("debugDisableMathParser")) {
+    return nl2br($("<p>" + string + "</p>").text()).replace("*","<i>").replace("*", "</i>");
+  }
+  else {
+    return nl2br($("<p>" + string + "</p>").text()); // Disable ** italic when debug enabled
+  }
 }
 
 /**

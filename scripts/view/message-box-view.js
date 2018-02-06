@@ -23,7 +23,10 @@ var MessageBoxView = new function() {
       },
       debug: {
         title: "Debug tools",
-        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle display scaling type</button>" +
+        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle scaling type display</button>" +
+          "<hr><button onclick='Setting.debugToggleDebugNaut()'>Toggle debug naut display</button>" +
+          "<hr><button onclick='Setting.debugToggleCrossRow()'>Show raw crossrow field</button>" +
+          "<hr><button onclick='Setting.debugToggleMathParser()'>Disable crossrow math parser</button>" +
           "<hr><label>Import custom spreadsheet</label><input id='custom-import' type='text'><hr>"
       },
       errorsReport: {
