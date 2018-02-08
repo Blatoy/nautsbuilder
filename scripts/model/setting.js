@@ -8,7 +8,8 @@ var Setting = new function() {
     debugDisplayNaut: false,
     debugDisplayScaleType: false,
     debugDisableCrossRowParser: false,
-    debugDisableMathParser: false
+    debugDisableMathParser: false,
+    debugRCIDisplay: false
   };
 
   // TODO: Desc
@@ -92,6 +93,11 @@ var Setting = new function() {
     InfoBoxView.setBuildSummaryContent();
     // Dirty reset to refresh boxes
     NautController.selectNaut(Build.current.getNaut().getName());
+  }
+
+  this.debugToggleRCIDisplay = function() {
+    this.set("debugRCIDisplay", !this.get("debugRCIDisplay"));
+    document.location.reload();
   }
 
   this.init();

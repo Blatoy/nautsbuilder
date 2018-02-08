@@ -25,8 +25,9 @@ var MessageBoxView = new function() {
         title: "Debug tools",
         content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle scaling type display</button>" +
           "<hr><button onclick='Setting.debugToggleDebugNaut()'>Toggle debug naut display</button>" +
-          "<hr><button onclick='Setting.debugToggleCrossRow()'>Show raw crossrow field</button>" +
-          "<hr><button onclick='Setting.debugToggleMathParser()'>Disable crossrow math parser</button>" +
+          "<hr><button onclick='Setting.debugToggleCrossRow()'>Toggle raw crossrow display</button>" +
+          "<hr><button onclick='Setting.debugToggleMathParser()'>Toggle crossrow math parser</button>" +
+          "<hr><button onclick='Setting.debugToggleRCIDisplay()'>Toggle RCI display on upgrade over</button>" +
           "<hr><label>Import custom spreadsheet</label><input id='custom-import' type='text'><hr>"
       },
       errorsReport: {
