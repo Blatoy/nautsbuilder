@@ -657,25 +657,35 @@ var Build = function(URLData) {
         res = res[0];
       }
 
+
+      // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
+      res = res.replace(/\|([0-9]*?),([0-9]*?)\|/g, function(match, row, col) {
+        return purchasedUpgrades[row][col] == 0 ? 0 : 1; // I prefer having 0 or 1 than a falsy/trusy value since it will be parsed using a math lib
+      });
+
       // Replace |row,col,index|
-      res = res.replace(/\|(.+?),(.+?),(.+?)\|/g, function(match, row, col, index){
+      res = res.replace(/\|([0-9]*?),([0-9]*?),([0-9]*?)\|/g, function(match, row, col, index) {
         var stage = purchasedUpgrades[row][col] - 1;
         if(stage === -1) {
           return 0;
         }
         else {
-          return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue();
+          if(self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue() != 0) {
+            return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue();
+          } else {
+            return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getCoeff();
+          }
         }
-      });
-
-      // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
-      res = res.replace(/\|(.+?),(.+?)\|/g, function(match, row, col){
-        return purchasedUpgrades[row][col] == 0 ? 0 : 1; // I prefer having 0 or 1 than a falsy/trusy value since it will be parsed using a math lib
       });
 
       // Replace ¦row, index¦ Get Same as |row,col,index| but for skills
       res = res.replace(/\¦(.+?),(.+?)\¦/g, function(match, row, index){
-          return self.getNaut().getSkills(row).getEffects()[index].getValue();
+        if(self.getNaut().getSkills(row).getEffects()[index].getValue() != 0) {
+          return  self.getNaut().getSkills(row).getEffects()[index].getValue();
+        }
+        else {
+          return self.getNaut().getSkills(row).getEffects()[index].getCoeff();
+        }
       });
 
       if(!Setting.get("debugDisableMathParser")) {
