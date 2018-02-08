@@ -1,5 +1,7 @@
 var MainView = new function() {
   var self = this;
+  var keyReleased = true;
+
   this.mousePos = {x: 0, y: 0};
 
   this.onLoaded = function() {
@@ -14,9 +16,24 @@ var MainView = new function() {
     });
 
     $(document).on("keydown", function(e){
+      if(keyReleased) {
+        keyReleased = false;
+        switch(e.keyCode) {
+          case 115: // F4
+            MessageBoxView.displayDebug();
+            break;
+          case 17: // ctrl
+            Tooltip.togglePositionUpdateActivation();
+            break;
+        }
+      }
+    });
+
+    $(document).on("keyup", function(e){
+      keyReleased = true;
       switch(e.keyCode) {
-        case 115: // F4
-          MessageBoxView.displayDebug();
+        case 17: // ctrl
+          Tooltip.togglePositionUpdateActivation();
           break;
       }
     });
