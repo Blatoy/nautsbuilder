@@ -14,10 +14,10 @@ var InfoBoxView = new function() {
       skills: new InfoBox("", "skill-description"),
       lore: new InfoBox("", "naut-description"),
       buildInfo1: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-1"),
-      buildInfo2: new InfoBox("", "build-info-2"),
-      buildInfo3: new InfoBox("", "build-info-3"),
-      buildInfo4: new InfoBox("", "build-info-4"),
-      buildSummary: new InfoBox("", "build-summary")
+      buildInfo2: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-2"),
+      buildInfo3: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-3"),
+      buildInfo4: new InfoBox("displayBuildSummary() error. Please retry.", "build-info-4"),
+      buildSummary: new InfoBox("displayBuildSummary() error. Please retry.", "build-summary")
     };
   };
 
@@ -72,10 +72,14 @@ var InfoBoxView = new function() {
 
       for(var k in effects) {
         if(!Setting.get("debugDisplayScaleType")) {
-          content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + "<br>";
+          if(effects[k].value != 0) {
+            content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + "<br>";
+          }
         }
         else {
-          content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + " - " + effects[k].scaleType + "<br>";
+          if(effects[k].value != 0) {
+            content += Effect.toString({unit: effects[k].unit, value: effects[k].value, key: k}) + " - " + effects[k].scaleType + "<br>";
+          }
         }
       }
 

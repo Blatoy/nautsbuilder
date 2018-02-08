@@ -190,10 +190,6 @@ Effect.toString = function(objectEffect) {
   var displayValue = objectEffect.value;
   var displayUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
 
-  if(displayValue == 0) {
-    return "";
-  }
-
   if(Array.isArray(displayValue)) {
     displayValue = displayValue.join(displayUnit + " > ");
   }

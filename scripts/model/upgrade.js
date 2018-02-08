@@ -33,6 +33,11 @@ var Upgrade = function(upgradeAPIData) {
 
           for(var j = 0; j < rawEffects.length; ++j) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
+              // Prevent NB2 being stuck in a state that prevent cache refresh
+              if(effectScaling[j] === undefined) {
+                alert("[ERROR] effectScaling missing for " + rawEffects[j] + ". Please report this issue!");
+                continue;
+              }
               effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
             }
           }

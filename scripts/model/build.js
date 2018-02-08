@@ -324,9 +324,7 @@ var Build = function(URLData) {
           else {
             // Yes => We merge the values
             var existingEffect = rowEffects[stepEffect.getKey()];
-            if(row == 2 && col == 3) {
-              console.log(existingEffect.value, stepEffect.getValue());
-            }
+
             existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
             existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
           }
@@ -681,7 +679,7 @@ var Build = function(URLData) {
       // Replace ¦row, index¦ Get Same as |row,col,index| but for skills
       res = res.replace(/\¦(.+?),(.+?)\¦/g, function(match, row, index){
         if(self.getNaut().getSkills(row).getEffects()[index].getValue() != 0) {
-          return  self.getNaut().getSkills(row).getEffects()[index].getValue();
+          return self.getNaut().getSkills(row).getEffects()[index].getValue();
         }
         else {
           return self.getNaut().getSkills(row).getEffects()[index].getCoeff();
