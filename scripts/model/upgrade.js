@@ -33,6 +33,11 @@ var Upgrade = function(upgradeAPIData) {
 
           for(var j = 0; j < rawEffects.length; ++j) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
+              // Prevent NB2 being stuck in a state that prevent cache refresh
+              if(effectScaling[j] === undefined) {
+                alert("[ERROR] effectScaling missing for " + rawEffects[j] + ". Please report this issue!");
+                continue;
+              }
               effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
             }
           }
@@ -47,13 +52,32 @@ var Upgrade = function(upgradeAPIData) {
   };
 
   this.toString = function() {
-    var txt = "<b>" + htmlToText(this.getName()) + "</b><br><br>";
+    var txt = "", row = 0, col = 0;
+
+    if(Setting.get("debugRCIDisplay")) {
+      for(var i = 0; i < Build.current.getNaut().getSkills().length; ++i) {
+        for(var j = 0; j < Build.current.getNaut().getSkills(i).getUpgrades().length; ++j) {
+          if(Build.current.getNaut().getSkills(i).getUpgrades(j).getName() == this.getName()) {
+            txt += "|" + i + "," + j + "| ";
+            row = i, col = j;
+          }
+        }
+      }
+    }
+
+    txt += "<b>" + htmlToText(this.getName()) + "</b>";
+    txt += "<br><br>";
     txt += "<img style='vertical-align: middle;' src='" + CONFIG.path.images + "solar-icon.png'/>" + htmlToText(this.getCost());
     txt += "";
     for(var i = 0; i < this.getSteps().length; ++i) {
       txt += "<br><br>Stage " + (i + 1) + "<span class='tooltip-upgrades'>";
       for(var j = 0; j < this.getSteps(i).length; ++j) {
-        txt += "<br>- " + this.getSteps(i)[j].toString();
+        if(!Setting.get("debugRCIDisplay")) {
+          txt += "<br>- " + this.getSteps(i)[j].toString();
+        }
+        else {
+          txt += "<br>|" + row  + "," + col + "," + j + "| " + this.getSteps(i)[j].toString();
+        }
       }
       txt += "</span>";
     }
@@ -87,6 +111,20 @@ var Upgrade = function(upgradeAPIData) {
   this.getCharacter = function(){
     return upgradeData.character;
   };
+
+  /**
+   * this.getSpecialEffect - Getter
+   *
+   * @returns {string}  The special effect of this upgrade or false if it doesn't have one
+   */
+  this.getSpecialEffect = function(){
+    if(upgradeData.specialeffect && upgradeData.specialeffect != "") {
+      return upgradeData.specialeffect;
+    }
+    else {
+      return false;
+    }
+  }
 
   /**
    * this.getSkillName - Getter

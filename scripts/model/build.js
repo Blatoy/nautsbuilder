@@ -285,8 +285,8 @@ var Build = function(URLData) {
   this.getRowEffects = function(row){
     var rowEffects = {};
 
-    // Add the effects from the skill.
-    // This is easy because rowEffects is empty and skill don't have duplicate effects
+    // Add SKILL EFFECTS
+    // rowEffects is empty and there are no duplicates at the moment
     var skill = naut.getSkills(row);
     var skillEffects = skill.getEffects();
     for(var i = 0; i < skillEffects.length; ++i) {
@@ -295,148 +295,106 @@ var Build = function(URLData) {
       rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({value: skillEffect.getValue(), coeff: skillEffect.getCoeff(), unit: skillEffect.getUnit(), scaleType: skillEffect.getEffectScaling()}));
     }
 
-    // Add the effects from upgrades. This require tests to see what to do with the existings effects
-    // Now it's the "hard" part because effects may already exists
+    // Add UPGRADES EFFECTS
+    // Some effects may already exist so we need to check for that
     var upgrades = skill.getUpgrades();
-
     for(var col = 0; col < upgrades.length; ++col) {
       var colUpgrade = upgrades[col];
+
+      if(colUpgrade.getSpecialEffect() == "AFFECT_ALL") {
+        // Upgrades that affect all other upgrades don't need to add their stats
+        continue;
+      }
+
+      // Upgrade is purchased
       if(purchasedUpgrades[row][col] !== 0) {
         var colEffects = colUpgrade.getSteps(purchasedUpgrades[row][col] - 1);
-
+        // For each effect...
         for(var j = 0; j < colEffects.length; ++j) {
           var stepEffect = colEffects[j];
-          // Same case as above, the effect doesn't exist so we don't have to check anything
 
+          // Does it already exist?
           if(rowEffects[stepEffect.getKey()] === undefined) {
-            // We duplicate the array so we are free to change it later
-            rowEffects[stepEffect.getKey()] = JSON.parse(JSON.stringify({value: stepEffect.getValue(), coeff: stepEffect.getCoeff(), unit: stepEffect.getUnit(), scaleType: stepEffect.getEffectScaling()}));
+            // No => Same as if it was new, nothing to do
+            rowEffects[stepEffect.getKey()] = JSON.parse(JSON.stringify(
+              {value: this.resolveCrossRow(stepEffect.getValue()),
+               coeff: this.resolveCrossRow(stepEffect.getCoeff()), unit: stepEffect.getUnit(),
+               scaleType: stepEffect.getEffectScaling()}));
           }
           else {
+            // Yes => We merge the values
             var existingEffect = rowEffects[stepEffect.getKey()];
-            // Now we can have a lot of different effect, including: Strings, number, number array, coeff, coeff array...
-            // I could reduce the amount of testing done by imbricate test but it's more readable this way and take less space...
-            if(Array.isArray(stepEffect.getValue()) && Array.isArray(existingEffect.value)) {
-              // Both array
-              for(var k = 0; k < stepEffect.getValue().length; ++k) {
-                // Check if array are the same size, they should but...
-                if(existingEffect.value[k] !== undefined) {
-                  existingEffect.value[k] += stepEffect.getValue(k);
-                }
-                else {
-                  existingEffect.value.push(stepEffect.getValue(k));
-                }
-              }
-            }
-            else if(Array.isArray(stepEffect.getValue()) && !Array.isArray(existingEffect.value)){
-              // New effect is array but old effect isn't
-              // If one is an array but the other isn't, we add the value to each cell of the array
-              var oldValue = existingEffect.value;
-              existingEffect.value = [];
-              for(var k = 0; k < stepEffect.getValue().length; ++k) {
-                existingEffect.value.push(oldValue + stepEffect.getValue(k));
-              }
-            }
-            else if(!Array.isArray(stepEffect.getValue()) && Array.isArray(existingEffect.value)){
-              // Old effect is array but new effect isn't
-              for(var k = 0; k < existingEffect.value.length; ++k) {
-                existingEffect.value[k] += stepEffect.getValue();
-              }
-            }
-            else {
-              // Both aren't
-              existingEffect.value += stepEffect.getValue();
-            }
 
-            // Now we do the same zork for coeff. It could be an idea to create a function
-            if(Array.isArray(stepEffect.getCoeff()) && Array.isArray(existingEffect.coeff)) {
-              // Both array
-              for(var k = 0; k < stepEffect.getCoeff().length; ++k) {
-                // Check if array are the same size, they should but...
-                if(existingEffect.coeff[k] !== undefined) {
-                  existingEffect.coeff[k] += stepEffect.getCoeff(k);
-                }
-                else {
-                  existingEffect.coeff.push(stepEffect.getCoeff(k));
-                }
-              }
-            }
-            else if(Array.isArray(stepEffect.getCoeff()) && !Array.isArray(existingEffect.coeff)){
-              // New effect is array but old effect isn't
-              // If one is an array but the other isn't, we add the value to each cell of the array
-              var oldCoeff = existingEffect.coeff;
-              existingEffect.coeff = [];
-              for(var k = 0; k < stepEffect.getCoeff().length; ++k) {
-                existingEffect.coeff.push(oldCoeff + stepEffect.getCoeff(k));
-              }
-            }
-            else if(!Array.isArray(stepEffect.getCoeff()) && Array.isArray(existingEffect.coeff)){
-              // Old effect is array but new effect isn't
-              for(var k = 0; k < existingEffect.coeff.length; ++k) {
-                existingEffect.coeff[k] += stepEffect.getCoeff();
-              }
-            }
-            else {
-              // Both aren't
-              existingEffect.coeff += stepEffect.getCoeff();
-            }
+            existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
+            existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
           }
         }
       }
     }
 
-    // Now that everything should be OK; We still have to "value *= 1 + coeff", add DPS, limit the digit to 2 and check for team level
-    var dpsAttackSpeed = {}, dpsDamage = {}, dpsMultiplier = {}, dotDpsDamage = 0, dotDpsDuration = 0, dotDpsScaleType = "";
+    // Check for special effects that would affect this row
+    for(var i = 0; i < naut.getSkills().length; ++i) {
+      for(var j = 0; j < naut.getSkills(i).getUpgrades().length; ++j) {
+        var upgrade = naut.getSkills(i).getUpgrades(j);
+        switch(upgrade.getSpecialEffect()) {
+          case "AFFECT_ALL":
+            // Check if the upgrade was bought
+            if(purchasedUpgrades[i][j] !== 0) {
+              // Apply effects to the existing effects
+              var effectsToApply = upgrade.getSteps(purchasedUpgrades[i][j] - 1);
+              for(var k = 0; k < effectsToApply.length; ++k) {
+                var newEffect = effectsToApply[k];
+                if(rowEffects[newEffect.getKey()] !== undefined) {
+                  rowEffects[newEffect.getKey()].value = mergeValues(rowEffects[newEffect.getKey()].value, newEffect.getValue());
+                  rowEffects[newEffect.getKey()].coeff = mergeValues(rowEffects[newEffect.getKey()].coeff, newEffect.getCoeff());
+                }
+              }
+            }
+
+            break;
+        }
+      }
+    }
+
+    // It's possible to have multiple source of DPS, but only 1 kind of DOTps is possible
+    var dpsAttackSpeed = {}, dpsDamage = {}, dpsMultiplier = {};
+    var dotDpsDamage = 0, dotDpsDuration = 0, dotDpsScaleType = "";
+
+    // Apply COEFFICIENT and track DPS/DOTps
     for(var k in rowEffects) {
       var effect = rowEffects[k];
-
-      // And let's go for the stupid array check again
-      if(Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
-        // Both array
-        // If they aren't the same size, I don't really know what to do, it just means there's an error in the spreadsheet
-        for(var i = 0; i < effect.value.length; ++i) {
-          effect.value[i] = round(effect.value[i] * (1 + effect.coeff[i]));
-          effect.value[i] = Build.getValueAfterTeamScaling(effect.value[i], effect.scaleType);
-        }
-      } else if(Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
-        // Value is array but coeff isn't
-        for(var i = 0; i < effect.value.length; ++i) {
-          effect.value[i] = round(effect.value[i] * (1 + effect.coeff));
-          effect.value[i] = Build.getValueAfterTeamScaling(effect.value[i], effect.scaleType);
-        }
-      } else if(!Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
-        // Coeff is array but value isn't
-        var tempValue = effect.value;
-
-        effect.value = [];
-        for(var i = 0; i < effect.coeff.length; ++i) {
-          //  effect.value.push(Build.getValueAfterTeamScaling(round((1 + effect.coeff[i]) * tempValue)), effect.scaleType);
-          // No value means the upgrade only has a %
-          if(tempValue === 0) {
-            effect.value.push(Build.getValueAfterTeamScaling(round((effect.coeff[i]) * 100), effect.scaleType));
-          }
-          else {
-            effect.value.push(Build.getValueAfterTeamScaling(round((1 + effect.coeff[i]) * tempValue)), effect.scaleType);
+      // Both array
+      // We make sure we don't try to do this to a string
+      if(typeof effect.value !== "string") {
+        if(Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
+          // NOTE: Only the size of effect.value is taken into account
+          for(var i = 0; i < effect.value.length; ++i) {
+            if(effect.coeff[i] !== undefined) {
+              effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff[i]), effect.scaleType);
+            }
           }
         }
-      } else {
-        // Both are value
-        if(isNumeric(effect.value)) {
-          if(effect.value === 0) {
-            // No value means the upgrade only has a %
-            effect.value = (effect.coeff) * 100;
-            effect.value = Build.getValueAfterTeamScaling(effect.value, effect.scaleType);
-          }
-          else {
-            // If no coeff, it will just multiply the value by 1
-            effect.value = round(effect.value * (1 + effect.coeff));
-            effect.value = Build.getValueAfterTeamScaling(effect.value, effect.scaleType);
-          }
+        else if(!Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
+          // Both values
+          effect.value = Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff), effect.scaleType);
         }
-        // else it's a string and so coeff isn't required
+        else if(Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
+            // Value is array, coeff isn't
+            for(var i = 0; i < effect.value.length; ++i) {
+              effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff), effect.scaleType);
+            }
+        }
+        else {
+          // Value is number, coeff is array
+          var tempArray = [];
+          for(var i = 0; i < effect.coeff.length; ++i) {
+            tempArray.push(Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff[i]), effect.scaleType));
+          }
+          effect.value = tempArray;
+        }
       }
 
-      // Find keys that allows us to calculate DPS
+      // DPS (we check for keywords to claculate DPS)
       // (Attack speed / 60 * Damage) * Damage Multiplier
       if(CONFIG.dpsCalculationRegex.speed.test(k)) {
         var speedType = CONFIG.dpsCalculationRegex.speed.exec(k)[1];
@@ -451,6 +409,7 @@ var Build = function(URLData) {
         dpsMultiplier[multiplierType] = effect.value;
       }
 
+      // Remove team scaling for dotPS as we will apply it later
       switch(k) {
         case "damage over time":
           dotDpsScaleType = effect.scaleType;
@@ -460,40 +419,45 @@ var Build = function(URLData) {
       }
     }
 
-    // Dot dps calculation
+    // DOT DPS calculation
     if(dotDpsDuration !== 0 && dotDpsDamage !== 0) {
-      rowEffects["Dot DPS"] = {unit: "", value: round(Build.getValueAfterTeamScaling(dotDpsDamage / dotDpsDuration, dotDpsScaleType)), coeff: 1};
+      rowEffects["Dot DPS"] = {unit: "", value: round(Build.applyTeamScaling(dotDpsDamage / dotDpsDuration, dotDpsScaleType)), coeff: 1};
     }
 
-    // Dps calculation
-    for(var k in dpsAttackSpeed) { // We take dpsAttackSpeed but we could also check dpsDamage
+    // DPS calculation (it's an object because there can be multiple DPS like Ink DPS and Anchor DPS)
+    for(var k in dpsAttackSpeed) {
+      // Is dpsDamage defined too?
       if(dpsDamage[k] !== undefined) {
+
         var dps = [];
+        // dpsDamage is required, but we can have dps without dpsMultiplier
         if(dpsMultiplier[k] === undefined) {
           dpsMultiplier[k] = 1;
         }
 
+        // TODO There's currently no cases that require an array of multiplier but this may be something that wneed to be implemented
         if(Array.isArray(dpsMultiplier[k])) {
-           // TODO: Handle it properly
-           // There's currently no case that require an array of multiplier but this may be something nice to do
           dpsMultiplier[k] = dpsMultiplier[k][0];
         }
 
         if(Array.isArray(dpsDamage[k]) && Array.isArray(dpsAttackSpeed[k])) {
-          // They must be the same size here or it won't just work...
-          for(var i = 0; i < dpsDamage.length; ++i) {
-            dps.push(round(dpsAttackSpeed[k][i] / 60 * dpsDamage[k][i] * dpsMultiplier[k]));
+          for(var i = 0; i < dpsDamage[k].length; ++i) {
+            dps.push(Build.applyDPS(dpsAttackSpeed[k][i], dpsDamage[k][i], dpsMultiplier[k]));
           }
-        } else if(!Array.isArray(dpsDamage[k]) && Array.isArray(dpsAttackSpeed[k])) {
+        }
+        else if(!Array.isArray(dpsDamage[k]) && !Array.isArray(dpsAttackSpeed[k])) {
+          dps = Build.applyDPS(dpsAttackSpeed[k], dpsDamage[k], dpsMultiplier[k]);
+        }
+        else if(!Array.isArray(dpsDamage[k]) && Array.isArray(dpsAttackSpeed[k])) {
+          // Attack speed is array, dps isn't
           for(var i = 0; i < dpsAttackSpeed[k].length; ++i) {
-            dps.push(round(dpsAttackSpeed[k][i] / 60 * dpsDamage[k] * dpsMultiplier[k]));
+            dps.push(Build.applyDPS(dpsAttackSpeed[k][i], dpsDamage[k], dpsMultiplier[k]));
           }
         } else if(Array.isArray(dpsDamage[k]) && !Array.isArray(dpsAttackSpeed[k])) {
+          // dps is array, damaage isn't
           for(var i = 0; i < dpsDamage[k].length; ++i) {
-            dps.push(round(dpsAttackSpeed[k] / 60 * dpsDamage[k][i] * dpsMultiplier[k]));
+            dps.push(Build.applyDPS(dpsAttackSpeed[k], dpsDamage[k][i], dpsMultiplier[k]));
           }
-        } else {
-          dps = round(dpsAttackSpeed[k] / 60 * dpsDamage[k] * dpsMultiplier[k]);
         }
 
         rowEffects[k + "DPS"] = {unit: "", value: dps, coeff: 1};
@@ -501,6 +465,40 @@ var Build = function(URLData) {
     }
     return rowEffects;
   };
+
+  // val1 and val2 is array => ret[i] = val1[i] + val2[i]
+  // val1 and val2 are number => ret = val1 + val2
+  // val1 is array, val2 is number => ret[i] = val1[i] + val2
+  // val2 is array, val1 is number => ret[i] = val2[i] + val1
+  var mergeValues = function(val1, val2) {
+    // Both value are array
+    if(Array.isArray(val1) && Array.isArray(val2)) {
+      var res = [];
+      var count = val1.length > val2.length ? val1.length : val2.length;
+      // We just add the value together or 0 if they doesn't exist
+      for(var i = 0; i < count; ++i) {
+        res.push((val1[i] === undefined ? 0 : val1[i]) + (val2[i] === undefined ? 0 : val2[i]));
+      }
+
+      return res;
+    }
+
+    // Both aren't array
+    if(!Array.isArray(val1) && !Array.isArray(val2)) {
+      return val1 + val2;
+    }
+    else {
+      // One of the value is an array
+      var array = Array.isArray(val1) ? val1 : val2;
+      var number = Array.isArray(val1) ? val2 : val1;
+
+      for(var i = 0; i < array.length; ++i) {
+        array[i] += number;
+      }
+
+      return array;
+    }
+  }
 
   // TODO: Desc
   this.reset = function() {
@@ -644,6 +642,79 @@ var Build = function(URLData) {
     }
   };
 
+  this.resolveCrossRow = function(values) {
+    // Debug: No resolving
+    if(Setting.get("debugDisableCrossRowParser")) return values;
+
+    // Force everything to be an array as it's easier for values like 0 > 1 > 2 > ...
+    var array = Array.isArray(values) ? values : [values];
+    for(var i = 0; i < array.length; ++i) {
+      var res = array[i] + ""; // Force string conversion
+      if(res.indexOf("//") !== -1) {
+        res = res.split("//");
+        res = res[0];
+      }
+
+
+      // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
+      res = res.replace(/\|([0-9]*?),([0-9]*?)\|/g, function(match, row, col) {
+        return purchasedUpgrades[row][col] == 0 ? 0 : 1; // I prefer having 0 or 1 than a falsy/trusy value since it will be parsed using a math lib
+      });
+
+      // Replace |row,col,index|
+      res = res.replace(/\|([0-9]*?),([0-9]*?),([0-9]*?)\|/g, function(match, row, col, index) {
+        var stage = purchasedUpgrades[row][col] - 1;
+        if(stage === -1) {
+          return 0;
+        }
+        else {
+          if(self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue() != 0) {
+            return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getValue();
+          } else {
+            return self.getNaut().getSkills(row).getUpgrades(col).getSteps(stage)[index].getCoeff();
+          }
+        }
+      });
+
+      // Replace ¦row, index¦ Get Same as |row,col,index| but for skills
+      res = res.replace(/\¦(.+?),(.+?)\¦/g, function(match, row, index){
+        if(self.getNaut().getSkills(row).getEffects()[index].getValue() != 0) {
+          return self.getNaut().getSkills(row).getEffects()[index].getValue();
+        }
+        else {
+          return self.getNaut().getSkills(row).getEffects()[index].getCoeff();
+        }
+      });
+
+      if(!Setting.get("debugDisableMathParser")) {
+        // Math eval of everything inside []
+        res = res.replace(/\[(.*)\]/g, function(match, capture){
+          try {
+            return math.eval(capture);
+          }
+          catch(err) {
+            console.error("Math evaluation failed for " + capture);
+          }
+          return 0;
+        });
+      }
+
+      // math.eval
+      // Make sure to recreate a number if it was a number ot keep the string
+      if(!isNaN(parseFloat(res))) {
+        res = parseFloat(res);
+      }
+      array[i] = res;
+    }
+
+    if(Array.isArray(values)) {
+      return array;
+    }
+    else {
+      return array[0];
+    }
+  }
+
   // Get the current naut
   this.getNaut = function() {
     return naut;
@@ -717,10 +788,26 @@ Build.getScalingFromEffectTypeAndLevel = function(effectType) {
 };
 
 // TODO: Desc
-Build.getValueAfterTeamScaling = function(value, scaleType) {
+Build.applyDPS = function(attackSpeed, damage, multiplier) {
+  return round(attackSpeed / 60 * damage * multiplier);
+}
+
+// TODO: Desc
+Build.applyCoeff = function(value, coeff) {
+  if(value === 0) {
+    return 100 * coeff; // No value => it's a %
+  }
+  else {
+    return value * (1 + coeff);
+  }
+}
+
+// TODO: Desc
+Build.applyTeamScaling = function(value, scaleType) {
   return round(value * (1 + Build.getScalingFromEffectTypeAndLevel(scaleType)));
 };
 
+// DPS and DOTps are affected by team scaling so we just reverse it before displaying...
 Build.reverseTeamScaling = function(value, scaleType) {
   return round(value / (1 + Build.getScalingFromEffectTypeAndLevel(scaleType)));
 };

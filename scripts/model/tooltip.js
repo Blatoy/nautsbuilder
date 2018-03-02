@@ -21,6 +21,10 @@ var Tooltip = function(content) {
 
   this.hide = function() {
     this.visible = false;
+
+    // Prevent hiding selected tooltips when they are freezed
+    if(!Tooltip.positionUpdateEnabled) return;
+
     this.jQueryElement.remove();
     Tooltip.updateList.splice(Tooltip.updateList.indexOf(this), 1);
   };
@@ -37,7 +41,12 @@ var Tooltip = function(content) {
 
 Tooltip.createDefault = function(jQueryElement, content) {
   var t = new Tooltip(content);
-  jQueryElement.on("mouseenter", function(){t.show();});
+
+  jQueryElement.on("mouseenter", function(){
+    if(Tooltip.positionUpdateEnabled) {
+      t.show();
+    }
+  });
   jQueryElement.on("mouseleave", function(){t.hide();});
 
   return t;
@@ -46,10 +55,26 @@ Tooltip.createDefault = function(jQueryElement, content) {
 Tooltip.list = [];
 Tooltip.updateList = [];
 Tooltip.offset = {x: 20, y: 20};
+Tooltip.positionUpdateEnabled = true;
+
+Tooltip.togglePositionUpdateActivation = function() {
+  Tooltip.positionUpdateEnabled = !Tooltip.positionUpdateEnabled;
+  if(Tooltip.positionUpdateEnabled) {
+    for(var i = 0; i < Tooltip.updateList.length; ++i) {
+      if(!Tooltip.updateList[i].visible) {
+        Tooltip.updateList[i].hide();
+      }
+    }
+  }
+}
 
 Tooltip.onMouseMove = function(e){
   var x = e.pageX || e.clientX;
   var y = e.pageY || e.clientY;
+
+  if(!Tooltip.positionUpdateEnabled) {
+    return;
+  }
 
   for(var i = 0; i < Tooltip.updateList.length; ++i) {
     Tooltip.updateList[i].setPosition(x, y);

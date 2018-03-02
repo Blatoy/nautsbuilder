@@ -141,8 +141,9 @@ Effect.parseString = function(effectData) {
   }
 
   key = effectData[0].toLowerCase();
-  // Remove any other white spaces
-  var rawValue = effectData[1].replace(/\s/g, "");
+  // Split value and comment, and merge them again
+  var rawValue = effectData[1].split("//");
+  rawValue = rawValue[0].replace(/\s/g, "") + (rawValue[1] !== undefined ? "//" + rawValue[1] : "");
 
   // cases to handle:
   // 1 - Damage: 95
@@ -192,8 +193,20 @@ Effect.toString = function(objectEffect) {
   if(Array.isArray(displayValue)) {
     displayValue = displayValue.join(displayUnit + " > ");
   }
+  else {
+    displayValue += "";
+  }
 
-  return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayValue) + htmlToText(displayUnit) + "</span>";
+  var displayValueParsed;
+  if(!Setting.get("debugDisableCrossRowParser")) {
+    displayValueParsed = displayValue.split("//");
+    displayValueParsed = (displayValueParsed[1] ? displayValueParsed[1] : displayValueParsed[0]);
+  }
+  else {
+    displayValueParsed = displayValue;
+  }
+
+  return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayValueParsed) + htmlToText(displayUnit) + "</span>";
 };
 
 Effect.EFFECT_SEPARATOR = ";";

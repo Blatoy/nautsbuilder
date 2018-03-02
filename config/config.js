@@ -6,6 +6,7 @@ var CONFIG = new function() {
     "libs/jquery.min.js",
     "libs/event-manager.js",
     "libs/utils.js",
+    "libs/math.min.js",
     "controller/naut-controller.js",
     "controller/build-controller.js",
     "model/build.js",
