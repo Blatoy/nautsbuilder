@@ -131,7 +131,7 @@ var Effect = function(effectData, scalingTypeRaw) {
 Effect.parseString = function(effectData) {
   var unit = "", key = "", value = "", type = "";
   // Clear stupid white spaces
-  effectData = effectData.trim();
+  effectData = effectData.trim().replace(/(\r\n|\n|\r)/gm,"");
   // Split key and value
   effectData = effectData.split(":");
 
