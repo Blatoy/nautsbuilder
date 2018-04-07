@@ -23,11 +23,11 @@ var MessageBoxView = new function() {
       },
       debug: {
         title: "Debug tools",
-        content: "<button onclick='Setting.debugToggleScaleDisplay()'>Toggle scaling type display</button>" +
-          "<hr><button onclick='Setting.debugToggleDebugNaut()'>Toggle debug naut display</button>" +
-          "<hr><button onclick='Setting.debugToggleCrossRow()'>Toggle raw crossrow display</button>" +
-          "<hr><button onclick='Setting.debugToggleMathParser()'>Toggle crossrow math parser</button>" +
-          "<hr><button onclick='Setting.debugToggleRCIDisplay()'>Toggle RCI display on upgrade over</button>" +
+        content: "<button onclick='Setting.debugToggleScaleDisplay(); MessageBoxView.displayDebug();'><span id='debug-status-scaling'></span> scaling type display</button>" +
+          "<hr><button onclick='Setting.debugToggleDebugNaut(); MessageBoxView.displayDebug();'><span id='debug-status-debug-naut'></span> debug naut display</button>" +
+          "<hr><button onclick='Setting.debugToggleCrossRow(); MessageBoxView.displayDebug();'><span id='debug-status-cross-row'></span> raw crossrow display</button>" +
+          "<hr><button onclick='Setting.debugToggleMathParser(); MessageBoxView.displayDebug();'><span id='debug-status-math-parser'></span> crossrow math parser</button>" +
+          "<hr><button onclick='Setting.debugToggleRCIDisplay(); MessageBoxView.displayDebug();'><span id='debug-status-rci-display'></span> RCI display on upgrade over</button>" +
           "<hr><label>Import custom spreadsheet</label><input id='custom-import' type='text'><hr>"
       },
       errorsReport: {
@@ -77,12 +77,19 @@ var MessageBoxView = new function() {
 
   // TODO: Desc
   this.displayDebug = function() {
+    MessageBox.close();
     MessageBox.show(messageBoxes.debug.title, messageBoxes.debug.content);
 
     $("#custom-import").on("input", function(){
       var data = $("#custom-import").val();
       NautController.debugSetTempSpreadsheetData(data);
     });
+
+    $("#debug-status-scaling").text(Setting.get("debugDisplayScaleType") ? "Disable" : "Enable");
+    $("#debug-status-debug-naut").text(Setting.get("debugDisplayNaut") ? "Disable" : "Enable");
+    $("#debug-status-cross-row").text(Setting.get("debugDisableCrossRowParser") ? "Disable" : "Enable");
+    $("#debug-status-math-parser").text(Setting.get("debugDisableMathParser") ? "Enable" : "Disable");
+    $("#debug-status-rci-display").text(Setting.get("debugRCIDisplay") ? "Disable" : "Enable");
   };
 
   // TODO: Desc
