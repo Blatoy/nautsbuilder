@@ -101,7 +101,7 @@ var Effect = function(effectData, scalingTypeRaw) {
         }
       }
       else {
-        return value / 100;
+        return parseFloat(value) / 100;
       }
     }
     else {
@@ -161,10 +161,38 @@ Effect.parseString = function(effectData) {
   else {
     if(rawValue.indexOf(">") == -1) {
       // 2, 5
-      var numberInfo = getNumberInfo(rawValue);
-      type = numberInfo.type;
-      unit = numberInfo.unit;
-      value = numberInfo.value;
+      // this is bad, we have a comment so getNumberInfo doesn't work
+      if(rawValue.indexOf("//") != -1) {
+        var rawValueSplited = rawValue.split("//");
+        rawValueSplited = rawValueSplited[0];
+        // A comment AND a calculated value
+        if(rawValueSplited.indexOf("[") != -1) {
+          // We have calculated values, we can only assume last char is the unit
+          var lastChar = rawValueSplited[rawValueSplited.length - 1];
+          if(lastChar != "]") unit = lastChar;
+          type = "number";
+          value = rawValue;
+        }
+        else {
+          // A comment but not calculated value
+          var numberInfo = getNumberInfo(rawValueSplited);
+          type = numberInfo.type;
+          unit = numberInfo.unit;
+          value = rawValue;
+        }
+      }
+      else if(rawValue.indexOf("[") != -1) {
+        var lastChar = rawValue[rawValue.length - 1];
+        if(lastChar != "]") unit = lastChar;
+        type = "number";
+        value = rawValue;
+      }
+      else {
+        var numberInfo = getNumberInfo(rawValue);
+        type = numberInfo.type;
+        unit = numberInfo.unit;
+        value = numberInfo.value;
+      }
     }
     else {
       type = "numberArray";
