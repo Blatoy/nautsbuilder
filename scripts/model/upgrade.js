@@ -72,11 +72,14 @@ var Upgrade = function(upgradeAPIData) {
     for(var i = 0; i < this.getSteps().length; ++i) {
       txt += "<br><br>Stage " + (i + 1) + "<span class='tooltip-upgrades'>";
       for(var j = 0; j < this.getSteps(i).length; ++j) {
+        var effectValueText = this.getSteps(i)[j].toString();
+        // Effects that have no text are hidden
+        if(effectValueText == "") continue;
         if(!Setting.get("debugRCIDisplay")) {
-          txt += "<br>- " + this.getSteps(i)[j].toString();
+          txt += "<br>- " + effectValueText;
         }
         else {
-          txt += "<br>|" + row  + "," + col + "," + j + "| " + this.getSteps(i)[j].toString();
+          txt += "<br>|" + row  + "," + col + "," + j + "| " + effectValueText;
         }
       }
       txt += "</span>";

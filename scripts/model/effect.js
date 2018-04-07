@@ -199,8 +199,22 @@ Effect.toString = function(objectEffect) {
 
   var displayValueParsed;
   if(!Setting.get("debugDisableCrossRowParser")) {
+    // Check if the effect has a custom display name
     displayValueParsed = displayValue.split("//");
-    displayValueParsed = (displayValueParsed[1] ? displayValueParsed[1] : displayValueParsed[0]);
+    if(displayValueParsed[1] !== undefined) {
+      // Check if we want the effect to be hidden
+      if(displayValueParsed[1] == "hidden") {
+        return "";
+      }
+      else {
+        // Effect has custom name
+        displayValueParsed = displayValueParsed[1];
+      }
+    }
+    else {
+      // Effect uses it's key: value name
+      displayValueParsed = displayValueParsed[0];
+    }
   }
   else {
     displayValueParsed = displayValue;
