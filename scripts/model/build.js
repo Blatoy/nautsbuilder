@@ -345,8 +345,8 @@ var Build = function(URLData) {
               for(var k = 0; k < effectsToApply.length; ++k) {
                 var newEffect = effectsToApply[k];
                 if(rowEffects[newEffect.getKey()] !== undefined) {
-                  rowEffects[newEffect.getKey()].value = mergeValues(rowEffects[newEffect.getKey()].value, newEffect.getValue());
-                  rowEffects[newEffect.getKey()].coeff = mergeValues(rowEffects[newEffect.getKey()].coeff, newEffect.getCoeff());
+                  rowEffects[newEffect.getKey()].value = mergeValues(rowEffects[newEffect.getKey()].value, this.resolveCrossRow(newEffect.getValue()));
+                  rowEffects[newEffect.getKey()].coeff = mergeValues(rowEffects[newEffect.getKey()].coeff, this.resolveCrossRow(newEffect.getCoeff()));
                 }
               }
             }
