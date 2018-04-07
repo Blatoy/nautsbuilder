@@ -1,6 +1,6 @@
 @font-face {
     font-family: ethnocentric;
-    src: url("/nautsbuilder/fonts/ethnocentric.ttf");
+    src: url("/standalone/nautsbuilder/fonts/ethnocentric.ttf");
 }
 
 body {
@@ -8,7 +8,7 @@ body {
   color: white;
   margin: 0;
 
-  background: url("/nautsbuilder/images/bg.jpg") no-repeat center center fixed;
+  background: url("/standalone/nautsbuilder/images/bg.jpg") no-repeat center center fixed;
   background-color: black;
    -webkit-background-size: cover;
    -moz-background-size: cover;
@@ -43,7 +43,7 @@ input {
   color: #666;
   background-color: rgb(5, 5, 5);
   border: 1px solid transparent;
-  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
 }
 
 input[type="button"] {
@@ -57,7 +57,7 @@ input[type="button"] {
   border-radius: 4px;
   font-family: ethnocentric;
   border: 1px solid transparent;
-  border-image: url("/nautsbuilder/images/border-full.png") 4;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 4;
   text-shadow: 2px 2px black;
 }
 
@@ -157,7 +157,7 @@ button {
 
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid transparent;
-  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   z-index: 999;
 }
@@ -175,7 +175,7 @@ button {
   position: fixed;
   z-index: 1000;
   border: 2px solid transparent;
-  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
   border-radius: 2px;
   width: auto;
   top: 20%;
@@ -471,7 +471,7 @@ hr {
   top: 0;
   width: calc(50% + 3px);
   height: 75%;
-  border-image: url("/nautsbuilder/images/border-shop.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-shop.png") 5 round;
   overflow: hidden;
 }
 
@@ -480,7 +480,7 @@ hr {
   width: 100%;
   height: 25%;
   border-top: 2px solid black;
-  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  background-image: url("/standalone/nautsbuilder/images/shop-hexagon.png");
   overflow: hidden;
 }
 
@@ -494,9 +494,9 @@ hr {
 
 #build-order {
   border: 3px solid transparent;
-  border-image: url("/nautsbuilder/images/border-buy-order.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-buy-order.png") 5 round;
 
-  background-image: url("/nautsbuilder/images/shop-hexagon.png");
+  background-image: url("/standalone/nautsbuilder/images/shop-hexagon.png");
   background-color: rgba(0, 16, 29, 0.8);
 
   position: fixed;
@@ -560,7 +560,7 @@ hr {
   left: 50px;
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid transparent;
-  border-image: url("/nautsbuilder/images/border-full.png") 5 round;
+  border-image: url("/standalone/nautsbuilder/images/border-full.png") 5 round;
 }
 
 .tooltip-upgrades {

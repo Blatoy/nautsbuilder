@@ -35,7 +35,7 @@ var CONFIG = new function() {
 
 
   var path = {};
-  path.base = "/nautsbuilder/";
+  path.base = "/standalone/nautsbuilder/";
   path.scripts = path.base + "scripts/";
   path.images = path.base + "images/";
 
