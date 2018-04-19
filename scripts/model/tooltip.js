@@ -43,7 +43,7 @@ Tooltip.createDefault = function(jQueryElement, content) {
   var t = new Tooltip(content);
 
   jQueryElement.on("mouseenter", function(){
-    if(Tooltip.positionUpdateEnabled) {
+    if(Tooltip.positionUpdateEnabled || Tooltip.updateList.length == 0) {
       t.show();
     }
   });

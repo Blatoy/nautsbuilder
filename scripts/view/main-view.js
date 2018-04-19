@@ -29,12 +29,23 @@ var MainView = new function() {
       }
     });
 
-    $(document).on("keyup", function(e){
+    $(window).on("blur", function(e){
+      // Force key release when leaving the page
       keyReleased = true;
-      switch(e.keyCode) {
-        case 17: // ctrl
-          Tooltip.togglePositionUpdateActivation();
-          break;
+      if(!Tooltip.positionUpdateEnabled) {
+        // Quick fix preventing tooltip display
+        Tooltip.togglePositionUpdateActivation();
+      }
+    });
+
+    $(document).on("keyup", function(e){
+      if(keyReleased == false) {
+        keyReleased = true;
+        switch(e.keyCode) {
+          case 17: // ctrl
+            Tooltip.togglePositionUpdateActivation();
+            break;
+        }
       }
     });
 
