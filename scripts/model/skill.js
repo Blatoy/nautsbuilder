@@ -117,10 +117,28 @@ var Skill = function(skillAPIData) {
   };
 
   this.toString = function() {
+    var txt = "", row = 0;
+
+    if(Setting.get("debugRCIDisplay")) {
+      for(var i = 0; i < Build.current.getNaut().getSkills().length; ++i) {
+        if(Build.current.getNaut().getSkills(i).getName() == this.getName()) {
+          row = i;
+        }
+      }
+    }
+
     var txt = "<b>" + htmlToText(this.getName()) + "</b>";
     txt += "<br><br>Effects<br><span class='tooltip-upgrades'>";
     for(var i = 0; i < this.getEffects().length; ++i) {
-      txt += " - " + this.getEffects(i).toString() + "<br>";
+      var effectValueText = this.getEffects(i).toString();
+      // Effects that have no text are hidden
+      if(effectValueText == "") continue;
+      if(!Setting.get("debugRCIDisplay")) {
+        txt += "<br>- " + effectValueText;
+      }
+      else {
+        txt += "<br>¦" + row  + "," + i + "¦ " + effectValueText;
+      }
     }
     txt += "</span><br><span class='small-text'>";
     txt += htmlToText(this.getDescription());
