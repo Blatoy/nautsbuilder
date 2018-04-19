@@ -292,7 +292,7 @@ var Build = function(URLData) {
     for(var i = 0; i < skillEffects.length; ++i) {
       var skillEffect = skillEffects[i];
       // TODO: Check if value/coeff is array and copy manually the value. They are going to be changed so we can't just copy it...
-      rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({value: skillEffect.getValue(), coeff: skillEffect.getCoeff(), unit: skillEffect.getUnit(), scaleType: skillEffect.getEffectScaling()}));
+      rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({value: this.resolveCrossRow(skillEffect.getValue()), coeff: this.resolveCrossRow(skillEffect.getCoeff()), unit: skillEffect.getUnit(), scaleType: skillEffect.getEffectScaling()}));
     }
 
     // Add UPGRADES EFFECTS
@@ -655,7 +655,6 @@ var Build = function(URLData) {
         res = res.split("//");
         res = res[0];
       }
-
 
       // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
       res = res.replace(/\|([0-9]*?),([0-9]*?)\|/g, function(match, row, col) {
