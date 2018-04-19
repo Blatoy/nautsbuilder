@@ -120,6 +120,7 @@ var ShopView = new function() {
             .addClass("shop-item-container")
             .append(upgradeImageElement)
             .append($("<span>").text("0 / " + upgrade.getStageCount()).addClass("shop-item-stage"))
+            .append($("<br>"))
             .append($("<span>")
               .addClass("shop-item-price")
               .text(upgrade.getCost())
