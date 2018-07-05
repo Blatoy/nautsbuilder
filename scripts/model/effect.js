@@ -215,8 +215,8 @@ Effect.parseString = function(effectData) {
 
 // TODO: Desc
 Effect.toString = function(objectEffect) {
-  var displayValue = objectEffect.value;
-  var displayUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
+  let displayValue = objectEffect.value;
+  let displayUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
 
   if(Array.isArray(displayValue)) {
     displayValue = displayValue.join(displayUnit + " > ");
@@ -225,7 +225,7 @@ Effect.toString = function(objectEffect) {
     displayValue += "";
   }
 
-  var displayValueParsed;
+  let displayValueParsed;
   if(!Setting.get("debugDisableCrossRowParser")) {
     // Check if the effect has a custom display name
     displayValueParsed = displayValue.split("//");
@@ -237,6 +237,7 @@ Effect.toString = function(objectEffect) {
       else {
         // Effect has custom name
         displayValueParsed = displayValueParsed[1];
+        displayUnit = ""; // We don't want to display unit in comments, they have to be set manually
       }
     }
     else {
