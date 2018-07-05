@@ -28,7 +28,10 @@ var Skill = function(skillAPIData) {
           effectScaling = skillData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
         }
         if(rawEffects[j].replace(/\s/g, "") !== "") {
-          effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
+          if(!effectScaling[j]) {
+            console.error("Missing effect scaling for " + skillData.naut + "'s' " + skillData.name);
+          }
+          effects.push(new Effect(rawEffects[j], effectScaling[j] ? effectScaling[j].replace(" ", "") : "none"));
         }
       }
     }

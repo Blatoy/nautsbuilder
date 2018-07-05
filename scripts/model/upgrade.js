@@ -35,10 +35,9 @@ var Upgrade = function(upgradeAPIData) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
               // Prevent NB2 being stuck in a state that prevent cache refresh
               if(effectScaling[j] === undefined) {
-                alert("[ERROR] effectScaling missing for " + rawEffects[j] + ". Please report this issue!");
-                continue;
+                  console.error("Missing effect scaling for " + skillData.naut + "'s' " + skillData.name);
               }
-              effects.push(new Effect(rawEffects[j], effectScaling[j].replace(" ", "")));
+              effects.push(new Effect(rawEffects[j], effectScaling[j] ? effectScaling[j].replace(" ", "") : "none"));
             }
           }
           steps.push(effects);
