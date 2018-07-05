@@ -66,13 +66,21 @@ var MessageBoxView = new function() {
 
   // TODO: Desc
   this.displayExportImage = function(){
-    MessageBox.show(messageBoxes.imageExport.title, messageBoxes.imageExport.content);
-    var canvas = document.getElementById("export-image-canvas");
-    ctx = canvas.getContext("2d");
+    let drawingInterval = -1;
+    MessageBox.show(messageBoxes.imageExport.title, messageBoxes.imageExport.content, false, function(){
+      clearInterval(drawingInterval);
+    });
+
+    let canvas = document.getElementById("export-image-canvas");
+    let ctx = canvas.getContext("2d");
+
     if(!Setting.get("buyOrderEnabled")) {
       canvas.height = 320;
     }
-    Build.current.drawBuildOnCanvas(ctx, canvas);
+
+    drawingInterval = setInterval(function(){
+      Build.current.drawBuildOnCanvas(ctx, canvas);
+    }, 100); // requestAnimationFrame could be used but it's easier to stop it this way and we are only genering a static image
   };
 
   // TODO: Desc

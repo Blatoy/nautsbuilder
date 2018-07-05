@@ -9,15 +9,17 @@ var MessageBox = {
     );
     MessageBox.jQueryElement = $("<div>").attr("id", "message-box").appendTo(MessageBox.jQueryBackElement);
   },
-  show: function(title, content, size){
+  show: function(title, content, size, onClose = function(){}){
     if(!size) {
       size = 60;
     }
+    MessageBox.onClose = onClose;
     MessageBox.jQueryElement.html(title + "<hr>" + "<span class='small-text'>" + content + "</span>");
     MessageBox.jQueryBackElement.show();
     MessageBox.jQueryElement.css("margin-left", $(document).width() / 2 - (MessageBox.jQueryElement.outerWidth() / 2) + "px");
   },
   close: function(){
+    MessageBox.onClose();
     MessageBox.jQueryBackElement.hide();
   }
 };
