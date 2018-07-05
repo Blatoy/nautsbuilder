@@ -119,7 +119,7 @@ var Skill = function(skillAPIData) {
   this.toString = function() {
     var txt = "", row = 0;
 
-    if(Setting.get("debugRCIDisplay")) {
+    if(Setting.get("debugRCIDisplay") && Build.current.getNaut()) {
       for(var i = 0; i < Build.current.getNaut().getSkills().length; ++i) {
         if(Build.current.getNaut().getSkills(i).getName() == this.getName()) {
           row = i;
