@@ -339,9 +339,13 @@ var Build = function(URLData) {
           } else {
             // Yes => We merge the values
             var existingEffect = rowEffects[stepEffect.getKey()];
-
             existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
             existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
+
+            // Forces to use no unit instead of percentage 
+            if (existingEffect.unit == "%" && stepEffect.getUnit() == "none") {
+              existingEffect.unit = "none";
+            }
           }
         }
       }
