@@ -19,7 +19,9 @@ var MessageBox = {
     MessageBox.jQueryElement.css("margin-left", $(document).width() / 2 - (MessageBox.jQueryElement.outerWidth() / 2) + "px");
   },
   close: function(){
-    MessageBox.onClose();
+    if(MessageBox.onClose) {
+      MessageBox.onClose();
+    }
     MessageBox.jQueryBackElement.hide();
   }
 };
