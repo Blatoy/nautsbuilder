@@ -342,7 +342,7 @@ var Build = function(URLData) {
             existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
             existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
 
-            // Forces to use no unit instead of percentage 
+            // Forces to use no unit instead of percentage
             if (existingEffect.unit == "%" && stepEffect.getUnit() == "none") {
               existingEffect.unit = "none";
             }
@@ -718,19 +718,20 @@ var Build = function(URLData) {
 
       if (!Setting.get("debugDisableMathParser")) {
         // Math eval of everything inside []
-        res = res.replace(/\[(.*)\]/g, function(match, capture) {
+        res = res.replace(/\[(.*?)\]/g, function(match, capture) {
           try {
             return math.eval(capture);
           } catch (err) {
             console.error("Math evaluation failed for " + capture);
           }
+          // Something failed, return 0
           return 0;
         });
       }
 
       // math.eval
       // Make sure to recreate a number if it was a number ot keep the string
-      if (!isNaN(parseFloat(res))) {
+      if (isNumeric(res)) {
         res = parseFloat(res);
       }
       array[i] = res;
