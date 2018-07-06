@@ -34,8 +34,8 @@ var Upgrade = function(upgradeAPIData) {
           for(var j = 0; j < rawEffects.length; ++j) {
             if(rawEffects[j].replace(/\s/g, "") !== "") {
               // Prevent NB2 being stuck in a state that prevent cache refresh
-              if(effectScaling[j] === undefined) {
-                  console.error("Missing effect scaling for " + skillData.naut + "'s' " + skillData.name);
+              if(!effectScaling[j]) {
+                  console.error("Missing effect scaling for " + upgradeData.skill + "'s' " + upgradeData.name);
               }
               effects.push(new Effect(rawEffects[j], effectScaling[j] ? effectScaling[j].replace(" ", "") : "none"));
             }

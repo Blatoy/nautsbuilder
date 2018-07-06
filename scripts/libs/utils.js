@@ -137,10 +137,23 @@ function getNumberInfo(str){
   }
   // Number without unit
   if(isNumeric(str)) {
-    return {unit: "none", type: "number", value: parseFloat(str.substring(0, str.length - 1))};
+    return {unit: "none", type: "number", value: parseFloat(str)};
   }
   else {
-    if(isNumeric(str.substring(0, str.length - 1)) && !isNumeric(str.substring(str.length - 1))) {
+    // Strings contains some unparser math
+    if(str.includes("[") && str.includes("]")) {
+       // Remove any spaces just in case
+      let cleanStr = str.replace(/\s/g, "");
+      // This string contains some unparsed math, let's try to find a unit
+      if(cleanStr[cleanStr.length - 1] == "]") {
+        return {unit: "none", type: "unparsedMath", value: str};
+      }
+      else {
+        // There's something that could look like a unit
+        return {unit: cleanStr[cleanStr.length - 1], type: "number", value: str};
+      }
+    }
+    else if(isNumeric(str.substring(0, str.length - 1)) && !isNumeric(str.substring(str.length - 1))) {
       return {unit: str.substring(str.length - 1), type: "number", value: parseFloat(str.substring(0, str.length - 1))};
     }
     else {
