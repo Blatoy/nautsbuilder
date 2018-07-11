@@ -75,9 +75,14 @@ let Effect = function(effectData, scalingTypeRaw) {
   this.getValue = function(index) {
     if (this.getUnit() != "%") {
       if (index !== undefined && Array.isArray(value)) {
-        return value[index];
+        return value[index] + "";
       } else {
-        return value;
+        if(Array.isArray(value)) {
+          return value.slice();
+        }
+        else {
+          return value + "";
+        }
       }
     } else {
       return 0;
