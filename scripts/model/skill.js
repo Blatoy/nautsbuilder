@@ -1,34 +1,33 @@
 /**
- * var Skill - Describes a skill, see the spreadsheet for more details
+ * let Skill - Describes a skill, see the spreadsheet for more details
  *
  * Instances of this class are stored in a Naut
  * @param  {JSONObject} upgradeAPIData The data taken from the API for a single Skill
  */
-var Skill = function(skillAPIData) {
-  var upgrades = [];
-  var effects = [];
-  var skillData = false;
+let Skill = function(skillAPIData) {
+  let upgrades = [];
+  let effects = [];
+  let skillData = false;
   /**
-   * var init - "Constructor" for this "class"
+   * let init - "Constructor" for this "class"
    *
    * @param  {JSONObject} skillAPIData See class description
    */
-  var init = function(skillAPIData){
-    if(!skillAPIData) {
+  let init = function(skillAPIData) {
+    if (!skillAPIData) {
       console.error("skill.js: constructor can't be called without args");
       return false;
-    }
-    else {
+    } else {
       skillData = skillAPIData;
 
-      var rawEffects = skillData.effects.split(Effect.EFFECT_SEPARATOR);
-      for(var j = 0; j < rawEffects.length; ++j) {
-        var effectScaling = [];
-        if(skillData.effectscaling) {
+      let rawEffects = skillData.effects.split(Effect.EFFECT_SEPARATOR);
+      for (let j = 0; j < rawEffects.length; ++j) {
+        let effectScaling = [];
+        if (skillData.effectscaling) {
           effectScaling = skillData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
         }
-        if(rawEffects[j].replace(/\s/g, "") !== "") {
-          if(!effectScaling[j]) {
+        if (rawEffects[j].replace(/\s/g, "") !== "") {
+          if (!effectScaling[j]) {
             console.error("Missing effect scaling for " + skillData.naut + "'s' " + skillData.name);
           }
           effects.push(new Effect(rawEffects[j], effectScaling[j] ? effectScaling[j].replace(" ", "") : "none"));
@@ -41,7 +40,7 @@ var Skill = function(skillAPIData) {
    *
    * @returns {string}  The name of the Naut who own this skill
    */
-  this.getCharacter = function(){
+  this.getCharacter = function() {
     return skillData.naut;
   };
 
@@ -50,7 +49,7 @@ var Skill = function(skillAPIData) {
    *
    * @returns {string}  The name of this skill
    */
-  this.getName = function(){
+  this.getName = function() {
     return skillData.name;
   };
 
@@ -64,7 +63,7 @@ var Skill = function(skillAPIData) {
    *
    * @returns {string}  The description of this skill
    */
-  this.getDescription = function(){
+  this.getDescription = function() {
     // TODO: Handle *, ** and remove other html
     return skillData.description;
   };
@@ -74,7 +73,7 @@ var Skill = function(skillAPIData) {
    *
    * @returns {string}  The URL of the icon of this skill
    */
-  this.getIcon = function(){
+  this.getIcon = function() {
     return skillData.icon;
   };
 
@@ -83,7 +82,7 @@ var Skill = function(skillAPIData) {
    *
    * @returns {number}  The cost per stage of this skill
    */
-  this.getCost = function(){
+  this.getCost = function() {
     return skillData.cost;
   };
 
@@ -95,11 +94,10 @@ var Skill = function(skillAPIData) {
    *
    * @returns {array}  The array of Effect for this skill
    */
-  this.getEffects = function(i){
-    if(i !== undefined) {
+  this.getEffects = function(i) {
+    if (i !== undefined) {
       return effects[i];
-    }
-    else {
+    } else {
       return effects;
     }
   };
@@ -110,47 +108,44 @@ var Skill = function(skillAPIData) {
    * @param {number} col - Optional, returns the upgrades at the specified col
    * @returns {array}  The array of Upgrades for this skill
    */
-  this.getUpgrades = function(col){
-    if(col !== undefined) {
+  this.getUpgrades = function(col) {
+    if (col !== undefined) {
       return upgrades[col];
-    }
-    else {
+    } else {
       return upgrades;
     }
   };
 
   this.toString = function() {
-    var txt = "", row = 0;
+    let row = 0;
 
-    if(Setting.get("debugRCIDisplay") && Build.current.getNaut()) {
-      for(var i = 0; i < Build.current.getNaut().getSkills().length; ++i) {
-        if(Build.current.getNaut().getSkills(i).getName() == this.getName()) {
+    if (Setting.get("debugRCIDisplay") && Build.current.getNaut()) {
+      for (let i = 0; i < Build.current.getNaut().getSkills().length; ++i) {
+        if (Build.current.getNaut().getSkills(i).getName() == this.getName()) {
           row = i;
         }
       }
     }
 
-    var txt = "<b>" + htmlToText(this.getName()) + "</b>";
+    let txt = "<b>" + htmlToText(this.getName()) + "</b>";
     txt += "<br><br>Effects<br><span class='tooltip-upgrades'>";
-    for(var i = 0; i < this.getEffects().length; ++i) {
-      var effectValueText = this.getEffects(i).toString();
+    for (let i = 0; i < this.getEffects().length; ++i) {
+      let effectValueText = this.getEffects(i).toString();
       // Effects that have no text are hidden
-      if(effectValueText == "") continue;
-      if(!Setting.get("debugRCIDisplay")) {
+      if (effectValueText == "") continue;
+      if (!Setting.get("debugRCIDisplay")) {
         txt += "<br>- " + effectValueText;
-      }
-      else {
-        txt += "<br>¦" + row  + "," + i + "¦ " + effectValueText;
+      } else {
+        txt += "<br>¦" + row + "," + i + "¦ " + effectValueText;
       }
     }
     txt += "</span><br><span class='small-text'>";
     txt += htmlToText(this.getDescription());
     txt += "</span>";
 
-    if(!this.getDevName()) {
+    if (!this.getDevName()) {
       txt += "<hr><span class='small-text'><b>Dev name missing for this skill</b>";
-    }
-    else {
+    } else {
       txt += "<hr><span class='small-text'><b>Dev name:</b> " + this.getDevName();
     }
 
@@ -162,7 +157,7 @@ var Skill = function(skillAPIData) {
    *
    * @param {Upgrade} upgrade - The upgrade to add
    */
-  this.addUpgrade = function(upgrade){
+  this.addUpgrade = function(upgrade) {
     upgrades.push(upgrade);
   };
 

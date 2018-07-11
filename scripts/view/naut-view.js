@@ -1,8 +1,8 @@
-var NautView = new function() {
-  var self = this;
+let NautView = new function() {
+  let self = this;
   // TODO: Function desc
-  this.displayNautList = function(nautList){
-    for(var i = 0; i < nautList.length; ++i) {
+  this.displayNautList = function(nautList) {
+    for (let i = 0; i < nautList.length; ++i) {
       $("#naut-list").append(this.getNautIcon(nautList[i]).hide().fadeIn(200));
     }
   };
@@ -11,16 +11,16 @@ var NautView = new function() {
   this.addRandomIconToNautList = function() {
     $("#naut-list").append(
       $("<img>")
-        .addClass("naut-icon")
-        .attr("src", CONFIG.path.images + "icon-random.png")
-        .attr("title", "Random character")
-        .click(function() {
-          NautController.selectRandomNaut();
-        })
-        .mouseenter(function() {
-          NautController.previewRandomNaut();
-        })
-        .hide().fadeIn(200)
+      .addClass("naut-icon")
+      .attr("src", CONFIG.path.images + "icon-random.png")
+      .attr("title", "Random character")
+      .click(function() {
+        NautController.selectRandomNaut();
+      })
+      .mouseenter(function() {
+        NautController.previewRandomNaut();
+      })
+      .hide().fadeIn(200)
     );
   };
 
@@ -32,9 +32,9 @@ var NautView = new function() {
 
   // TODO: Function desc
   this.getIconElementForNaut = function(naut) {
-    var element = false;
+    let element = false;
     $(".naut-icon").each(function(i) {
-      if(this.src == naut.getIcon()) {
+      if (this.src == naut.getIcon()) {
         return element = $(this); // wtf there's probably a meaning to that. TODO: Check why it's done this way
       }
     });
@@ -42,8 +42,8 @@ var NautView = new function() {
   };
 
   // TODO: Function desc
-  this.getNautIcon = function(naut){
-    var icon = $("<img>");
+  this.getNautIcon = function(naut) {
+    let icon = $("<img>");
     icon.addClass("naut-icon")
       .attr("src", naut.getIcon())
       .attr("title", naut.getName())
@@ -59,13 +59,13 @@ var NautView = new function() {
 
   // TODO: Function desc
   this.moveNautSelectionToRight = function() {
-    if($("#naut-list").hasClass("naut-list-center")) {
+    if ($("#naut-list").hasClass("naut-list-center")) {
       $("#naut-list").attr("class", "naut-list-right");
     }
   };
 
   // TODO: Function desc
-  this.displayRandomNaut = function(){
+  this.displayRandomNaut = function() {
     $("#naut-art").show();
     $("#naut-art").attr("src", CONFIG.path.images + "naut-random.png");
     $("#naut-name").text("Random");
@@ -79,9 +79,9 @@ var NautView = new function() {
   };
 
   // TODO: Function desc
-  this.displayName = function(naut){
+  this.displayName = function(naut) {
     $("#naut-name").show();
-    var devText = Setting.get("displayDevNames") ? "<br><span class='small-text'>" + naut.getDevName() + "</span>" : "";
+    let devText = Setting.get("displayDevNames") ? "<br><span class='small-text'>" + naut.getDevName() + "</span>" : "";
     $("#naut-name").html(htmlToText(naut.getName()) + devText);
   };
 

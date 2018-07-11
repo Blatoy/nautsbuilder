@@ -77,10 +77,9 @@ let Effect = function(effectData, scalingTypeRaw) {
       if (index !== undefined && Array.isArray(value)) {
         return value[index] + "";
       } else {
-        if(Array.isArray(value)) {
+        if (Array.isArray(value)) {
           return value.slice();
-        }
-        else {
+        } else {
           return value + "";
         }
       }

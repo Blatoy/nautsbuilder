@@ -1,5 +1,5 @@
-var UIManager = new function() {
-  var self = this;
+let UIManager = new function() {
+  let self = this;
   this.elements = {};
 
   /**

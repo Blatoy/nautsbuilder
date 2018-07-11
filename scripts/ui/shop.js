@@ -1,14 +1,14 @@
-var UIShop = new function(){
-  var draggedReorderUpgrade = false;
-  var self = this;
+let UIShop = new function() {
+  let draggedReorderUpgrade = false;
+  let self = this;
 
   /**
    * Display the right upgrades in the buyOrder box
    */
   this.updateBuyOrder = function(buyOrder) {
     $("#build-order-content").html("");
-    for(var i = 0; i < buyOrder.length; ++i) {
-      var upgradeContainer = UIUpgrade.addUpgradeToSelector("#build-order-content", buyOrder[i], false);
+    for (let i = 0; i < buyOrder.length; ++i) {
+      let upgradeContainer = UIUpgrade.addUpgradeToSelector("#build-order-content", buyOrder[i], false);
       upgradeContainer.data("index", i);
       EventManager.addEvent(upgradeContainer, "click", self.handleReorderClick);
 
@@ -27,13 +27,12 @@ var UIShop = new function(){
    * Handle build reorder
    */
   this.handleReorderClick = function() {
-    if(!self.draggedReorderUpgrade) {
+    if (!self.draggedReorderUpgrade) {
       $("#build-order-content .shop-item-container").removeClass("selected");
       $(this).addClass("selected");
 
       self.draggedReorderUpgrade = this;
-    }
-    else {
+    } else {
       NautsBuilder.swapBuildOrder($(self.draggedReorderUpgrade).data("index"), $(this).data("index"));
     }
   };
@@ -53,8 +52,8 @@ var UIShop = new function(){
     UIManager.elements.shop.show();
     UIManager.elements.buildOrder.show();
 
-    for(var i = 0 ; i < naut.skills.length; ++i) {
-      var skill = naut.skills[i];
+    for (let i = 0; i < naut.skills.length; ++i) {
+      let skill = naut.skills[i];
 
       // Clear the row to remove existing item
       $("#shop-row-" + (i + 1)).html("");
@@ -63,9 +62,9 @@ var UIShop = new function(){
       UIUpgrade.addSkillToSelector("#shop-row-" + (i + 1), skill);
 
       // Add upgrades icon to the shop
-      for(var j = 0; j < skill.upgrades.length; ++j) {
+      for (let j = 0; j < skill.upgrades.length; ++j) {
         // Used to create the buy order (since we want a retro-compatibility with nautsbuilder v1)
-        (function(skill, i, j){
+        (function(skill, i, j) {
           skill.upgrades[j].index = i * 6 + j + i + 1;
         })(skill, i, j);
 

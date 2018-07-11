@@ -1,12 +1,12 @@
-var UINautList = new function(){
-  var self = this;
+let UINautList = new function() {
+  let self = this;
 
   /**
    * Display naut's art, skills and description. Remove it if naut is set to false (except if selectedNaut is set)
    * @param {object} naut - Data for an Awesomenauts or false
    */
   this.displayNautInformation = function(naut) {
-    if(naut == false) {
+    if (naut == false) {
       // Do not clear informations if a naut is selected
       UIManager.elements.nautSplashArt.html("");
       UIManager.elements.nautDescription.html("");
@@ -18,34 +18,34 @@ var UINautList = new function(){
     UIManager.elements.nautDescription
       .html("")
       .append($("<div>").text(naut.role + " - " + naut.attacktype + " - " + naut.mobility)
-      .append($("<div>").addClass("naut-story").html(nl2br($("<p>"+naut.description+"</p>").text())))
-    );
+        .append($("<div>").addClass("naut-story").html(nl2br($("<p>" + naut.description + "</p>").text())))
+      );
 
     // Art
     UIManager.elements.nautSplashArt
       .html("")
       .append(
         $("<div>")
-          .addClass("naut-name")
-          .text(naut.name)
+        .addClass("naut-name")
+        .text(naut.name)
       )
       .append(
         $("<img>")
-          .addClass("naut-image")
-          .attr("src", naut.image)
+        .addClass("naut-image")
+        .attr("src", naut.image)
       )
 
-      // Skills
-      UIManager.elements.skillDescription.html("<div>Skills</div>");
-      if(naut.skills) {
-        for(var i = 0; i < naut.skills.length; ++i) {
-          var skill = naut.skills[i];
-          UIManager.elements.skillDescription
-            .append($("<img>").attr("src", skill.icon))
-            .append($("<span>").text(skill.description))
-            .append($("<hr>"))
-        }
+    // Skills
+    UIManager.elements.skillDescription.html("<div>Skills</div>");
+    if (naut.skills) {
+      for (let i = 0; i < naut.skills.length; ++i) {
+        let skill = naut.skills[i];
+        UIManager.elements.skillDescription
+          .append($("<img>").attr("src", skill.icon))
+          .append($("<span>").text(skill.description))
+          .append($("<hr>"))
       }
+    }
   };
 
   /**
@@ -53,11 +53,11 @@ var UINautList = new function(){
    * @param {array} nauts - The list of nauts to add
    */
   this.addNautsToUi = function(nauts) {
-    for(var i = 0; i < nauts.length; ++i) {
-      var naut = nauts[i];
+    for (let i = 0; i < nauts.length; ++i) {
+      let naut = nauts[i];
 
-      (function(naut){
-        var nautImage = $("<img>");
+      (function(naut) {
+        let nautImage = $("<img>");
         nautImage
           .attr("src", naut.icon)
           .addClass("naut-icon")
@@ -65,11 +65,11 @@ var UINautList = new function(){
 
 
         // TODO: Check if it's required to add onmouseleave and to clear displayNautInfo
-        EventManager.addEvent(nautImage, "mouseenter", function(){
+        EventManager.addEvent(nautImage, "mouseenter", function() {
           self.displayNautInformation(naut);
         });
 
-        EventManager.addEvent(nautImage, "click", function(){
+        EventManager.addEvent(nautImage, "click", function() {
           // Remove all other selections and select this image
           $(".naut-icon").removeClass("selected");
           $(this).addClass("selected");
@@ -87,13 +87,13 @@ var UINautList = new function(){
     }
 
     // Add the random icon
-    var randomIcon = $("<img>");
+    let randomIcon = $("<img>");
     randomIcon.attr("src", CONFIG.path.images + "/random-naut.png").addClass("naut-icon");
 
-    EventManager.addEvent(randomIcon, "click", function(){
-      var randomNaut = Math.round(Math.random() * $("#naut-list .naut-icon").length);
+    EventManager.addEvent(randomIcon, "click", function() {
+      let randomNaut = Math.round(Math.random() * $("#naut-list .naut-icon").length);
       $("#naut-list .naut-icon").each(function(i, item) {
-        if(i == randomNaut) {
+        if (i == randomNaut) {
           $(this).click();
           NautsBuilder.getRandomBuild();
 
@@ -110,7 +110,7 @@ var UINautList = new function(){
    * Hide the shop and infobox when the mouse enters the naut list
    */
   this.onMouseEnterNautList = function() {
-    var offsetLeft = "-55%";
+    let offsetLeft = "-55%";
 
     UIManager.elements.shop.css("left", offsetLeft);
     UIManager.elements.buildOrder.css("left", offsetLeft);
@@ -127,7 +127,7 @@ var UINautList = new function(){
    * Display the shop and infobox when the mouse leaves the naut list
    */
   this.onMouseLeaveNautList = function() {
-    if(!UIManager.elements.shop.is(":visible")) {
+    if (!UIManager.elements.shop.is(":visible")) {
       return;
     }
 

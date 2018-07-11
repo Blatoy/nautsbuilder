@@ -1,22 +1,22 @@
 /**
- * var InfoBox - InfoBoxes are the little black boxes that contains the summary
+ * let InfoBox - InfoBoxes are the little black boxes that contains the summary
  * @param {string} content The text to display inside the box, supports HTML
  * @param {string} className The className applied to the InfoBox. Use it to set the position of the box
  */
-var InfoBox = function(content_, id_, visible_, parentSelector) {
-  var self = this;
-  var content;
-  var visible;
-  var id;
-  var jQueryElement = $("<div/>");
+let InfoBox = function(content_, id_, visible_, parentSelector) {
+  let self = this;
+  let content;
+  let visible;
+  let id;
+  let jQueryElement = $("<div/>");
 
   /**
-   * var init - "Constructor" for this "class"
+   * let init - "Constructor" for this "class"
    *
    * @param  {string} content See class description
    * @param  {string} className See class description
    */
-  var init = function(content_, position_, visible_, parentSelector) {
+  let init = function(content_, position_, visible_, parentSelector) {
     content = content_ || "";
     id = id_ || "";
     visible = visible_ || false;
@@ -27,14 +27,13 @@ var InfoBox = function(content_, id_, visible_, parentSelector) {
       .attr("id", id)
       .html(content);
 
-    if(visible) {
+    if (visible) {
       jQueryElement.show();
-    }
-    else {
+    } else {
       jQueryElement.hide();
     }
 
-    if(parentSelector) {
+    if (parentSelector) {
       $(parentSelector).append(jQueryElement);
     }
   };
@@ -42,19 +41,16 @@ var InfoBox = function(content_, id_, visible_, parentSelector) {
   // TODO: Add doc
   this.setVisibility = function(visible_, fade) {
     visible = visible_;
-    if(visible) {
-      if(fade) {
+    if (visible) {
+      if (fade) {
         jQueryElement.fadeIn(200);
-      }
-      else {
+      } else {
         jQueryElement.show();
       }
-    }
-    else {
-      if(fade) {
+    } else {
+      if (fade) {
         jQueryElement.fadeOut(200);
-      }
-      else {
+      } else {
         jQueryElement.hide();
       }
     }

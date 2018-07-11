@@ -1,33 +1,32 @@
 /**
- * var Naut - The structure of an Awesomenauts, contains a list of skills among other informations provided by the API
+ * let Naut - The structure of an Awesomenauts, contains a list of skills among other informations provided by the API
  * Instances of this class are stored in the naut-controller
  * @param {JSONObject} nautAPIData - The data taken from the API for a single Naut
  */
-var Naut = function(nautAPIData) {
-  var skills = [];
-  var nautData = false; // We keep the API format to reduce the quantity of useless code
+let Naut = function(nautAPIData) {
+  let skills = [];
+  let nautData = false; // We keep the API format to reduce the quantity of useless code
 
   /**
-   * var init - "Constructor" for this "class"
+   * let init - "Constructor" for this "class"
    *
    * @param  {JSONObject} nautAPIData See class description
    */
-   var init = function(nautAPIData){
-     if(!nautAPIData) {
-       console.error("naut.js: constructor can't be called without args");
-       return false;
-     }
-     else {
-       nautData = nautAPIData;
-     }
-   };
+  let init = function(nautAPIData) {
+    if (!nautAPIData) {
+      console.error("naut.js: constructor can't be called without args");
+      return false;
+    } else {
+      nautData = nautAPIData;
+    }
+  };
 
   /**
    * this.getName - Getter
    *
    * @returns {string} The name for this Awesomenaut
    */
-  this.getName = function(){
+  this.getName = function() {
     return nautData.name;
   };
 
@@ -36,7 +35,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The description for this Awesomenaut
    */
-  this.getDescription = function(){
+  this.getDescription = function() {
     return nautData.description;
   };
 
@@ -45,11 +44,11 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The URL of the icon for this Awesomenaut
    */
-  this.getIcon = function(){
+  this.getIcon = function() {
     return nautData.icon;
   };
 
-  this.getDevName = function(){
+  this.getDevName = function() {
     return nautData.devname || "";
   };
 
@@ -58,7 +57,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The attackType for this Awesomenaut
    */
-  this.getAttackType = function(){
+  this.getAttackType = function() {
     return nautData.attacktype; // No camelcase isn't a mistake :/
   };
 
@@ -67,7 +66,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The role for this Awesomenaut
    */
-  this.getRole = function(){
+  this.getRole = function() {
     return nautData.role;
   };
 
@@ -76,7 +75,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The mobility for this Awesomenaut
    */
-  this.getMobility = function(){
+  this.getMobility = function() {
     return nautData.mobility;
   };
 
@@ -85,7 +84,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The wiki URL for this Awesomenaut
    */
-  this.getWikiURL = function(){
+  this.getWikiURL = function() {
     return nautData.wikiurl;
   };
 
@@ -94,7 +93,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The URL of the splash art for this Awesomenaut
    */
-  this.getSplashArt = function(){
+  this.getSplashArt = function() {
     return nautData.image;
   };
 
@@ -103,7 +102,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {string} The expansion for this Awesomenaut. Can be "none", "starstorm", "overdrive"
    */
-  this.getExpansion = function(){
+  this.getExpansion = function() {
     return nautData.expansion;
   };
 
@@ -112,7 +111,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {boolean} True if the Awesomenaut is only accessible in the beta
    */
-  this.isBeta = function(){
+  this.isBeta = function() {
     return nautData.beta === 1;
   };
 
@@ -122,11 +121,10 @@ var Naut = function(nautAPIData) {
    * @param {number} row - If specified, return only the skill for the row
    * @returns {array} The array containing the 4 skills of the awesomenauts
    */
-  this.getSkills = function(row){
-    if(row !== undefined) {
+  this.getSkills = function(row) {
+    if (row !== undefined) {
       return skills[row];
-    }
-    else {
+    } else {
       return skills;
     }
   };
@@ -136,7 +134,7 @@ var Naut = function(nautAPIData) {
    *
    * @returns {Skill} skill The skill to add
    */
-  this.addSkill = function(skill){
+  this.addSkill = function(skill) {
     skills.push(skill);
   };
 
@@ -147,16 +145,16 @@ var Naut = function(nautAPIData) {
 Naut.list = [];
 Naut.EXPANSION_NONE = "none"; // We don't need the other because we never check for a specific expansion
 
-Naut.getByName = function(nautName){
+Naut.getByName = function(nautName) {
   // We sadly have to hard-code this one to keep compatibility with the old Nautsbuilder links
   // New nauts won't need this since the old Nautsbuilder isn't updated anymore
-  if(nautName == "Skolldir") {
+  if (nautName == "Skolldir") {
     nautName = "Sklldir";
   }
 
   nautName = getCleanString(nautName).toLowerCase();
-  for(var i = 0; i < Naut.list.length; ++i) {
-    if(getCleanString(Naut.list[i].getName()).toLowerCase() == nautName) {
+  for (let i = 0; i < Naut.list.length; ++i) {
+    if (getCleanString(Naut.list[i].getName()).toLowerCase() == nautName) {
       return Naut.list[i];
     }
   }

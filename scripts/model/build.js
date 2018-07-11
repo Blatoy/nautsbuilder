@@ -1,5 +1,5 @@
 /**
- * var Build - Store informations about the current build
+ * let Build - Store informations about the current build
  * Just to be clear:
  * Effect is something like Damage: +34 or Add flying droid: yes
  * Effects are stored like : ["effect name": {value: 3, coefficient: 0.12}]
@@ -8,18 +8,17 @@
  *
  * @param  {string} URLData Something like: "Nibbs/1001000100200010010001000000/3" This is actually the same format as the old nautsbuilder
  */
-var Build = function(URLData) {
+let Build = function(URLData) {
   /**
-   * @var purchasedUpgrades - Stores a 2D array of the current stage of an upgrade ([row][col])
-   * @var buildOrder - Stores a list of upgrade index (to support old nautsbuilder format, includes skills)
-   * @var naut - The naut of this build
+   * @let purchasedUpgrades - Stores a 2D array of the current stage of an upgrade ([row][col])
+   * @let buildOrder - Stores a list of upgrade index (to support old nautsbuilder format, includes skills)
+   * @let naut - The naut of this build
    */
-  var buildOrder = [],
-    naut = {};
-  var errors = [];
-  var naut = false;
-  var purchasedUpgrades = false;
-  var self = this;
+  let buildOrder = [];
+  let errors = [];
+  let naut = false;
+  let purchasedUpgrades = false;
+  let self = this;
 
   /**
    * this.addError - Used to debug the spreadsheet by storing all invalid thingy that can be fixed in the spreadsheet
@@ -39,7 +38,7 @@ var Build = function(URLData) {
   this.getFromURL = function(URLData) {
     // "nautName/build/build-order"
     // Nibbs/1000000100000010010001000000/17-15-12-11
-    var name = "",
+    let name = "",
       build = [
         [0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
@@ -49,13 +48,13 @@ var Build = function(URLData) {
       order = false;
 
     // [0] = nautName [1] = build [2] = build-order
-    var data = URLData.split("/");
+    let data = URLData.split("/");
 
     name = data[0];
     if (data[1]) {
       //data[1] = data[1].substring(0, 28);
       // We convert the string to a 2 dimensional array where rows are skills and cols are upgrades
-      for (var i = 0; i < 28; ++i) {
+      for (let i = 0; i < 28; ++i) {
         // The old nautsbuilder stores the stage for the skill but unlocking skills has been removed from the game
         if (i % 7 === 0) {
           continue;
@@ -65,7 +64,7 @@ var Build = function(URLData) {
           continue;
         }
 
-        var row = Math.floor(i / 7);
+        let row = Math.floor(i / 7);
         build[row][i % 7 - 1] = parseInt(data[1][i]);
       }
     }
@@ -77,13 +76,13 @@ var Build = function(URLData) {
       // It's possible to detect if it's an old building using buildOrder length
       // This means, all incomplete build from nautsbuilder1 won't have a build order / an invalid one
       // The idea is the same however it's index - 1 and index 1 and 8 should be ignorer
-      var uniqueOrder = order.filter(function(item, pos) {
+      let uniqueOrder = order.filter(function(item, pos) {
         return order.indexOf(item) == pos
       });
-      var useOldBuildOrder = uniqueOrder.length == 14;
+      let useOldBuildOrder = uniqueOrder.length == 14;
 
       if (useOldBuildOrder) {
-        for (var i = 0; i < order.length; ++i) {
+        for (let i = 0; i < order.length; ++i) {
           if (isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 28) {
             order = [];
             break;
@@ -99,7 +98,7 @@ var Build = function(URLData) {
           }
         }
       } else {
-        for (var i = 0; i < order.length; ++i) {
+        for (let i = 0; i < order.length; ++i) {
           if (isNaN(parseInt(order[i])) || order[i] <= 0 || order[i] > 27) {
             order = [];
             break;
@@ -130,7 +129,7 @@ var Build = function(URLData) {
       this.addUpgradeToBuildOrder(row, col + 1); // + 1 because in the old format you can buy skills
       return stage;
     } else {
-      var maxUpgradeStage = naut.getSkills()[row].getUpgrades()[col].getStageCount();
+      let maxUpgradeStage = naut.getSkills()[row].getUpgrades()[col].getStageCount();
 
       purchasedUpgrades[row][col] = purchasedUpgrades[row][col] + 1 > maxUpgradeStage ? 0 : purchasedUpgrades[row][col] + 1;
       if (purchasedUpgrades[row][col] == 0) {
@@ -154,8 +153,8 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.getUpgradeFromIndex = function(index) {
-    var rc = Build.getRowColFromIndex(index - 1);
-    var skill = naut.getSkills(rc.row);
+    let rc = Build.getRowColFromIndex(index - 1);
+    let skill = naut.getSkills(rc.row);
 
     return skill.getUpgrades(rc.col);
   };
@@ -174,7 +173,7 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.removeUpgradeFromBuildOrder = function(indexOrRow, col) {
-    var index = indexOrRow;
+    let index = indexOrRow;
     if (col !== undefined) {
       index = Build.getIndexFromRowCol(indexOrRow, col);
     }
@@ -195,8 +194,8 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.getRowUpgradeCount = function(row) {
-    var count = 0;
-    for (var i = 0; i < purchasedUpgrades[row].length; ++i) {
+    let count = 0;
+    for (let i = 0; i < purchasedUpgrades[row].length; ++i) {
       if (purchasedUpgrades[row][i] != 0) {
         ++count;
       }
@@ -220,10 +219,10 @@ var Build = function(URLData) {
    * @param  {number} row The row to get the price. (between 0 - 3)
    */
   this.getRowPrice = function(row) {
-    var price = 0;
-    var upgrades = naut.getSkills()[row].getUpgrades();
+    let price = 0;
+    let upgrades = naut.getSkills()[row].getUpgrades();
 
-    for (var i = 0; i < upgrades.length; ++i) {
+    for (let i = 0; i < upgrades.length; ++i) {
       // Upgrade cost * stage. No cost if stage = 0
       price += upgrades[i].getCost() * purchasedUpgrades[row][i];
     }
@@ -233,8 +232,8 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.getPrice = function() {
-    var price = 0;
-    for (var i = 0; i < 4; ++i) {
+    let price = 0;
+    for (let i = 0; i < 4; ++i) {
       price += this.getRowPrice(i);
     }
     return price;
@@ -247,12 +246,12 @@ var Build = function(URLData) {
    */
   this.toString = function(enableRetrocompatibility) {
     // Naut name
-    var str = getCleanString(naut.getName());
+    let str = getCleanString(naut.getName());
     str += "/";
 
     // Item list
-    for (var i = 0; i < purchasedUpgrades.length; ++i) {
-      for (var j = 0; j < purchasedUpgrades[i].length; ++j) {
+    for (let i = 0; i < purchasedUpgrades.length; ++i) {
+      for (let j = 0; j < purchasedUpgrades[i].length; ++j) {
         // We keep a retro-compatibility with the old nautsbuilder format since the skill is also in the URL
         if (j == 0) {
           str += "1";
@@ -267,13 +266,13 @@ var Build = function(URLData) {
       str += "/";
       if (enableRetrocompatibility == true) {
         str += "1-8-"
-        for (var i = 0; i < buildOrder.length; ++i) {
+        for (let i = 0; i < buildOrder.length; ++i) {
           str += (parseInt(buildOrder[i]) + 1) + "-";
         }
       } else {
         // Doesn't put the skill, and index = index -1
         // This was done by mistake but can't be changed since a lot of link use this system
-        for (var i = 0; i < buildOrder.length; ++i) {
+        for (let i = 0; i < buildOrder.length; ++i) {
           str += buildOrder[i] + "-";
         }
       }
@@ -292,14 +291,14 @@ var Build = function(URLData) {
    * @returns {object} Something like: {"Skill duration": {value: 234, unit: "s"}, "Damage": {value: 2, unit: ""}}
    */
   this.getRowEffects = function(row) {
-    var rowEffects = {};
+    let rowEffects = {};
 
     // Add SKILL EFFECTS
     // rowEffects is empty and there are no duplicates at the moment
-    var skill = naut.getSkills(row);
-    var skillEffects = skill.getEffects();
-    for (var i = 0; i < skillEffects.length; ++i) {
-      var skillEffect = skillEffects[i];
+    let skill = naut.getSkills(row);
+    let skillEffects = skill.getEffects();
+    for (let i = 0; i < skillEffects.length; ++i) {
+      let skillEffect = skillEffects[i];
       // TODO: Check if value/coeff is array and copy manually the value. They are going to be changed so we can't just copy it...
       rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({
         value: this.resolveCrossRow(skillEffect.getValue()),
@@ -311,9 +310,9 @@ var Build = function(URLData) {
 
     // Add UPGRADES EFFECTS
     // Some effects may already exist so we need to check for that
-    var upgrades = skill.getUpgrades();
-    for (var col = 0; col < upgrades.length; ++col) {
-      var colUpgrade = upgrades[col];
+    let upgrades = skill.getUpgrades();
+    for (let col = 0; col < upgrades.length; ++col) {
+      let colUpgrade = upgrades[col];
 
       if (colUpgrade.getSpecialEffect() == "AFFECT_ALL") {
         // Upgrades that affect all other upgrades don't need to add their stats
@@ -322,10 +321,10 @@ var Build = function(URLData) {
 
       // Upgrade is purchased
       if (purchasedUpgrades[row][col] !== 0) {
-        var colEffects = colUpgrade.getSteps(purchasedUpgrades[row][col] - 1);
+        let colEffects = colUpgrade.getSteps(purchasedUpgrades[row][col] - 1);
         // For each effect...
-        for (var j = 0; j < colEffects.length; ++j) {
-          var stepEffect = colEffects[j];
+        for (let j = 0; j < colEffects.length; ++j) {
+          let stepEffect = colEffects[j];
 
           // Does it already exist?
           if (rowEffects[stepEffect.getKey()] === undefined) {
@@ -338,7 +337,7 @@ var Build = function(URLData) {
             }));
           } else {
             // Yes => We merge the values
-            var existingEffect = rowEffects[stepEffect.getKey()];
+            let existingEffect = rowEffects[stepEffect.getKey()];
             existingEffect.value = mergeValues(existingEffect.value, this.resolveCrossRow(stepEffect.getValue()));
             existingEffect.coeff = mergeValues(existingEffect.coeff, this.resolveCrossRow(stepEffect.getCoeff()));
 
@@ -352,19 +351,18 @@ var Build = function(URLData) {
     }
 
     // Check for special effects that would affect this row
-    for (var i = 0; i < naut.getSkills().length; ++i) {
-      for (var j = 0; j < naut.getSkills(i).getUpgrades().length; ++j) {
-        var upgrade = naut.getSkills(i).getUpgrades(j);
+    for (let i = 0; i < naut.getSkills().length; ++i) {
+      for (let j = 0; j < naut.getSkills(i).getUpgrades().length; ++j) {
+        let upgrade = naut.getSkills(i).getUpgrades(j);
         switch (upgrade.getSpecialEffect()) {
           case "AFFECT_ALL":
             // Check if the upgrade was bought
             if (purchasedUpgrades[i][j] !== 0) {
               // Apply effects to the existing effects
-              var effectsToApply = upgrade.getSteps(purchasedUpgrades[i][j] - 1);
-              for (var k = 0; k < effectsToApply.length; ++k) {
-                var newEffect = effectsToApply[k];
+              let effectsToApply = upgrade.getSteps(purchasedUpgrades[i][j] - 1);
+              for (let k = 0; k < effectsToApply.length; ++k) {
+                let newEffect = effectsToApply[k];
                 if (rowEffects[newEffect.getKey()] !== undefined) {
-                  console.log(this.resolveCrossRow(newEffect.getValue()));
                   rowEffects[newEffect.getKey()].value = mergeValues(rowEffects[newEffect.getKey()].value, this.resolveCrossRow(newEffect.getValue()));
                   rowEffects[newEffect.getKey()].coeff = mergeValues(rowEffects[newEffect.getKey()].coeff, this.resolveCrossRow(newEffect.getCoeff()));
                 }
@@ -377,22 +375,22 @@ var Build = function(URLData) {
     }
 
     // It's possible to have multiple source of DPS, but only 1 kind of DOTps is possible
-    var dpsAttackSpeed = {},
+    let dpsAttackSpeed = {},
       dpsDamage = {},
       dpsMultiplier = {};
-    var dotDpsDamage = 0,
+    let dotDpsDamage = 0,
       dotDpsDuration = 0,
       dotDpsScaleType = "";
 
     // Apply COEFFICIENT and track DPS/DOTps
-    for (var k in rowEffects) {
-      var effect = rowEffects[k];
+    for (let k in rowEffects) {
+      let effect = rowEffects[k];
       // Both array
       // We make sure we don't try to do this to a string
       if (typeof effect.value !== "string") {
         if (Array.isArray(effect.value) && Array.isArray(effect.coeff)) {
           // NOTE: Only the size of effect.value is taken into account
-          for (var i = 0; i < effect.value.length; ++i) {
+          for (let i = 0; i < effect.value.length; ++i) {
             if (effect.coeff[i] !== undefined) {
               effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff[i]), effect.scaleType);
             }
@@ -402,13 +400,13 @@ var Build = function(URLData) {
           effect.value = Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff), effect.scaleType);
         } else if (Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
           // Value is array, coeff isn't
-          for (var i = 0; i < effect.value.length; ++i) {
+          for (let i = 0; i < effect.value.length; ++i) {
             effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff), effect.scaleType);
           }
         } else {
           // Value is number, coeff is array
-          var tempArray = [];
-          for (var i = 0; i < effect.coeff.length; ++i) {
+          let tempArray = [];
+          for (let i = 0; i < effect.coeff.length; ++i) {
             tempArray.push(Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff[i]), effect.scaleType));
           }
           effect.value = tempArray;
@@ -418,15 +416,15 @@ var Build = function(URLData) {
       // DPS (we check for keywords to claculate DPS)
       // (Attack speed / 60 * Damage) * Damage Multiplier
       if (CONFIG.dpsCalculationRegex.speed.test(k)) {
-        var speedType = CONFIG.dpsCalculationRegex.speed.exec(k)[1];
+        let speedType = CONFIG.dpsCalculationRegex.speed.exec(k)[1];
         dpsAttackSpeed[speedType] = effect.value;
       }
       if (CONFIG.dpsCalculationRegex.damage.test(k)) {
-        var damageType = CONFIG.dpsCalculationRegex.damage.exec(k)[1];
+        let damageType = CONFIG.dpsCalculationRegex.damage.exec(k)[1];
         dpsDamage[damageType] = effect.value;
       }
       if (CONFIG.dpsCalculationRegex.multiplier.test(k)) {
-        var multiplierType = CONFIG.dpsCalculationRegex.multiplier.exec(k)[1];
+        let multiplierType = CONFIG.dpsCalculationRegex.multiplier.exec(k)[1];
         dpsMultiplier[multiplierType] = effect.value;
       }
 
@@ -452,11 +450,11 @@ var Build = function(URLData) {
     }
 
     // DPS calculation (it's an object because there can be multiple DPS like Ink DPS and Anchor DPS)
-    for (var k in dpsAttackSpeed) {
+    for (let k in dpsAttackSpeed) {
       // Is dpsDamage defined too?
       if (dpsDamage[k] !== undefined) {
 
-        var dps = [];
+        let dps = [];
         // dpsDamage is required, but we can have dps without dpsMultiplier
         if (dpsMultiplier[k] === undefined) {
           dpsMultiplier[k] = 1;
@@ -468,19 +466,19 @@ var Build = function(URLData) {
         }
 
         if (Array.isArray(dpsDamage[k]) && Array.isArray(dpsAttackSpeed[k])) {
-          for (var i = 0; i < dpsDamage[k].length; ++i) {
+          for (let i = 0; i < dpsDamage[k].length; ++i) {
             dps.push(Build.applyDPS(dpsAttackSpeed[k][i], dpsDamage[k][i], dpsMultiplier[k]));
           }
         } else if (!Array.isArray(dpsDamage[k]) && !Array.isArray(dpsAttackSpeed[k])) {
           dps = Build.applyDPS(dpsAttackSpeed[k], dpsDamage[k], dpsMultiplier[k]);
         } else if (!Array.isArray(dpsDamage[k]) && Array.isArray(dpsAttackSpeed[k])) {
           // Attack speed is array, dps isn't
-          for (var i = 0; i < dpsAttackSpeed[k].length; ++i) {
+          for (let i = 0; i < dpsAttackSpeed[k].length; ++i) {
             dps.push(Build.applyDPS(dpsAttackSpeed[k][i], dpsDamage[k], dpsMultiplier[k]));
           }
         } else if (Array.isArray(dpsDamage[k]) && !Array.isArray(dpsAttackSpeed[k])) {
           // dps is array, damaage isn't
-          for (var i = 0; i < dpsDamage[k].length; ++i) {
+          for (let i = 0; i < dpsDamage[k].length; ++i) {
             dps.push(Build.applyDPS(dpsAttackSpeed[k], dpsDamage[k][i], dpsMultiplier[k]));
           }
         }
@@ -499,13 +497,13 @@ var Build = function(URLData) {
   // val1 and val2 are number => ret = val1 + val2
   // val1 is array, val2 is number => ret[i] = val1[i] + val2
   // val2 is array, val1 is number => ret[i] = val2[i] + val1
-  var mergeValues = function(val1, val2) {
+  let mergeValues = function(val1, val2) {
     // Both value are array
     if (Array.isArray(val1) && Array.isArray(val2)) {
-      var res = [];
-      var count = val1.length > val2.length ? val1.length : val2.length;
+      let res = [];
+      let count = val1.length > val2.length ? val1.length : val2.length;
       // We just add the value together or 0 if they doesn't exist
-      for (var i = 0; i < count; ++i) {
+      for (let i = 0; i < count; ++i) {
         res.push((val1[i] === undefined ? 0 : val1[i]) + (val2[i] === undefined ? 0 : val2[i]));
       }
 
@@ -517,10 +515,10 @@ var Build = function(URLData) {
       return val1 + val2;
     } else {
       // One of the value is an array
-      var array = Array.isArray(val1) ? val1 : val2;
-      var number = Array.isArray(val1) ? val2 : val1;
+      let array = Array.isArray(val1) ? val1 : val2;
+      let number = Array.isArray(val1) ? val2 : val1;
 
-      for (var i = 0; i < array.length; ++i) {
+      for (let i = 0; i < array.length; ++i) {
         array[i] += number;
       }
 
@@ -542,12 +540,12 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.drawBuildOnCanvas = function(ctx, canvas) {
-    var solarIcon = new Image();
-    var nautIcon = new Image();
-    var lockedImage = new Image();
-    var shopBackground = new Image();
+    let solarIcon = new Image();
+    let nautIcon = new Image();
+    let lockedImage = new Image();
+    let shopBackground = new Image();
 
-    var y = 35,
+    let y = 35,
       x = 70;
 
     solarIcon.src = CONFIG.path.images + "solar-icon.png"; // Should be loaded instantly since it's in cache
@@ -573,13 +571,13 @@ var Build = function(URLData) {
     ctx.drawImage(nautIcon, 10, 10, 50, 50);
 
     // Upgrades
-    var skills = this.getNaut().getSkills();
-    for (var i = 0; i < skills.length; ++i) {
-      for (var j = 0; j < skills[i].getUpgrades().length; ++j) {
-        var img = new Image();
+    let skills = this.getNaut().getSkills();
+    for (let i = 0; i < skills.length; ++i) {
+      for (let j = 0; j < skills[i].getUpgrades().length; ++j) {
+        let img = new Image();
         img.src = skills[i].getUpgrades(j).getIcon();
-        var x1 = 2 + j * 60;
-        var y1 = y + 33 + 60 * i;
+        let x1 = 2 + j * 60;
+        let y1 = y + 33 + 60 * i;
 
         if (this.getUpgradeStage(i, j) == 0 && Build.current.getRowUpgradeCount(i) != 3) {
           // Upgrade not bought but row not full
@@ -599,14 +597,14 @@ var Build = function(URLData) {
     }
     // Build order
     if (Setting.get("buyOrderEnabled")) {
-      var y2 = 325,
+      let y2 = 325,
         imgCount = 12;
 
-      for (var i = 0; i < buildOrder.length; ++i) {
-        var upgrade = this.getUpgradeFromIndex(buildOrder[i]);
-        var img = new Image();
+      for (let i = 0; i < buildOrder.length; ++i) {
+        let upgrade = this.getUpgradeFromIndex(buildOrder[i]);
+        let img = new Image();
         img.src = upgrade.getIcon();
-        var w = 360 / imgCount;
+        let w = 360 / imgCount;
         ctx.drawImage(img, 2 + (i % imgCount) * w, y2 + Math.floor(i / imgCount) * w, w - 2, w - 2)
       }
     }
@@ -621,13 +619,13 @@ var Build = function(URLData) {
   // TODO: Desc
   this.setRandomBuild = function() {
     buildOrder = [];
-    for (var i = 0; i < 4; ++i) {
-      var s = shuffleString("111000");
-      for (var j = 0; j < s.length; ++j) {
+    for (let i = 0; i < 4; ++i) {
+      let s = shuffleString("111000");
+      for (let j = 0; j < s.length; ++j) {
         purchasedUpgrades[i][j] = parseInt(s.charAt(j));
         if (purchasedUpgrades[i][j] != 0) {
           purchasedUpgrades[i][j] = naut.getSkills()[i].getUpgrades()[j].getStageCount()
-          for (var k = 0; k < purchasedUpgrades[i][j]; ++k) {
+          for (let k = 0; k < purchasedUpgrades[i][j]; ++k) {
             buildOrder.push(Build.getIndexFromRowCol(i, j + 1));
           }
         }
@@ -638,7 +636,7 @@ var Build = function(URLData) {
 
   // TODO: Desc
   this.swapBuildOrderElement = function(initialIndex, finalIndex) {
-    var tmp = buildOrder[initialIndex];
+    let tmp = buildOrder[initialIndex];
     buildOrder[initialIndex] = buildOrder[finalIndex];
     buildOrder[finalIndex] = tmp;
   };
@@ -651,7 +649,7 @@ var Build = function(URLData) {
   // TODO: Desc
   this.setFromData = function(URLData) {
     if (URLData) {
-      var build = self.getFromURL(URLData);
+      let build = self.getFromURL(URLData);
       buildOrder = build.order;
       purchasedUpgrades = build.purchasedUpgrades;
 
@@ -661,10 +659,10 @@ var Build = function(URLData) {
         buildOrder = [];
 
         // We still fill the build order with the upgrade to prevent an empty buy order when upgrades are bought
-        for (var i = 0; i < build.purchasedUpgrades.length; ++i) {
-          for (var j = 0; j < build.purchasedUpgrades[i].length; ++j) {
+        for (let i = 0; i < build.purchasedUpgrades.length; ++i) {
+          for (let j = 0; j < build.purchasedUpgrades[i].length; ++j) {
             // 1 id per stage
-            for (var k = 0; k < build.purchasedUpgrades[i][j]; ++k) {
+            for (let k = 0; k < build.purchasedUpgrades[i][j]; ++k) {
               buildOrder.push(Build.getIndexFromRowCol(i, j + 1));
             }
           }
@@ -680,13 +678,9 @@ var Build = function(URLData) {
     if (Setting.get("debugDisableCrossRowParser")) return values;
 
     // Force everything to be an array as it's easier for values like 0 > 1 > 2 > ...
-    var array = Array.isArray(values) ? values : [values];
-    for (var i = 0; i < array.length; ++i) {
-      var res = array[i] + ""; // Force string conversion
-      if (res.indexOf("//") !== -1) {
-        res = res.split("//");
-        res = res[0];
-      }
+    let array = Array.isArray(values) ? values : [values];
+    for (let i = 0; i < array.length; ++i) {
+      let res = array[i] + ""; // Force string conversion
 
       // Replace |row,col| by 1 if the upgade was purchased, 0 otherwise
       res = res.replace(/\|([0-9]*?),([0-9]*?)\|/g, function(match, row, col) {
@@ -695,7 +689,7 @@ var Build = function(URLData) {
 
       // Replace |row,col,index|
       res = res.replace(/\|([0-9]*?),([0-9]*?),([0-9]*?)\|/g, function(match, row, col, index) {
-        var stage = purchasedUpgrades[row][col] - 1;
+        let stage = purchasedUpgrades[row][col] - 1;
         if (stage === -1) {
           return 0;
         } else {
@@ -764,22 +758,22 @@ var Build = function(URLData) {
       .html(" - " + naut.getName() + " -<br>Skills              Shop         Cost     Effects<br>")
     );
 
-    var txt = ["", "", "", ""];
+    let txt = ["", "", "", ""];
 
-    for (var i = 0; i < naut.getSkills().length; ++i) {
+    for (let i = 0; i < naut.getSkills().length; ++i) {
       txt[i] += "* " + naut.getSkills()[i].getName().padEnd(17, " ");
     }
 
-    for (var i = 0; i < purchasedUpgrades.length; i++) {
-      for (var j = 0; j < purchasedUpgrades[i].length; ++j) {
+    for (let i = 0; i < purchasedUpgrades.length; i++) {
+      for (let j = 0; j < purchasedUpgrades[i].length; ++j) {
         txt[i] += " <a href='#' onclick='b.setUpgradeStage(" + i + ", " + j + "); b.debugPrintBuild()'>" + purchasedUpgrades[i][j] + "</a>";
       }
     }
 
-    for (var i = 0; i < 4; ++i) {
+    for (let i = 0; i < 4; ++i) {
       txt[i] += "  " + (self.getRowPrice(i) + "").padEnd(3, " ") + "      ";
-      var rowEffects = self.getRowEffects(i);
-      for (var k in rowEffects) {
+      let rowEffects = self.getRowEffects(i);
+      for (let k in rowEffects) {
         if (Array.isArray(rowEffects[k].value)) {
           txt[i] += k + ": " + rowEffects[k].value.join(" > ") + "" + (rowEffects[k].unit == "none" ? "" : rowEffects[k].unit) + "; ";
         } else {
@@ -788,7 +782,7 @@ var Build = function(URLData) {
       }
     }
 
-    for (var i = 0; i < txt.length; ++i) {
+    for (let i = 0; i < txt.length; ++i) {
       $("#debug").append(txt[i] + "<br>");
     }
   };
@@ -809,7 +803,7 @@ Build.getRowColFromIndex = function(index) {
 
 // TODO: Desc
 Build.getScalingFromEffectTypeAndLevel = function(effectType) {
-  var teamLevel = parseInt(Setting.get("teamLevel") - 1);
+  let teamLevel = parseInt(Setting.get("teamLevel") - 1);
 
   switch (effectType) {
     case "heal":

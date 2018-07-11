@@ -1,8 +1,8 @@
 /**
- * var Tooltip - Displayed at mouse position when .show is called, they are boxes displayed when hovering a skill
+ * let Tooltip - Displayed at mouse position when .show is called, they are boxes displayed when hovering a skill
  */
-var Tooltip = function(content) {
-  var self = this;
+let Tooltip = function(content) {
+  let self = this;
 
   this.visible = false;
   this.jQueryElement = undefined;
@@ -23,7 +23,7 @@ var Tooltip = function(content) {
     this.visible = false;
 
     // Prevent hiding selected tooltips when they are freezed
-    if(!Tooltip.positionUpdateEnabled) return;
+    if (!Tooltip.positionUpdateEnabled) return;
 
     this.jQueryElement.remove();
     Tooltip.updateList.splice(Tooltip.updateList.indexOf(this), 1);
@@ -31,7 +31,7 @@ var Tooltip = function(content) {
 
   this.setPosition = function(x, y) {
     this.jQueryElement.css("left", Math.min(x + Tooltip.offset.x, $(window).width() - this.jQueryElement.outerWidth()) + "px");
-    this.jQueryElement.css("top",  Math.min((y + Tooltip.offset.y), $(window).height() - this.jQueryElement.outerHeight()) + "px");
+    this.jQueryElement.css("top", Math.min((y + Tooltip.offset.y), $(window).height() - this.jQueryElement.outerHeight()) + "px");
   };
 
   this.setContent = function(content) {
@@ -40,43 +40,48 @@ var Tooltip = function(content) {
 };
 
 Tooltip.createDefault = function(jQueryElement, content) {
-  var t = new Tooltip(content);
+  let t = new Tooltip(content);
 
-  jQueryElement.on("mouseenter", function(){
-    if(Tooltip.positionUpdateEnabled || Tooltip.updateList.length == 0) {
+  jQueryElement.on("mouseenter", function() {
+    if (Tooltip.positionUpdateEnabled || Tooltip.updateList.length == 0) {
       t.show();
     }
   });
-  jQueryElement.on("mouseleave", function(){t.hide();});
+  jQueryElement.on("mouseleave", function() {
+    t.hide();
+  });
 
   return t;
 };
 
 Tooltip.list = [];
 Tooltip.updateList = [];
-Tooltip.offset = {x: 20, y: 20};
+Tooltip.offset = {
+  x: 20,
+  y: 20
+};
 Tooltip.positionUpdateEnabled = true;
 
 Tooltip.togglePositionUpdateActivation = function() {
   Tooltip.positionUpdateEnabled = !Tooltip.positionUpdateEnabled;
-  if(Tooltip.positionUpdateEnabled) {
-    for(var i = 0; i < Tooltip.updateList.length; ++i) {
-      if(!Tooltip.updateList[i].visible) {
+  if (Tooltip.positionUpdateEnabled) {
+    for (let i = 0; i < Tooltip.updateList.length; ++i) {
+      if (!Tooltip.updateList[i].visible) {
         Tooltip.updateList[i].hide();
       }
     }
   }
 }
 
-Tooltip.onMouseMove = function(e){
-  var x = e.pageX || e.clientX;
-  var y = e.pageY || e.clientY;
+Tooltip.onMouseMove = function(e) {
+  let x = e.pageX || e.clientX;
+  let y = e.pageY || e.clientY;
 
-  if(!Tooltip.positionUpdateEnabled) {
+  if (!Tooltip.positionUpdateEnabled) {
     return;
   }
 
-  for(var i = 0; i < Tooltip.updateList.length; ++i) {
+  for (let i = 0; i < Tooltip.updateList.length; ++i) {
     Tooltip.updateList[i].setPosition(x, y);
   }
 };

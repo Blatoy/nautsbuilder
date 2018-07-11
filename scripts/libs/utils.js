@@ -1,5 +1,5 @@
 // Tools
-var preloadedImages = [];
+let preloadedImages = [];
 
 /**
  * Replaces \n by <br>
@@ -11,10 +11,9 @@ function nl2br(string) {
 
 // TODO: Desc
 function htmlToText(string) {
-  if(!Setting.get("debugDisableCrossRowParser") && !Setting.get("debugDisableMathParser")) {
-    return nl2br($("<p>" + string + "</p>").text()).replace("*","<i>").replace("*", "</i>");
-  }
-  else {
+  if (!Setting.get("debugDisableCrossRowParser") && !Setting.get("debugDisableMathParser")) {
+    return nl2br($("<p>" + string + "</p>").text()).replace("*", "<i>").replace("*", "</i>");
+  } else {
     return nl2br($("<p>" + string + "</p>").text()); // Disable ** italic when debug enabled
   }
 }
@@ -25,8 +24,10 @@ function htmlToText(string) {
  * @param {function(data, textStatus)} callback - The function called after querying the API
  */
 function queryAPI(action, callback) {
-  $.post(CONFIG.apiURL, {action: action}, function(data, textStatus) {
-    if(callback) {
+  $.post(CONFIG.apiURL, {
+    action: action
+  }, function(data, textStatus) {
+    if (callback) {
       callback(data, textStatus);
     }
   }, "json");
@@ -37,8 +38,8 @@ function queryAPI(action, callback) {
  * TODO: Store in local storage and check if it's already present to reduce loading time
  * @param {string} src - The source of the image
  */
-function preloadImage(src){
-  var img = new Image();
+function preloadImage(src) {
+  let img = new Image();
   img.src = src;
   preloadedImages.push(img);
 }
@@ -55,14 +56,14 @@ function setHash(hash) {
  * TODO: Desc
  */
 function getURLData() {
-  var url = window.location.href;
-  if(url.indexOf("?b=") != -1) {
+  let url = window.location.href;
+  if (url.indexOf("?b=") != -1) {
     url = url.split("?b");
     window.history.pushState({}, "", url[0]);
     return url[1];
   }
 
-  if(url.indexOf("#") != -1) {
+  if (url.indexOf("#") != -1) {
     return url.split("#")[1];
   }
 
@@ -82,13 +83,14 @@ function isNumeric(n) {
  * @param {string} str - The string to shuffle
  */
 function shuffleString(str) {
-  var a = str.split(""), n = a.length;
+  let a = str.split(""),
+    n = a.length;
 
-  for(var i = n - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = a[i];
-      a[i] = a[j];
-      a[j] = tmp;
+  for (let i = n - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let tmp = a[i];
+    a[i] = a[j];
+    a[j] = tmp;
   }
   return a.join("");
 }
@@ -107,7 +109,8 @@ function getCleanString(str) {
  * @param {array} array - The array to shuffle
  */
 function shuffleArray(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+  let currentIndex = array.length,
+    temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
   while (0 !== currentIndex) {
@@ -131,40 +134,60 @@ function shuffleArray(array) {
  * @param {string} str
  * @return {object} {unit: "none", "type": "number|text", value: ""}
  */
-function getNumberInfo(str){
-  if(str === undefined) {
-    return {unit: "none", type: "undefined", value: undefined};
+function getNumberInfo(str) {
+  if (str === undefined) {
+    return {
+      unit: "none",
+      type: "undefined",
+      value: undefined
+    };
   }
   // Number without unit
-  if(isNumeric(str)) {
-    return {unit: "none", type: "number", value: parseFloat(str)};
-  }
-  else {
+  if (isNumeric(str)) {
+    return {
+      unit: "none",
+      type: "number",
+      value: parseFloat(str)
+    };
+  } else {
     // Strings contains some unparser math
-    if(str.includes("[") && str.includes("]")) {
-       // Remove any spaces just in case
+    if (str.includes("[") && str.includes("]")) {
+      // Remove any spaces just in case
       let cleanStr = str.replace(/\s/g, "");
       // This string contains some unparsed math, let's try to find a unit
-      if(cleanStr[cleanStr.length - 1] == "]") {
-        return {unit: "none", type: "unparsedMath", value: str};
-      }
-      else {
+      if (cleanStr[cleanStr.length - 1] == "]") {
+        return {
+          unit: "none",
+          type: "unparsedMath",
+          value: str
+        };
+      } else {
         // There's something that could look like a unit
-        return {unit: cleanStr[cleanStr.length - 1], type: "number", value: str};
+        return {
+          unit: cleanStr[cleanStr.length - 1],
+          type: "number",
+          value: str
+        };
       }
-    }
-    else if(isNumeric(str.substring(0, str.length - 1)) && !isNumeric(str.substring(str.length - 1))) {
-      return {unit: str.substring(str.length - 1), type: "number", value: parseFloat(str.substring(0, str.length - 1))};
-    }
-    else {
-      return {unit: "none", type: "text", value: str}; // we only want 1-digit units, we assume this is a string
+    } else if (isNumeric(str.substring(0, str.length - 1)) && !isNumeric(str.substring(str.length - 1))) {
+      return {
+        unit: str.substring(str.length - 1),
+        type: "number",
+        value: parseFloat(str.substring(0, str.length - 1))
+      };
+    } else {
+      return {
+        unit: "none",
+        type: "text",
+        value: str
+      }; // we only want 1-digit units, we assume this is a string
     }
   }
 }
 
 // Source: https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
 function capitalizeFirstLetter(string) {
-  if(string === undefined)
+  if (string === undefined)
     return;
   return string.charAt(0).toUpperCase() + string.slice(1);
 }

@@ -1,5 +1,5 @@
-var ShopView = new function() {
-  var self = this;
+let ShopView = new function() {
+  let self = this;
 
   // TODO: Desc
   this.init = function() {
@@ -12,9 +12,9 @@ var ShopView = new function() {
   };
 
   this.updateAllUpgradeStage = function() {
-    var upgradeStages = Build.current.getAllUpgradeStage();
-    for(var i = 0; i < upgradeStages.length; ++i) {
-      for(var j = 0; j < upgradeStages[i].length; ++j) {
+    let upgradeStages = Build.current.getAllUpgradeStage();
+    for (let i = 0; i < upgradeStages.length; ++i) {
+      for (let j = 0; j < upgradeStages[i].length; ++j) {
         ShopView.setDisplayStage(i, j, upgradeStages[i][j], Build.current.getStageCount(i, j));
       }
     }
@@ -24,15 +24,14 @@ var ShopView = new function() {
 
   // TODO: Desc
   this.setDisplayStage = function(row, col, stage, stageCount) {
-    var row = $("#shop-row-" + (row + 1));
-    $(".shop-item-upgrade", row).each(function(i){
-      if(i == col) {
-        if(stage > 0) {
-          if(!$(this).hasClass("purchased")) {
+    row = $("#shop-row-" + (row + 1));
+    $(".shop-item-upgrade", row).each(function(i) {
+      if (i == col) {
+        if (stage > 0) {
+          if (!$(this).hasClass("purchased")) {
             $(this).addClass("purchased");
           }
-        }
-        else {
+        } else {
           $(this).removeClass("purchased");
         }
         // Display stage
@@ -43,19 +42,19 @@ var ShopView = new function() {
 
   // TODO: Desc
   this.lockUpgradesWhenRowFull = function() {
-    for(var i = 0; i < 4; ++i) {
-      var row = $("#shop-row-" + (i + 1));
+    for (let i = 0; i < 4; ++i) {
+      let row = $("#shop-row-" + (i + 1));
 
       // TODO: Don't hardcode the max numbre of upgrade per row
-      if(Build.current.getRowUpgradeCount(i) >= 3) {
-        $(".shop-item-upgrade", row).each(function(){
-          if(!$(this).hasClass("purchased")) {
+      if (Build.current.getRowUpgradeCount(i) >= 3) {
+        $(".shop-item-upgrade", row).each(function() {
+          if (!$(this).hasClass("purchased")) {
 
             // Item isn't purchased and already 3 item have been bought => we change the icon
             $(this).attr("src", CONFIG.path.images + "locked.png");
             $(this).addClass("locked");
 
-            if(self.isBigScreen()) {
+            if (self.isBigScreen()) {
               $(this).addClass("locked-big");
             }
 
@@ -63,10 +62,9 @@ var ShopView = new function() {
             $("span", this.parentElement).hide();
           }
         });
-      }
-      else {
+      } else {
         // Unlock and enable all upgrades
-        $(".locked", row).each(function(){
+        $(".locked", row).each(function() {
           $(".shop-item-upgrade", this).data("disabled", false);
           $(this).removeClass("locked");
           $(this).removeClass("locked-big");
@@ -80,22 +78,24 @@ var ShopView = new function() {
 
   // TODO: Desc
   this.displaySkillsAndUpgrades = function(naut) {
-    var skills = naut.getSkills();
+    let skills = naut.getSkills();
 
-    for(var i = 0; i < skills.length; ++i) {
-      var skill = skills[i];
+    for (let i = 0; i < skills.length; ++i) {
+      let skill = skills[i];
       // We empty the row so we don't have to reset anything when selecting another char
       $("#shop-row-" + (i + 1)).html("");
 
       // Skill icon
-      var skillImageElement = $("<img>")
+      let skillImageElement = $("<img>")
         .attr("src", skills[i].getIcon())
         .addClass("shop-item-skill");
 
       // Skill container
       $("<div>")
         .addClass("shop-skill-container")
-        .on('dragstart', function(e) { e.preventDefault(); })
+        .on('dragstart', function(e) {
+          e.preventDefault();
+        })
         .append(skillImageElement)
         .append($("<span>")
           .addClass("shop-item-price")
@@ -105,12 +105,12 @@ var ShopView = new function() {
 
       Tooltip.createDefault(skillImageElement, skill.toString());
 
-      var upgrades = skill.getUpgrades();
-      for(var j = 0; j < upgrades.length; ++j) {
+      let upgrades = skill.getUpgrades();
+      for (let j = 0; j < upgrades.length; ++j) {
 
-        (function(i, j, upgrade){
+        (function(i, j, upgrade) {
           // Upgrade image
-          var upgradeImageElement = $("<img>")
+          let upgradeImageElement = $("<img>")
             .attr("src", upgrade.getIcon())
             .data("default-url", upgrade.getIcon())
             .addClass("shop-item-upgrade");
@@ -131,14 +131,14 @@ var ShopView = new function() {
                 .attr("src", CONFIG.path.images + "/" + "solar-icon.png")
               )
             )
-            .on("click", function(){
+            .on("click", function() {
               // Can we select this upgrade?
-              if(Build.current.getRowUpgradeCount(i) >= 3 && Build.current.getUpgradeStage(i, j) == 0) {
+              if (Build.current.getRowUpgradeCount(i) >= 3 && Build.current.getUpgradeStage(i, j) == 0) {
                 return;
               }
 
               // Tell the controller we selected an upgrade
-              var stage = BuildController.onUpgradeClick(i, j);
+              let stage = BuildController.onUpgradeClick(i, j);
               // Display new stage
               self.setDisplayStage(i, j, stage, upgrade.getStageCount());
               self.updateBuildOrderDisplay();
@@ -146,7 +146,7 @@ var ShopView = new function() {
             })
             .appendTo("#shop-row-" + (i + 1));
 
-            Tooltip.createDefault(upgradeImageElement, upgrade.toString());
+          Tooltip.createDefault(upgradeImageElement, upgrade.toString());
         })(i, j, upgrades[j]);
       }
     }
@@ -157,11 +157,10 @@ var ShopView = new function() {
   // TODO: Desc
   this.onWindowResize = function() {
     // If the screen is big enough, we display upgrade cost below the upgrade
-    if(self.isBigScreen()) {
+    if (self.isBigScreen()) {
       $(".shop-item-price").attr("class", "shop-item-price-big");
       $(".locked").addClass("locked-big");
-    }
-    else {
+    } else {
       $(".shop-item-price-big").attr("class", "shop-item-price");
       $(".locked").removeClass("locked-big");
     }
@@ -188,23 +187,22 @@ var ShopView = new function() {
   this.displayShop = function() {
     NautView.moveNautSelectionToRight();
     InfoBoxView.displayBuildSummary();
-   $("#naut-shop").css("left", "-3px");
+    $("#naut-shop").css("left", "-3px");
   };
 
   // TODO: Desc
   this.displayBuyOrder = function() {
-   $("#build-order").css("left", "-3px");
+    $("#build-order").css("left", "-3px");
   };
 
   // TODO: Desc
   this.showBuildOrderPanel = function(enabled) {
-    if(enabled) {
+    if (enabled) {
       $("#buy-order-status").text("Disable");
       $("#build-order").removeClass("panel-disabled");
       $("#buy-order-text").fadeIn();
       $("#build-order-content").fadeIn();
-    }
-    else {
+    } else {
       $("#buy-order-status").text("Enable buy order");
       $("#build-order").addClass("panel-disabled");
       $("#buy-order-text").fadeOut();
@@ -213,11 +211,11 @@ var ShopView = new function() {
   };
 
   // TODO: Desc
-  this.setSelectedUpgradePosition = function(x, y){
-    var upgradeAttachedToMouse = $("#moving-upgrade");
+  this.setSelectedUpgradePosition = function(x, y) {
+    let upgradeAttachedToMouse = $("#moving-upgrade");
 
-    if(upgradeAttachedToMouse.length > 0) {
-      upgradeAttachedToMouse.css("left", x  - upgradeAttachedToMouse.width() / 2 + "px");
+    if (upgradeAttachedToMouse.length > 0) {
+      upgradeAttachedToMouse.css("left", x - upgradeAttachedToMouse.width() / 2 + "px");
       upgradeAttachedToMouse.css("top", y - upgradeAttachedToMouse.height() / 2 + "px");
     }
   };
@@ -229,69 +227,70 @@ var ShopView = new function() {
 
     $("body").append(
       $("<img>")
-        .attr("src", upgrade.getIcon())
-        .attr("id", "moving-upgrade")
-        .on('dragstart', function(e) { e.preventDefault(); })
-        .on("mouseup", function(){
-          BuildController.onBuildOrderUpgradeMouseUp();
-        })
+      .attr("src", upgrade.getIcon())
+      .attr("id", "moving-upgrade")
+      .on('dragstart', function(e) {
+        e.preventDefault();
+      })
+      .on("mouseup", function() {
+        BuildController.onBuildOrderUpgradeMouseUp();
+      })
     );
   };
 
   // TODO: Desc
   this.updateBuildOrderDisplay = function(tempUpgradeIndex) {
     $("#build-order-content").html(""); // Clear current order
-    var buildOrder = Build.current.getBuildOrder();
+    let buildOrder = Build.current.getBuildOrder();
 
-    if(tempUpgradeIndex !== undefined) {
+    if (tempUpgradeIndex !== undefined) {
       buildOrder = buildOrder.slice(); // We create a copy so we can change it without problem
       buildOrder.splice(tempUpgradeIndex, 0, -1);
     }
 
-    for(var i = 0; i < buildOrder.length; ++i) {
-      if(buildOrder[i] != -1) {
-        var upgrade = Build.current.getUpgradeFromIndex(buildOrder[i]);
+    for (let i = 0; i < buildOrder.length; ++i) {
+      if (buildOrder[i] != -1) {
+        let upgrade = Build.current.getUpgradeFromIndex(buildOrder[i]);
 
-        (function(upgrade, i){
+        (function(upgrade, i) {
           // Build order upgrade
-          var img = $("<img>");
-          var tooltip;
-          if(tempUpgradeIndex === undefined) {
+          let img = $("<img>");
+          let tooltip;
+          if (tempUpgradeIndex === undefined) {
             tooltip = Tooltip.createDefault(img, upgrade.toString());
           }
 
           img.attr("src", upgrade.getIcon())
             .addClass("shop-item-upgrade purchased")
-            .on("mousedown", function(){
-                if(tempUpgradeIndex === undefined) {
-                  tooltip.hide();
-                }
-                BuildController.onBuyOrderUpgradeMouseDown(upgrade, this, buildOrder[i], i);
+            .on("mousedown", function() {
+              if (tempUpgradeIndex === undefined) {
+                tooltip.hide();
+              }
+              BuildController.onBuyOrderUpgradeMouseDown(upgrade, this, buildOrder[i], i);
             });
 
           // Add it to the buy order
           $("#build-order-content").append($("<div>").addClass("shop-item-container").append(img));
 
           // Only add a ">" if it's not the last upgrade
-          if(i + 1 < buildOrder.length) {
+          if (i + 1 < buildOrder.length) {
             $("#build-order-content").append(" > ");
           }
         })(upgrade, i);
-      }
-      else {
+      } else {
         $("#build-order-content").append(
           $("<div>")
-            .addClass("shop-item-container")
-            .addClass("build-order-empty")
-            .append(
-              $("<img>")
-              .attr("src", CONFIG.path.images + "empty-upgrade.png")
-              .addClass("shop-item-upgrade purchased")
-            ));
-          // Only add a ">" if it's not the last upgrade
-          if(i + 1 < buildOrder.length) {
-            $("#build-order-content").append(" > ");
-          }
+          .addClass("shop-item-container")
+          .addClass("build-order-empty")
+          .append(
+            $("<img>")
+            .attr("src", CONFIG.path.images + "empty-upgrade.png")
+            .addClass("shop-item-upgrade purchased")
+          ));
+        // Only add a ">" if it's not the last upgrade
+        if (i + 1 < buildOrder.length) {
+          $("#build-order-content").append(" > ");
+        }
       }
     }
   };

@@ -1,24 +1,27 @@
-var MainView = new function() {
-  var self = this;
-  var keyReleased = true;
+let MainView = new function() {
+  let self = this;
+  let keyReleased = true;
 
-  this.mousePos = {x: 0, y: 0};
+  this.mousePos = {
+    x: 0,
+    y: 0
+  };
 
   this.onLoaded = function() {
     $("#loading").fadeOut(400);
     $("#loading img, #loading span").fadeOut(350);
 
-    $(document).on("mousemove", function(e){
+    $(document).on("mousemove", function(e) {
       self.mousePos.x = e.clientX || e.pageX;
       self.mousePos.y = e.clientY || e.pageY;
 
       Tooltip.onMouseMove(e);
     });
 
-    $(document).on("keydown", function(e){
-      if(keyReleased) {
+    $(document).on("keydown", function(e) {
+      if (keyReleased) {
         keyReleased = false;
-        switch(e.keyCode) {
+        switch (e.keyCode) {
           case 115: // F4
             MessageBoxView.displayDebug();
             break;
@@ -29,19 +32,19 @@ var MainView = new function() {
       }
     });
 
-    $(window).on("blur", function(e){
+    $(window).on("blur", function(e) {
       // Force key release when leaving the page
       keyReleased = true;
-      if(!Tooltip.positionUpdateEnabled) {
+      if (!Tooltip.positionUpdateEnabled) {
         // Quick fix preventing tooltip display
         Tooltip.togglePositionUpdateActivation();
       }
     });
 
-    $(document).on("keyup", function(e){
-      if(keyReleased == false) {
+    $(document).on("keyup", function(e) {
+      if (keyReleased == false) {
         keyReleased = true;
-        switch(e.keyCode) {
+        switch (e.keyCode) {
           case 17: // ctrl
             Tooltip.togglePositionUpdateActivation();
             break;
@@ -49,6 +52,8 @@ var MainView = new function() {
       }
     });
 
-    $("#settings-container").click(function(){MessageBoxView.displaySettings();});
+    $("#settings-container").click(function() {
+      MessageBoxView.displaySettings();
+    });
   };
 };

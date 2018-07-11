@@ -1,5 +1,5 @@
 // TODO: Delete this class
-var EventManager = new function() {
+let EventManager = new function() {
   /**
    * Add an event
    * @param {string} selector - The text of the tooltip. Supports HTML

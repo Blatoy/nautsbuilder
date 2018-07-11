@@ -1,14 +1,17 @@
-
 /**
- * var BuildController - Controls everything related to the build (e.g: upgrades in the shop)
+ * let BuildController - Controls everything related to the build (e.g: upgrades in the shop)
  */
-var BuildController = new function(){
-  var buildOrderSelectedUpgradeId = -1, buildOrderSelectedUpgradeNewIndex = -1;
-  var mousePos = {x: 0, y: 0};
-  var self = this;
+let BuildController = new function() {
+  let buildOrderSelectedUpgradeId = -1,
+    buildOrderSelectedUpgradeNewIndex = -1;
+  let mousePos = {
+    x: 0,
+    y: 0
+  };
+  let self = this;
 
   // TODO: Desc
-  this.init = function(){
+  this.init = function() {
     Build.current = new Build();
 
     $(window).on("mousemove", self.onMouseMove);
@@ -24,7 +27,7 @@ var BuildController = new function(){
   };
 
   // TODO: Desc
-  this.onBuyOrderUpgradeMouseDown = function(upgrade, element, upgradeId, index){
+  this.onBuyOrderUpgradeMouseDown = function(upgrade, element, upgradeId, index) {
     buildOrderSelectedUpgradeId = upgradeId;
     // Add the temp element that follows the mouse
     ShopView.displayBuildOrderTempUpgrade(upgrade, element);
@@ -37,24 +40,23 @@ var BuildController = new function(){
 
   // TODO: Desc
   this.handleBuildOrderReorder = function(index) {
-    var movedUpgrade = $("#moving-upgrade");
-    if(movedUpgrade.length > 0) {
-      var x = mousePos.x;
-      var y = mousePos.y;
+    let movedUpgrade = $("#moving-upgrade");
+    if (movedUpgrade.length > 0) {
+      let x = mousePos.x;
+      let y = mousePos.y;
       // Fix that the first time it doesn't display the placeholder upgrade
-      if(index !== undefined) {
+      if (index !== undefined) {
         buildOrderSelectedUpgradeNewIndex = index;
         ShopView.updateBuildOrderDisplay(index, buildOrderSelectedUpgradeId);
-      }
-      else {
-        $("#build-order-content .shop-item-container").each(function(i){
-          var x1 = this.getBoundingClientRect().left;
-          var y1 = this.getBoundingClientRect().top;
-          var w = $(this).width();
-          var h = $(this).height();
+      } else {
+        $("#build-order-content .shop-item-container").each(function(i) {
+          let x1 = this.getBoundingClientRect().left;
+          let y1 = this.getBoundingClientRect().top;
+          let w = $(this).width();
+          let h = $(this).height();
 
           // Check height
-          if(y > y1 && y < y1 + h && x > x1 && x < x1 + w) {
+          if (y > y1 && y < y1 + h && x > x1 && x < x1 + w) {
             buildOrderSelectedUpgradeNewIndex = i;
             ShopView.updateBuildOrderDisplay(Math.max(i, 0), buildOrderSelectedUpgradeId);
             return;
@@ -94,8 +96,8 @@ var BuildController = new function(){
   };
 
   // TODO: Desc
-  this.onUpgradeClick = function(row, col){
-    var stage = Build.current.setUpgradeStage(row, col);
+  this.onUpgradeClick = function(row, col) {
+    let stage = Build.current.setUpgradeStage(row, col);
     this.refreshViewsAndURL();
     return stage;
   };
@@ -105,11 +107,11 @@ var BuildController = new function(){
     setHash(Build.current.toString());
   };
 
-  this.refreshViewsAndURL = function(){
+  this.refreshViewsAndURL = function() {
     ShopView.updateBuildOrderDisplay();
     InfoBoxView.setBuildSummaryContent();
     this.setUrlData();
   };
 
-  this.importBuildFromURLData = function(data){};
+  this.importBuildFromURLData = function(data) {};
 };
