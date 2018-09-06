@@ -202,26 +202,35 @@ Effect.parseString = function(effectData) {
 
 // TODO: Desc
 Effect.toString = function(objectEffect) {
-  let displayValue = objectEffect.value;
-  let displayUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
+  let displayedValue = objectEffect.value;
+  let displayedUnit = (objectEffect.unit == "none" ? "" : objectEffect.unit);
   let comment = objectEffect.comment;
 
   if (comment == "hidden") {
     return "";
   }
 
-  if (Array.isArray(displayValue)) {
-    displayValue = displayValue.join(displayUnit + " > ");
+  if (Array.isArray(displayedValue)) {
+    let displayedValueCopy = displayedValue.slice();
+    for(let i = displayedValueCopy.length - 1; i >= 0; --i) {
+      if(displayedValueCopy[i] == 0) {
+        displayedValueCopy.pop();
+      }
+      else {
+        break;
+      }
+    }
+    displayedValue = displayedValueCopy.join(displayedUnit + " > ");
   }
 
   if (comment) {
-    displayValue = comment;
+    displayedValue = comment;
     if (!Setting.get("debugDisableCrossRowParser")) {
-      displayUnit = "";
+      displayedUnit = "";
     }
   }
 
-  return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayValue) + htmlToText(displayUnit) + "</span>";
+  return htmlToText(capitalizeFirstLetter(objectEffect.key)) + ": <span class='effect-value-colored'>" + htmlToText(displayedValue) + htmlToText(displayedUnit) + "</span>";
 };
 
 Effect.EFFECT_SEPARATOR = ";";
