@@ -134,9 +134,9 @@ let Skill = function(skillAPIData) {
       // Effects that have no text are hidden
       if (effectValueText == "") continue;
       if (!Setting.get("debugRCIDisplay")) {
-        txt += "<br>- " + effectValueText;
+        txt += "<br>- " + htmlToText(effectValueText);
       } else {
-        txt += "<br>¦" + row + "," + i + "¦ " + effectValueText;
+        txt += "<br>¦" + htmlToText(row) + "," + i + "¦ " + htmlToText(effectValueText);
       }
     }
     txt += "</span><br><span class='small-text'>";
@@ -146,7 +146,7 @@ let Skill = function(skillAPIData) {
     if (!this.getDevName()) {
       txt += "<hr><span class='small-text'><b>Dev name missing for this skill</b>";
     } else {
-      txt += "<hr><span class='small-text'><b>Dev name:</b> " + this.getDevName();
+      txt += "<hr><span class='small-text'><b>Dev name:</b> " + htmlToText(this.getDevName());
     }
 
     return txt;

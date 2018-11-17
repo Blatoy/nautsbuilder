@@ -755,7 +755,7 @@ let Build = function(URLData) {
       .css("color", "black")
       .css("font-family", "consolas")
       .attr("id", "debug")
-      .html(" - " + naut.getName() + " -<br>Skills              Shop         Cost     Effects<br>")
+      .text(" - " + naut.getName() + " -<br>Skills              Shop         Cost     Effects<br>")
     );
 
     let txt = ["", "", "", ""];

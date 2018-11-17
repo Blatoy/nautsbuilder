@@ -81,7 +81,7 @@ let NautView = new function() {
   // TODO: Function desc
   this.displayName = function(naut) {
     $("#naut-name").show();
-    let devText = Setting.get("displayDevNames") ? "<br><span class='small-text'>" + naut.getDevName() + "</span>" : "";
+    let devText = Setting.get("displayDevNames") ? "<br><span class='small-text'>" + htmlToText(naut.getDevName()) + "</span>" : "";
     $("#naut-name").html(htmlToText(naut.getName()) + devText);
   };
 

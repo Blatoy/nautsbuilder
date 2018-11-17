@@ -23,7 +23,7 @@ let InfoBoxView = new function() {
 
   // TODO: Add desc
   this.displayLore = function(naut) {
-    infoBoxes.lore.setContent("<div>" + naut.getRole() + " - " + naut.getAttackType() + " - " + naut.getMobility() + "</div>" +
+    infoBoxes.lore.setContent("<div>" + htmlToText(naut.getRole()) + " - " + htmlToText(naut.getAttackType()) + " - " + htmlToText(naut.getMobility()) + "</div>" +
       "<span class='small-text'>" + htmlToText(naut.getDescription()) + "</span>");
     infoBoxes.lore.setVisibility(true, true);
     infoBoxes.about.setVisibility(false, true);
@@ -39,7 +39,7 @@ let InfoBoxView = new function() {
       let skill = naut.getSkills(i);
       let skillImage = $("<img/>").attr("src", skill.getIcon());
       element.append(skillImage);
-      element.append("<span>" + skill.getDescription() + "</span><hr>")
+      element.append("<span>" + htmlToText(skill.getDescription()) + "</span><hr>")
       Tooltip.createDefault(skillImage, skill.toString());
     }
 
@@ -85,7 +85,7 @@ let InfoBoxView = new function() {
               unit: effects[k].unit,
               value: effects[k].value,
               key: k
-            }) + " - " + effects[k].scaleType + "<br>";
+            }) + " - " + htmlToText(effects[k].scaleType) + "<br>";
           }
         }
       }

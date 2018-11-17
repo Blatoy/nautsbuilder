@@ -13,7 +13,7 @@ let MessageBox = {
       size = 60;
     }
     MessageBox.onClose = onClose;
-    MessageBox.jQueryElement.html(title + "<hr>" + "<span class='small-text'>" + content + "</span>");
+    MessageBox.jQueryElement.html(htmlToText(title) + "<hr>" + "<span class='small-text'>" + content + "</span>");
     MessageBox.jQueryBackElement.show();
     MessageBox.jQueryElement.css("margin-left", $(document).width() / 2 - (MessageBox.jQueryElement.outerWidth() / 2) + "px");
   },
