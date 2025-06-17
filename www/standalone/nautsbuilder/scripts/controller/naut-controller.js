@@ -251,28 +251,95 @@ let NautController = new function() {
    * this.addSkillsToNauts - Replaces the current (api) cache by data
    * API is automatically detected from data. Prevent the cache to be automatically updated
    */
-  this.debugSetTempSpreadsheetData = function(data) {
-    let d = JSON.parse(data);
-    if (d[0]) {
-      let e = d[0];
-      $("#custom-import").val("Refresh to apply.");
+    this.debugSetTempSpreadsheetData = function(pastedText) {
+    const entries = [];
+
+    try {
+      const text = pastedText.replace(/\r/g, "");
+
+      // First line is header
+      const headerLine = text.split("\n")[0];
+      const headers = headerLine.split("\t").map((header) => header.toLowerCase())
+      const noHeaders = text.split("\n").slice(1).join("\n");
+
+      // The first entry of each page has a "TRUE" used by nautsbuilder to detect which page is being imported
+      // By removing it we ensure the first entry also ends up with a tab
+      const fixedFirstLine = noHeaders.replace("TRUE", "");
+      const fixedTabs = fixedFirstLine.replace(/\t\n/mg, "\t");
+      const data = fixedTabs.split("\t");
+
+      let foundLast = false;
+      if (data.length < 3 || headers.length < 3) {
+        alert("Pasted data seems invalid (not enough headers or data)");
+        return;
+      }
+
+      const lastHeader = headers[headers.length - 1];
+      if (!["isconfigtab", "isupgradestab", "isskillstab", "ischaracterstab"].includes(lastHeader)) {
+        alert("Pasted data seems invalid (unknown header). Make sure you did not press CTRL-A twice and to not select extra row / columns)");
+        return;
+      }
+
+      if (headers.some((v) => v.trim() === "")) {
+        alert("Pasted data is invalid (empty headers). Make sure you did not press CTRL-A twice and to not select extra row / columns)");
+        return;
+      }
+
+      for (let i = 0; i < data.length; i++) {
+        const entry = {};
+        for (let j = 0; j < headers.length - 1; j++) {
+          let text = data[i++];
+          if (!text || text === "") {
+            continue;
+          }
+
+          if (text.startsWith('"') && text.endsWith('"')) {
+            text = text.slice(1, -1);
+          }
+
+          const number = Number(text);
+          entry[headers[j]] = isNaN(number) ? text : number;
+          if (i > data.length) {
+            foundLast = true;
+            break;
+          }
+        }
+
+        if (!foundLast && Object.keys(entry).length > 0) {
+          i--;
+          if (entries.length === 0) {
+            entry[headers[headers.length - 1]] = true;
+          }
+          entries.push(entry);
+        }
+      }
+    }
+    catch (e) {
+        alert("Something went wrong. " + (e));
+    }
+
+    if (entries[0]) {
+      let firstEntry = entries[0];
+      document.getElementById("custom-import").value = "Refresh to apply.";
       if (localStorage.getItem("cacheVersion") != "-1") {
         localStorage.setItem("cacheVersion", "-1");
         alert("Cache auto-updating has been disabled. Setting > Clear cache to enable it again.")
       }
 
-      if (e.ischaracterstab) {
-        localStorage.setItem(NautController.API.CHARACTERS, data);
-      } else if (e.isskillstab) {
-        localStorage.setItem(NautController.API.SKILLS, data);
-      } else if (e.isupgradestab) {
-        localStorage.setItem(NautController.API.UPGRADES, data);
-      } else if (e.iseffectstab) {
-        localStorage.setItem(NautController.API.EFFECTS, data);
-      } else if (e.isconfigtab) {
-        localStorage.setItem(NautController.API.CONFIG, data);
+      const jsonData = JSON.stringify(entries);
+
+      if (firstEntry.ischaracterstab) {
+        localStorage.setItem(NautController.API.CHARACTERS, jsonData);
+      } else if (firstEntry.isskillstab) {
+        localStorage.setItem(NautController.API.SKILLS, jsonData);
+      } else if (firstEntry.isupgradestab) {
+        localStorage.setItem(NautController.API.UPGRADES, jsonData);
+      } else if (firstEntry.iseffectstab) {
+        localStorage.setItem(NautController.API.EFFECTS, jsonData);
+      } else if (firstEntry.isconfigtab) {
+        localStorage.setItem(NautController.API.CONFIG, jsonData);
       } else {
-        $("#custom-import").val("Invalid data");
+        document.getElementById("custom-import").value = "Invalid data";
       }
     }
   };

@@ -29,7 +29,7 @@ let MessageBoxView = new function() {
           "<hr><button onclick='Setting.debugToggleCrossRow(); MessageBoxView.displayDebug();'><span id='debug-status-cross-row'></span> raw crossrow display</button>" +
           "<hr><button onclick='Setting.debugToggleMathParser(); MessageBoxView.displayDebug();'><span id='debug-status-math-parser'></span> crossrow math parser</button>" +
           "<hr><button onclick='Setting.debugToggleRCIDisplay(); MessageBoxView.displayDebug();'><span id='debug-status-rci-display'></span> RCI display on upgrade over</button>" +
-          "<hr><label>Import custom spreadsheet</label><input id='custom-import' type='text'><hr>"
+          "<hr><label>Import custom spreadsheet</label><textarea id='custom-import'></textarea><hr>"
       },
       errorsReport: {
         title: "Report errors",
@@ -89,9 +89,9 @@ let MessageBoxView = new function() {
     MessageBox.close();
     MessageBox.show(messageBoxes.debug.title, messageBoxes.debug.content);
 
-    $("#custom-import").on("input", function() {
-      let data = $("#custom-import").val();
-      NautController.debugSetTempSpreadsheetData(data);
+    document.getElementById("custom-import").addEventListener("paste", (event) => {
+      event.preventDefault();
+      NautController.debugSetTempSpreadsheetData((event.clipboardData || window.clipboardData).getData("text"));
     });
 
     $("#debug-status-scaling").text(Setting.get("debugDisplayScaleType") ? "Disable" : "Enable");
