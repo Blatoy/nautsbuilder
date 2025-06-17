@@ -23,7 +23,18 @@
         // Get upgrade stage effects and dev names
         for (let i = 0; i < Upgrade.MAX_STEP_AVAILABLE; ++i) {
           if (upgradeData["step" + (i + 1)] !== undefined) {
-            let rawEffects = upgradeData["step" + (i + 1)].split(Effect.EFFECT_SEPARATOR);
+            const step = upgradeData["step" + (i + 1)];
+            if (!step ) {
+              console.error("Missing step for " + upgradeData.skill + " > " + upgradeData.name);
+              continue;
+            }
+
+            if (typeof(step) !== "string") {
+              console.error("Step", step, " is not valid for " + upgradeData.skill + " > " + upgradeData.name);
+              return;
+            }
+
+            let rawEffects = step.split(Effect.EFFECT_SEPARATOR);
             let effectScaling = [];
             if (upgradeData.effectscaling) {
               effectScaling = upgradeData.effectscaling.split(Effect.EFFECT_SEPARATOR) || [];
@@ -34,7 +45,7 @@
               if (rawEffects[j].replace(/\s/g, "") !== "") {
                 // Prevent NB2 being stuck in a state that prevent cache refresh
                 if (!effectScaling[j]) {
-                  console.error("Missing effect scaling for " + upgradeData.skill + "'s' " + upgradeData.name);
+                  console.error("Missing effect scaling for " + upgradeData.skill + " > " + upgradeData.name);
                 }
                 effects.push(new Effect(rawEffects[j], effectScaling[j] ? effectScaling[j].replace(" ", "") : "none"));
               }
