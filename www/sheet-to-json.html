@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheet to JSON</title>
+    <style>
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        pre {
+            background-color: #eee;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>Convert the Google Sheet to a JSON that Nautsbuilder understands</p>
+    <p>In the sheet, click somewhere inside the data and then press CTRL-A to select everything. Use CTRL-C to copy and
+        then CTRL-V inside the area below.</p>
+    <label>Input:</label>
+    <textarea id="import-area"></textarea>
+    <label>Output:</label>
+    <textarea id="output" readonly></textarea>
+    <script>
+        document.getElementById("import-area").addEventListener("paste", (event) => {
+            try {
+                const text = ((event.clipboardData || window.clipboardData).getData("text")).replace(/\r/g, "");
+
+                // First line is header
+                const headerLine = text.split("\n")[0];
+                const headers = headerLine.split("\t").map((header) => header.toLowerCase())
+                const headerCount = headers.length;
+
+                // The first entry of each page has a "TRUE" used by nautsbuilder to detect which page is being imported
+                const noHeaders = text.split("\n").slice(1).join("\n");
+                const fixedFirstLine = noHeaders.replace("TRUE", "");
+                const fixedTabs = fixedFirstLine.replace(/\t\n/mg, "\t");
+                const data = fixedTabs.split("\t");
+
+                const entries = [];
+
+                let foundLast = false;
+                if (data.length < 3 || headers.length < 3) {
+                    document.getElementById("output").value = "Pasted data seems invalid (not enough headers or data)";
+                    return;
+                }
+
+                const lastHeader = headers[headers.length - 1];
+                if (!["isconfigtab", "isupgradestab", "isskillstab", "ischaracterstab"].includes(lastHeader)) {
+                    document.getElementById("output").value = "Pasted data seems invalid (unknown header). Make sure you did not press CTRL-A twice and to not select extra row / columns)";
+                    return;
+                }
+
+                if (headers.some((v) => v.trim() === "")) {
+                    document.getElementById("output").value = "Pasted data is invalid (empty headers). Make sure you did not press CTRL-A twice and to not select extra row / columns)";
+                    return;
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    const entry = {};
+                    for (let j = 0; j < headers.length - 1; j++) {
+                        const text = data[i++];
+                        const number = parseFloat(text);
+                        entry[headers[j]] = isNaN(number) ? text : number;
+                        if (i > data.length) {
+                            foundLast = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundLast) {
+                        i--;
+                        if (entries.length === 0) {
+                            entry[headers[headers.length - 1]] = true;
+                        }
+                        entries.push(entry);
+                    }
+                }
+
+                document.getElementById("output").value = JSON.stringify(entries, null, 2);
+            }
+            catch (e) {
+                document.getElementById("output").value = "Something went wrong. " + (e);
+            }
+        });
+    </script>
+</body>
+
+</html>
