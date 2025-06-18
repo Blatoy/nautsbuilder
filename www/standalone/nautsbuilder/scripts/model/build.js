@@ -392,22 +392,26 @@ let Build = function(URLData) {
           // NOTE: Only the size of effect.value is taken into account
           for (let i = 0; i < effect.value.length; ++i) {
             if (effect.coeff[i] !== undefined) {
-              effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff[i]), effect.scaleType);
+              const unscaled = Build.applyCoeff(effect.value[i], effect.coeff[i], effect.unit);
+              effect.value[i] = Build.applyTeamScaling(unscaled, effect.scaleType);
             }
           }
         } else if (!Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
           // Both values
-          effect.value = Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff), effect.scaleType);
+          const unscaled = Build.applyCoeff(effect.value, effect.coeff, effect.unit);
+          effect.value = Build.applyTeamScaling(unscaled, effect.scaleType);
         } else if (Array.isArray(effect.value) && !Array.isArray(effect.coeff)) {
           // Value is array, coeff isn't
           for (let i = 0; i < effect.value.length; ++i) {
-            effect.value[i] = Build.applyTeamScaling(Build.applyCoeff(effect.value[i], effect.coeff), effect.scaleType);
+            const unscaled = Build.applyCoeff(effect.value[i], effect.coeff, effect.unit);
+            effect.value[i] = Build.applyTeamScaling(unscaled, effect.scaleType);
           }
         } else {
           // Value is number, coeff is array
           let tempArray = [];
           for (let i = 0; i < effect.coeff.length; ++i) {
-            tempArray.push(Build.applyTeamScaling(Build.applyCoeff(effect.value, effect.coeff[i]), effect.scaleType));
+            const unscaled = Build.applyCoeff(effect.value, effect.coeff[i], effect.unit);
+            tempArray.push(Build.applyTeamScaling(unscaled, effect.scaleType));
           }
           effect.value = tempArray;
         }
@@ -821,8 +825,8 @@ Build.applyDPS = function(attackSpeed, damage, multiplier) {
 }
 
 // TODO: Desc
-Build.applyCoeff = function(value, coeff) {
-  if (value === 0) {
+Build.applyCoeff = function(value, coeff, unit) {
+  if (value === 0 && unit === '%') {
     return 100 * coeff; // No value => it's a %
   } else {
     return value * (1 + coeff);
