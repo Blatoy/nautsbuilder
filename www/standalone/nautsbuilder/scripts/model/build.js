@@ -300,12 +300,12 @@ let Build = function(URLData) {
     for (let i = 0; i < skillEffects.length; ++i) {
       let skillEffect = skillEffects[i];
       // TODO: Check if value/coeff is array and copy manually the value. They are going to be changed so we can't just copy it...
-      rowEffects[skillEffect.getKey()] = JSON.parse(JSON.stringify({
+      rowEffects[skillEffect.getKey()] = {
         value: this.resolveCrossRow(skillEffect.getValue()),
         coeff: this.resolveCrossRow(skillEffect.getCoeff()),
         unit: skillEffect.getUnit(),
         scaleType: skillEffect.getEffectScaling()
-      }));
+      };
     }
 
     // Add UPGRADES EFFECTS
